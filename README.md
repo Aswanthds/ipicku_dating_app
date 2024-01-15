@@ -26,7 +26,7 @@ Insert some screenshots or GIFs showcasing the app's UI and features.
 - Clone this repository:
 
 ```bash
-git clone https://github.com/your-username/iPickU.git
+git clone [https://github.com/your-username/iPickU.git](https://github.com/Aswanthds/ipicku_dating_app)
 cd iPickU
 ```
 
@@ -55,9 +55,6 @@ We welcome contributions! To contribute to iPickU, follow these steps:
 3. Make your changes.
 4. Open a pull request with a clear title and description.
 
-## License
-
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
 ## Acknowledgments
 
