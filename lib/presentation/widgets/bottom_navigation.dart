@@ -1,7 +1,7 @@
 import 'package:eva_icons_flutter/eva_icons_flutter.dart';
 import 'package:flutter/material.dart';
 
-ValueNotifier<int> indexChangeNotifier = ValueNotifier(1);
+ValueNotifier<int> indexChangeNotifier = ValueNotifier(0);
 
 class BottomNavigation extends StatelessWidget {
   const BottomNavigation({super.key});
@@ -22,22 +22,15 @@ class BottomNavigation extends StatelessWidget {
           showUnselectedLabels: false,
           items: const [
             BottomNavigationBarItem(
-              icon: Icon(
-                EvaIcons.person,
-                size: 25,
-              ),
-              activeIcon: Icon(
-                EvaIcons.person,
-                size: 25,
-              ),
-              label: 'Home',
-            ),
-            BottomNavigationBarItem(
               icon: ImageIcon(
                 AssetImage('assets/images/logo_light.png'),
                 size: 25,
               ),
-              label: '',
+              activeIcon: ImageIcon(
+                AssetImage('assets/images/logo_light.png'),
+                size: 25,
+              ),
+              label: 'Home',
             ),
             BottomNavigationBarItem(
               icon: Icon(
@@ -50,6 +43,17 @@ class BottomNavigation extends StatelessWidget {
                 size: 25,
               ),
               label: 'Recommended',
+            ),
+            BottomNavigationBarItem(
+              icon: Icon(
+                EvaIcons.messageCircleOutline,
+                size: 25,
+              ),
+              activeIcon: Icon(
+                EvaIcons.messageCircle,
+                size: 25,
+              ),
+              label: '',
             ),
           ],
         );

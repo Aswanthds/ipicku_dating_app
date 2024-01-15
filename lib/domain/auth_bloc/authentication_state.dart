@@ -24,7 +24,7 @@ class AuthenticationSuccess extends AuthenticationState {
 class AuthenticationSucessButNotSet extends AuthenticationState {
   final String userId;
 
-  AuthenticationSucessButNotSet(this.userId);
+  const AuthenticationSucessButNotSet(this.userId);
 
   @override
   List<Object> get props => [userId];
@@ -50,3 +50,14 @@ class AuthenticationLoading extends AuthenticationState {
 
 class Unauthenticated extends AuthenticationState{}
 
+
+
+class ResetPasswordInProgress extends AuthenticationState {}
+
+class ResetPasswordSuccess extends AuthenticationState {}
+
+class ResetPasswordFailure extends AuthenticationState {
+  final String message;
+
+  const ResetPasswordFailure(this.message);
+}

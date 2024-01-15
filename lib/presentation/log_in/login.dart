@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 import 'package:ipicku_dating_app/constants.dart';
 import 'package:ipicku_dating_app/data/repositories/user_repositories.dart';
+import 'package:ipicku_dating_app/domain/login_bloc/login_bloc.dart';
 
-import 'package:ipicku_dating_app/presentation/login/widgets/formwidget.dart';
+import 'package:ipicku_dating_app/presentation/log_in/widgets/formwidget.dart';
 
 class SignInPage extends StatelessWidget {
   final UserRepository userRepository;
@@ -11,11 +13,14 @@ class SignInPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return  Scaffold(
+    return Scaffold(
       resizeToAvoidBottomInset: false,
       backgroundColor: kPrimary,
       body: Center(
-        child: LoginForm(userRepository: userRepository ),
+        child: BlocProvider(
+          create: (context) => LoginBloc(userRepository: userRepository),
+          child: LoginForm(userRepository: userRepository),
+        ),
       ),
     );
   }

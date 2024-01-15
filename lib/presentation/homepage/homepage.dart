@@ -1,69 +1,54 @@
-import 'package:eva_icons_flutter/eva_icons_flutter.dart';
 import 'package:flutter/material.dart';
-import 'package:ipicku_dating_app/presentation/chatpage/chatpage.dart';
+import 'package:ipicku_dating_app/data/repositories/user_repositories.dart';
+import 'package:ipicku_dating_app/presentation/homepage/widgets/actions_button.dart';
+import 'package:ipicku_dating_app/presentation/homepage/widgets/date_container.dart';
+import 'package:ipicku_dating_app/presentation/homepage/widgets/date_details_section.dart';
+import 'package:ipicku_dating_app/presentation/profile/profile_drawer.dart';
 
-class HomePage extends StatelessWidget {
-  const HomePage({super.key});
+class HomePage extends StatefulWidget {
+  final UserRepository userRepository;
+  const HomePage({super.key, required this.userRepository});
+
+  @override
+  State<HomePage> createState() => _HomePageState();
+}
+
+class _HomePageState extends State<HomePage> {
+  String? id;
+  String? email;
+
+  getid() async {
+    var ert = await widget.userRepository.getUser();
+    var ema = await widget.userRepository.getUserEmail();
+    setState(() {
+      id = ert;
+      email = ema;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+      getid();
+    });
     final size = MediaQuery.of(context).size;
     return Scaffold(
       appBar: AppBar(
-        actions: [
-          IconButton(
-              onPressed: () {
-                Navigator.push(context,
-                    MaterialPageRoute(builder: (context) => const ChatPage()));
-              },
-              icon: const Icon(EvaIcons.messageCircleOutline))
-        ],
+        title: const Text("I Pick U"),
+        centerTitle: true,
       ),
+      drawer: ProfileDrawer(size: size, email: email, id: id, widget: widget),
       body: Stack(
         children: [
-          Center(
-            child: Card(
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(20),
-              ),
-              child: Container(
-                height: size.height,
-                width: size.width - 50,
-                decoration: BoxDecoration(
-                  color: Colors.black26,
-                  borderRadius: BorderRadius.circular(20),
-                ),
-              ),
-            ),
-          ),
-          Align(
+          DateProfileContainer(size: size),
+          const Align(
             alignment: Alignment.bottomCenter,
-            child: Row(
-              mainAxisSize: MainAxisSize.max,
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
-              children: [
-                IconButton(
-                  onPressed: () {},
-                  icon: const Icon(EvaIcons.slash),
-                  color: Colors.red,
-                  iconSize: 30,
-                ),
-                IconButton(
-                  onPressed: () {},
-                  icon: const ImageIcon(
-                    AssetImage('assets/images/logo_light.png'),
-                  ),
-                  iconSize: 50,
-                ),
-                IconButton(
-                  onPressed: () {},
-                  icon: const Icon(
-                    Icons.report_gmailerrorred_outlined,
-                  ),
-                  iconSize: 30,
-                ),
-              ],
-            ),
+            child: ActionsButton(),
+          ),
+          const Positioned(
+            bottom: 80,
+            left: 40,
+            child: DateDetailsSection(),
           )
         ],
       ),

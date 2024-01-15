@@ -2,102 +2,71 @@ import 'package:flutter/material.dart';
 import 'package:ipicku_dating_app/constants.dart';
 
 class RecommendedPage extends StatelessWidget {
-  const RecommendedPage({super.key});
+  const RecommendedPage({super.key,});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(
-          title: const Text('Recommended Profiles'),
-        ),
-        body: ListView(
-          children: [
-            buildSection('Interests', _buildInterestProfiles()),
-            buildSection('Age 20 - 30', _buildAgeGroup2030Profiles()),
-            buildSection('Region', _buildNewYorkProfiles()),
-          ],
-        ));
-  }
-
-  List<Widget> _buildInterestProfiles() {
-    // Placeholder for interest-based profiles
-    return [
-      _buildProfileCard(
-          'John',
-          'Music, Travel',
-          'https://i.pinimg.com/236x/be/b0/fc/beb0fcdf7cf7db7a539f53e0bf6a5c4e.jpg',
-          'Interests '),
-      _buildProfileCard(
-          'Alice',
-          'Hiking, Photography',
-          'https://i.pinimg.com/736x/ec/a0/bb/eca0bb5f24b99b24e7f186a3d9948813.jpg',
-          'Interests '),
-      _buildProfileCard(
-          'Emma',
-          'Movies, Reading',
-          'https://i.pinimg.com/236x/32/7f/35/327f35c84fe893c6be1efce8aa8930ee.jpg',
-          'Interests '),
-    ];
+      appBar: AppBar(
+        title: const Text('Recommended Profiles'),
+      ),
+      body: ListView(
+        children: [
+          buildSection('Age 20 - 30', _buildAgeGroup2030Profiles()),
+        ],
+      ),
+    );
   }
 
   List<Widget> _buildAgeGroup2030Profiles() {
-    // Placeholder for age group 20-30 profiles
     return [
       _buildProfileCard(
-          'Michael',
-          ' 25',
-          'https://i.pinimg.com/236x/7f/30/bc/7f30bce838ae79bc1f85e8fd0717f1c7.jpg',
-          'Age '),
+        'Drishya',
+        '23',
+        'https://i.pinimg.com/236x/7f/30/bc/7f30bce838ae79bc1f85e8fd0717f1c7.jpg',
+        'Age',
+      ),
       _buildProfileCard(
-          'Sophia',
-          ' 28',
-          'https://i.pinimg.com/236x/7f/30/bc/7f30bce838ae79bc1f85e8fd0717f1c7.jpg',
-          'Age '),
+        'Arya',
+        ' 25',
+        'https://i.pinimg.com/236x/3a/a4/09/3aa4097d7709bfb26b169eb82e457c52.jpg',
+        'Age',
+      ),
       _buildProfileCard(
-          'Ethan',
-          ' 22',
-          'https://i.pinimg.com/236x/7f/30/bc/7f30bce838ae79bc1f85e8fd0717f1c7.jpg',
-          'Age '),
-      // Add more profiles for age group 20-30
-    ];
-  }
-
-  List<Widget> _buildNewYorkProfiles() {
-    // Placeholder for profiles from New York region
-    return [
+        'Aishwarya',
+        ' 22',
+        'https://i.pinimg.com/236x/87/8e/e9/878ee9986c7c5d8625edb1197a26a1fd.jpg',
+        'Age',
+      ),
       _buildProfileCard(
-          'Olivia',
-          'New York',
-          'https://i.pinimg.com/236x/7f/30/bc/7f30bce838ae79bc1f85e8fd0717f1c7.jpg',
-          'Location '),
+        'Arpitha',
+        '26',
+        'https://i.pinimg.com/236x/1e/ae/7f/1eae7f5954ba954362bf482b7eae430c.jpg',
+        'Age',
+      ),
       _buildProfileCard(
-          'William',
-          'New York',
-          'https://i.pinimg.com/236x/7f/30/bc/7f30bce838ae79bc1f85e8fd0717f1c7.jpg',
-          'Location '),
+        'Priya',
+        '28',
+        'https://i.pinimg.com/236x/9c/c1/6f/9cc16fc7fcc9beaca9b4d9ac4246e6e5.jpg',
+        'Age',
+      ),
       _buildProfileCard(
-          'Ava',
-          'New York',
-          'https://i.pinimg.com/236x/7f/30/bc/7f30bce838ae79bc1f85e8fd0717f1c7.jpg',
-          'Location '),
-      _buildProfileCard(
-          'Ava',
-          'New York',
-          'https://i.pinimg.com/236x/7f/30/bc/7f30bce838ae79bc1f85e8fd0717f1c7.jpg',
-          'Location '),
-      _buildProfileCard(
-          'Ava',
-          'New York',
-          'https://i.pinimg.com/236x/7f/30/bc/7f30bce838ae79bc1f85e8fd0717f1c7.jpg',
-          'Location '),
-      // Add more profiles from New York
+        'Srividya',
+        '25',
+        'https://i.pinimg.com/236x/43/54/db/4354dbcd90e8b1851d82c7838f9399ca.jpg',
+        'Age',
+      ),
     ];
   }
 
   Widget _buildProfileCard(
       String name, String description, String imagePath, String title) {
     return Card(
-      elevation: 10,
+      elevation: 5,
+      margin: const EdgeInsets.all(5.0),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(20),
+      ),
       child: SizedBox(
         width: 120,
         child: Stack(
@@ -112,7 +81,8 @@ class RecommendedPage extends StatelessWidget {
             Container(
               width: 120,
               decoration: BoxDecoration(
-                gradient: whiteFade,
+                borderRadius: BorderRadius.circular(20),
+                gradient: blackFade,
               ),
               child: Padding(
                 padding: const EdgeInsets.all(8.0),
@@ -123,19 +93,24 @@ class RecommendedPage extends StatelessWidget {
                     Text(
                       name,
                       style: const TextStyle(
-                          fontWeight: FontWeight.bold, color: Colors.black),
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white,
+                      ),
                     ),
                     RichText(
                       text: TextSpan(
-                          text: "$title :",
-                          style: const TextStyle(
-                              fontWeight: FontWeight.bold, color: Colors.black),
-                          children: [
-                            TextSpan(
-                              text: description,
-                              style: const TextStyle(color: Colors.black54),
-                            )
-                          ]),
+                        text: "$title :",
+                        style: const TextStyle(
+                          fontWeight: FontWeight.bold,
+                          color: Colors.white,
+                        ),
+                        children: [
+                          TextSpan(
+                            text: description,
+                            style: const TextStyle(color: Colors.white),
+                          )
+                        ],
+                      ),
                     ),
                   ],
                 ),
@@ -165,12 +140,13 @@ class RecommendedPage extends StatelessWidget {
         const Divider(),
         const SizedBox(height: 10),
         SizedBox(
-            height: 200,
-            child: ListView.builder(
-              scrollDirection: Axis.horizontal,
-              itemCount: buildInterestProfiles.length,
-              itemBuilder: (context, index) => buildInterestProfiles[index],
-            ))
+          height: 200,
+          child: ListView.builder(
+            scrollDirection: Axis.horizontal,
+            itemCount: buildInterestProfiles.length,
+            itemBuilder: (context, index) => buildInterestProfiles[index],
+          ),
+        ),
       ],
     );
   }

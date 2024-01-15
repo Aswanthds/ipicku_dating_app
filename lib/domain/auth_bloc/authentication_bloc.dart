@@ -1,5 +1,8 @@
+import 'dart:async';
+
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
+import 'package:flutter/material.dart';
 import 'package:ipicku_dating_app/data/repositories/user_repositories.dart';
 
 part 'authentication_event.dart';
@@ -8,58 +11,70 @@ part 'authentication_state.dart';
 class AuthenticationBloc
     extends Bloc<AuthenticationEvent, AuthenticationState> {
   final UserRepository userRepository;
+
   AuthenticationBloc({required this.userRepository})
       : super(IntialAuthenticationState()) {
-    // on<AuthenticationEvent>((event, emit) {
-    //   // TODO: implement event handler
-    // });
-
-    Stream<AuthenticationState> mapEventToState(
-        AuthenticationEvent event) async* {
-      if (event is AppStarted) {
-        yield* mapAppStartToState();
-      } else if (event is LoggedIn) {
-        yield* mapLoggedInState();
-      } else if (event is LoggedOut) {
-        yield* mapLoggedOutToState();
-      }
-    }
+    on<AppStarted>(_mapAppStartedToState);
+    on<LoggedIn>(_mapLoggedInState);
+    on<LoggedOut>(_mapLoggedOutToState);
+    on<ResetPasswordRequested>(_mapResetpassword);
   }
 
-  Stream<AuthenticationState> mapAppStartToState() async* {
+  Future<void> _mapAppStartedToState(
+      AppStarted event, Emitter<AuthenticationState> emit) async {
     try {
-      yield AuthenticationLoading(true);
+      //  emit(const AuthenticationLoading(true));
       final isSigned = await userRepository.isSignedIn();
       if (isSigned) {
         final userId = await userRepository.getUser();
         final isFirst = await userRepository.isFirstTime(userId);
 
         if (!isFirst) {
-          yield AuthenticationSucessButNotSet(userId);
+          emit(AuthenticationSucessButNotSet(userId));
         } else {
-          yield AuthenticationSuccess(userId);
+          emit(AuthenticationSuccess(userId));
         }
       } else {
-        yield Unauthenticated();
+        emit(Unauthenticated());
       }
+      // emit(const AuthenticationLoading(false));
     } catch (e) {
-      yield Unauthenticated();
+      emit(Unauthenticated());
     }
   }
 
-  Stream<AuthenticationState> mapLoggedInState() async* {
+  Future<void> _mapLoggedInState(
+      LoggedIn event, Emitter<AuthenticationState> emit) async {
     final isFirstTime =
         await userRepository.isFirstTime(await userRepository.getUser());
 
     if (!isFirstTime) {
-      yield AuthenticationSucessButNotSet(await userRepository.getUser());
+      emit(AuthenticationSucessButNotSet(await userRepository.getUser()));
     } else {
-      yield AuthenticationSuccess(await userRepository.getUser());
+      emit(AuthenticationSuccess(await userRepository.getUser()));
     }
   }
 
-  Stream<AuthenticationState> mapLoggedOutToState() async* {
-    yield Unauthenticated();
-    userRepository.signOut();
+  Future<void> _mapLoggedOutToState(
+      LoggedOut event, Emitter<AuthenticationState> emit) async {
+    emit(Unauthenticated());
+    await userRepository.signOut();
+  }
+
+  FutureOr<void> _mapResetpassword(
+      ResetPasswordRequested event, Emitter<AuthenticationState> emit) async {
+    emit(ResetPasswordInProgress());
+    try {
+      final user = await userRepository.sendPasswordResetEmail(event.email);
+
+      if (user) {
+        emit(ResetPasswordSuccess());
+      } else {
+        emit(const ResetPasswordFailure("Error occured"));
+      }
+    } catch (error) {
+      debugPrint("error $error");
+      emit(const ResetPasswordFailure('User not registered'));
+    }
   }
 }

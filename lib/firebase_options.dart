@@ -50,19 +50,19 @@ class DefaultFirebaseOptions {
   }
 
   static const FirebaseOptions web = FirebaseOptions(
-    apiKey: 'AIzaSyC8Nwjh_9LH5kd1fOSlGKph5U7O9pPEHlo',
-    appId: '1:648289965277:web:44cae46f991d83296ef734',
-    messagingSenderId: '648289965277',
-    projectId: 'ipicku-dating-app',
-    authDomain: 'ipicku-dating-app.firebaseapp.com',
-    storageBucket: 'ipicku-dating-app.appspot.com',
+    apiKey: 'AIzaSyDQGb3cnYftJTya-zTHNvXhtT_UaDt6iUk',
+    appId: '1:471585294652:web:8cfa9ebed41600d66bf639',
+    messagingSenderId: '471585294652',
+    projectId: 'ipicku-dating-app-fire',
+    authDomain: 'ipicku-dating-app-fire.firebaseapp.com',
+    storageBucket: 'ipicku-dating-app-fire.appspot.com',
   );
 
   static const FirebaseOptions android = FirebaseOptions(
-    apiKey: 'AIzaSyBCd_52-psAIIJVJN-om_7I_6hHUWtNYsU',
-    appId: '1:648289965277:android:96e2eafb4b760b5c6ef734',
-    messagingSenderId: '648289965277',
-    projectId: 'ipicku-dating-app',
-    storageBucket: 'ipicku-dating-app.appspot.com',
+    apiKey: 'AIzaSyAMn7tajC_IWjNo3x_pBwphIm113JiLj7o',
+    appId: '1:471585294652:android:9539aa0ed4f2c2686bf639',
+    messagingSenderId: '471585294652',
+    projectId: 'ipicku-dating-app-fire',
+    storageBucket: 'ipicku-dating-app-fire.appspot.com',
   );
 }

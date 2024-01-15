@@ -1,30 +1,17 @@
-import 'dart:async';
 import 'package:flutter/material.dart';
-import 'package:ipicku_dating_app/data/repositories/user_repositories.dart';
-import 'package:ipicku_dating_app/presentation/login/login.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:geolocator/geolocator.dart';
+import 'package:ipicku_dating_app/domain/auth_bloc/authentication_bloc.dart';
 
-class SplashScreen extends StatefulWidget {
+class SplashScreen extends StatelessWidget {
   const SplashScreen({super.key});
 
   @override
-  State<SplashScreen> createState() => _SplashScreenState();
-}
-
-class _SplashScreenState extends State<SplashScreen> {
-  @override
-  void initState() {
-    super.initState();
-    Timer(
-        const Duration(seconds: 8),
-        () => Navigator.pushAndRemoveUntil(
-              context,
-              MaterialPageRoute(builder: (context) =>  SignInPage(userRepository: UserRepository(),)),
-              (route) => false,
-            ));
-  }
-
-  @override
   Widget build(BuildContext context) {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      BlocProvider.of<AuthenticationBloc>(context).add(AppStarted());
+      LocationPermission.always;
+    });
     return Scaffold(
       backgroundColor: const Color.fromRGBO(5, 0, 30, 1.0),
       body: Center(
