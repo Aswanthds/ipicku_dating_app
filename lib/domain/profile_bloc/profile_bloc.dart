@@ -4,6 +4,7 @@ import 'dart:io';
 import 'package:bloc/bloc.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:equatable/equatable.dart';
+import 'package:ipicku_dating_app/data/model/user.dart';
 import 'package:ipicku_dating_app/data/repositories/user_repositories.dart';
 import 'package:ipicku_dating_app/domain/profile_bloc/profile_state.dart';
 
@@ -18,6 +19,7 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
     //on<InterestedInChanged>(_interestedChanged);
     //on<LocationChanged>(_locationChanged);
     on<Submitted>(_submitted);
+    on<PhotosChanged>(_photosChanged);
     //on<PhotoChanged>(_photochanged);
   }
 
@@ -31,10 +33,12 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
         gender: event.gender,
         location: event.location,
         name: event.name,
-        photo: event.photo,
-        email: email ,
+        photoPath: event.photo,
+        email: email,
         userId: uid,
-        created: DateTime.now(),
+        interests: event.interests,
+        userPhotos: event.userPics ,
+        created: Timestamp.now(),
       );
       emit(ProfileState.success());
     } catch (e) {
@@ -63,4 +67,9 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
   // FutureOr<void> _photochanged(PhotoChanged event, Emitter<ProfileState> emit) {
   //   emit(state.update(isPhotoEmpty: event.photo == null));
   // }
+
+  FutureOr<void> _photosChanged(
+      PhotosChanged event, Emitter<ProfileState> emit) {
+    emit(state.update(isPicsEmpty: event.photos.isEmpty));
+  }
 }

@@ -158,10 +158,24 @@ const profilefailedSnackBar = SnackBar(
   behavior: SnackBarBehavior.floating,
 );
 const profileSucessSnackBar = SnackBar(
+  backgroundColor: Colors.green,
   content: Row(
     children: [
       Text("Details Submitted Succesfully"),
       Icon(EvaIcons.doneAll),
+    ],
+  ),
+  behavior: SnackBarBehavior.floating,
+);
+const profileloading = SnackBar(
+  backgroundColor: Colors.grey,
+  content: Row(
+    children: [
+      Text("Details Submitted Succesfully"),
+      CircularProgressIndicator(
+        strokeWidth: 2.0,
+        color: Colors.white,
+      ),
     ],
   ),
   behavior: SnackBarBehavior.floating,

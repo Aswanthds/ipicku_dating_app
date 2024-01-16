@@ -1,5 +1,3 @@
-
-
 import 'package:flutter/material.dart';
 
 @immutable
@@ -8,6 +6,7 @@ class SignUpState {
   final bool isPasswordValid;
   final bool isSubmitting;
   final bool isSuccess;
+
   final bool isFailure;
 
   bool get isFormValid => isEmailValid && isPasswordValid;

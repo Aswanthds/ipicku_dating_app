@@ -6,11 +6,14 @@ class ProfileSignUpFormField extends StatelessWidget {
   final ProfileState state;
   final IconData? icon;
 
+  final String title;
+
   const ProfileSignUpFormField({
     super.key,
     required this.controller,
     this.icon,
     required this.state,
+    required this.title,
   });
 
   @override
@@ -23,9 +26,9 @@ class ProfileSignUpFormField extends StatelessWidget {
       child: TextFormField(
         controller: controller,
 
-        decoration: const InputDecoration(
-          labelText: "Name",
-          enabledBorder: OutlineInputBorder(
+        decoration: InputDecoration(
+          labelText: title,
+          enabledBorder: const OutlineInputBorder(
             borderRadius: BorderRadius.all(
               Radius.circular(15),
             ),
@@ -34,8 +37,8 @@ class ProfileSignUpFormField extends StatelessWidget {
               style: BorderStyle.solid,
             ),
           ),
-          labelStyle: TextStyle(color: Colors.white),
-          focusedBorder: OutlineInputBorder(
+          labelStyle: const TextStyle(color: Colors.white),
+          focusedBorder: const OutlineInputBorder(
             borderRadius: BorderRadius.all(
               Radius.circular(15),
             ),

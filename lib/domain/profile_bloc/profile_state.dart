@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 
 @immutable
@@ -11,7 +10,7 @@ class ProfileState {
   final bool isFailure;
   final bool isSubmitting;
   final bool isSuccess;
-
+  final bool isPicsEmpty;
   // bool get isFormValid =>
   //     isPhotoEmpty && isNameEmpty && isAgeEmpty && isGenderEmpty;
 
@@ -24,11 +23,11 @@ class ProfileState {
     required this.isFailure,
     required this.isSubmitting,
     required this.isSuccess,
+    required this.isPicsEmpty,
   });
 
   factory ProfileState.empty() {
     return const ProfileState(
-      
       isFailure: false,
       isSuccess: false,
       isSubmitting: false,
@@ -37,15 +36,16 @@ class ProfileState {
       // isGenderEmpty: false,
       // isLocationEmpty: false,
       // isPhotoEmpty: false,
+      isPicsEmpty: false,
     );
   }
 
   factory ProfileState.loading() {
     return const ProfileState(
-  
       isFailure: false,
       isSuccess: false,
       isSubmitting: true,
+      isPicsEmpty: false,
       // isNameEmpty: false,
       // isAgeEmpty: false,
       // isGenderEmpty: false,
@@ -56,10 +56,10 @@ class ProfileState {
 
   factory ProfileState.failure() {
     return const ProfileState(
-    
       isFailure: true,
       isSuccess: false,
       isSubmitting: false,
+      isPicsEmpty: false,
       // isNameEmpty: false,
       // isAgeEmpty: false,
       // isGenderEmpty: false,
@@ -70,10 +70,10 @@ class ProfileState {
 
   factory ProfileState.success() {
     return const ProfileState(
-    
       isFailure: false,
       isSuccess: true,
       isSubmitting: false,
+      isPicsEmpty: false,
       // isNameEmpty: false,
       // isAgeEmpty: false,
       // isGenderEmpty: false,
@@ -88,11 +88,13 @@ class ProfileState {
     bool? isAgeEmpty,
     bool? isGenderEmpty,
     bool? isLocationEmpty,
+    bool? isPicsEmpty
   }) {
     return copyWith(
       isFailure: false,
       isSuccess: false,
       isSubmitting: false,
+      isPicsEmpty: isPicsEmpty,
       // isPhotoEmpty: isPhotoEmpty,
       // isNameEmpty: isNameEmpty,
       // isAgeEmpty: isAgeEmpty,
@@ -110,6 +112,7 @@ class ProfileState {
     bool? isSubmitting,
     bool? isSuccess,
     bool? isFailure,
+    bool? isPicsEmpty,
   }) {
     return ProfileState(
       // isPhotoEmpty: isPhotoEmpty ?? this.isPhotoEmpty,
@@ -120,6 +123,7 @@ class ProfileState {
       isSubmitting: isSubmitting ?? this.isSubmitting,
       isSuccess: isSuccess ?? this.isSuccess,
       isFailure: isFailure ?? this.isFailure,
+      isPicsEmpty: isPicsEmpty ?? this.isPicsEmpty,
     );
   }
 }

@@ -13,6 +13,7 @@ class SignUpBloc extends Bloc<SignUpEvent, SignUpState> {
     on<EmailChanged>(_mapEmailChanged);
     on<PasswordChanged>(_mapPasswordChanged);
     on<SignUpPressed>(_mapSignUpPressed);
+    
   }
 
   FutureOr<void> _mapEmailChanged(
