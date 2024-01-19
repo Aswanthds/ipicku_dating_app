@@ -48,3 +48,8 @@ class LoginPressed extends LoginEvent {
 }
 
 
+class GoogleSignUp extends LoginEvent {
+  final GoogleSignInAccount account;
+
+  const GoogleSignUp({required this.account});
+}

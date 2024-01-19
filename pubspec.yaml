@@ -44,7 +44,9 @@ dependencies:
   flutter_datetime_picker: ^1.5.1
   flutter_native_splash: ^2.3.9
   geolocator: ^10.1.0
+  getwidget: ^4.0.0
   google_sign_in: ^6.2.1
+  http: ^1.2.0
   image_picker: ^1.0.7
   intl: ^0.18.0
   swipe_cards: ^2.0.0+1
@@ -63,10 +65,6 @@ dev_dependencies:
     sdk: flutter
 flutter:
 
-
- 
-
-
   # The following line ensures that the Material Icons font is
   # included with your application, so that you can use the icons in
   # the material Icons class.
@@ -76,7 +74,6 @@ flutter:
     - assets/images/logo_dark.png
     - assets/images/logo_light.png
     - assets/images/image_place.png
-    
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware
   # For details regarding adding assets from package dependencies, see

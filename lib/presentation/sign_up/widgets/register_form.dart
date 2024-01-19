@@ -119,7 +119,7 @@ class _RegisterFormState extends State<RegisterForm> {
                     isPassword: true,
                   ),
                   Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 20),
+                    padding: const EdgeInsets.only(top: 20),
                     child: isPopulated
                         ? RegisterButton(
                             onPressed: isSignUpButtonEnabled(state)
@@ -135,6 +135,23 @@ class _RegisterFormState extends State<RegisterForm> {
                             ),
                             child: const Text("Register"),
                           ),
+                  ),
+                  ElevatedButton.icon(
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.redAccent,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(30.0),
+                      ),
+                    ),
+                    icon: const Icon(EvaIcons.google, color: Colors.white),
+                    onPressed: () async {
+                      final account =
+                          await widget.userRepository.performGoogleSignIn();
+                      BlocProvider.of<SignUpBloc>(context)
+                          .add(GoogleSignUpEvent(account: account));
+                    },
+                    label: const Text('Sign in with Google',
+                        style: TextStyle(color: Colors.white)),
                   ),
                 ],
               ),

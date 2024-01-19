@@ -6,6 +6,8 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:ipicku_dating_app/data/model/user.dart';
 
 class UserRepository {
   final FirebaseAuth _firebaseAuth;
@@ -46,16 +48,13 @@ class UserRepository {
     );
   }
 
- 
-
   Future<bool> sendPasswordResetEmail(String email) async {
-    // final signInmethods = fetchSignInMethods(email);
     try {
       await _firebaseAuth.sendPasswordResetEmail(email: email);
-      return true; // Success
+      return true;
     } on FirebaseAuthException catch (error) {
       debugPrint('Error sending password reset email: ${error.code}');
-      return false; // Failure
+      return false;
     }
   }
 
@@ -87,16 +86,16 @@ class UserRepository {
     String? userId,
     String? name,
     String? gender,
+    String? bio,
     int? age,
     String? email,
     File? photoPath,
     Timestamp? created,
+    DateTime? dob,
     GeoPoint? location,
-    List<File?>? userPhotos,
     List<String>? interests,
   }) async {
     try {
-      // Upload profile photo to Firebase Storage
       final Reference storageRef = FirebaseStorage.instance
           .ref()
           .child('userPhotos')
@@ -107,15 +106,12 @@ class UserRepository {
       final TaskSnapshot storageSnapshot = await uploadTask;
       final String photoUrl = await storageSnapshot.ref.getDownloadURL();
 
-      // Save user data to Firestore
       final CollectionReference usersCollection =
           FirebaseFirestore.instance.collection('users');
 
-      // Check if the user already exists
       final DocumentSnapshot userDoc = await usersCollection.doc(userId).get();
 
       if (userDoc.exists) {
-        // Update user data if the user exists
         await usersCollection.doc(userId).update({
           'photoUrl': photoUrl,
           'name': name,
@@ -124,9 +120,10 @@ class UserRepository {
           'age': age,
           'email': email,
           'created': created,
+          'dob': dob,
+          'bio': bio,
         });
       } else {
-        // Create a new user if the user doesn't exist
         await usersCollection.doc(userId).set({
           'uid': userId,
           'photoUrl': photoUrl,
@@ -136,33 +133,31 @@ class UserRepository {
           'age': age,
           'email': email,
           'created': created,
+          'dob': dob,
+          'bio': bio,
         });
       }
-      String photoPrefix = userId.substring(userId.length - 4);
+      String photoPrefix = userId.substring(userId.length - 4).toLowerCase();
 
-      // Loop through the user photos and upload each one to Firebase Storage
-      for (int i = 0; i < userPhotos!.length; i++) {
-        File? photo = userPhotos[i];
+      // for (int i = 0; i < userPhotos!.length; i++) {
+      //   File? photo = userPhotos[i];
 
-        // Construct a unique name for the photo using the generated prefix and a picture number
-        String photoName = '$photoPrefix-pic$i.png';
+      //   String photoName = '$photoPrefix-pic$i.png';
 
-        final Reference storageRef = FirebaseStorage.instance
-            .ref()
-            .child('userPhotos')
-            .child(userId)
-            .child(photoName);
+      //   final Reference storageRef = FirebaseStorage.instance
+      //       .ref()
+      //       .child('userPhotos')
+      //       .child(userId)
+      //       .child(photoName);
 
-        final UploadTask uploadTask = storageRef.putFile(photo!);
-        await uploadTask;
-        final String photoUrl = await storageRef.getDownloadURL();
+      //   final UploadTask uploadTask = storageRef.putFile(photo!);
+      //   await uploadTask;
+      //   final String photoUrl = await storageRef.getDownloadURL();
 
-        // Save the photo URL to Firestore or perform any other necessary actions
-        // Example: Save photo URL to a user's document in the users collection
-        await usersCollection.doc(userId).update({
-          'photos': FieldValue.arrayUnion([photoUrl]),
-        });
-      }
+      //   await usersCollection.doc(userId).update({
+      //     'photos': FieldValue.arrayUnion([photoUrl]),
+      //   });
+      // }
       for (int i = 0; i < interests!.length; i++) {
         String interest = interests[i].trim();
         await usersCollection.doc(userId).update({
@@ -171,8 +166,156 @@ class UserRepository {
       }
     } catch (e) {
       debugPrint('Error during profile setup: $e');
-      // Handle errors (show a message to the user, log the error, etc.)
-      rethrow; // Rethrow the error to let the calling code handle it
+
+      rethrow;
     }
   }
+
+  Future<List<UserModel>> get() async {
+    List<UserModel> list = [];
+
+    try {
+      final users = await FirebaseFirestore.instance.collection('users').get();
+
+      for (var element in users.docs) {
+        list.add(UserModel.fromJson(element.data()));
+      }
+
+      return list;
+    } on FirebaseException catch (e) {
+      debugPrint("Failed with error ${e.code} : ${e.message}");
+      return list;
+    } catch (e) {
+      throw Exception(e.toString());
+    }
+  }
+
+  Future<UserModel?> getUserData() async {
+    try {
+      final userId = await getUser();
+      final users = FirebaseFirestore.instance.collection('users').doc(userId);
+
+      final data = await users.get();
+
+      return UserModel.fromJson(data.data() ?? {});
+    } catch (e) {
+      debugPrint("$e");
+      return null;
+    }
+  }
+
+// ...
+
+  Future<void> uploadImageToStorage(
+      XFile imageFile, int index, String field) async {
+    try {
+      final userId = await getUser();
+
+      String photoPrefix = userId.substring(userId.length - 4).toLowerCase();
+      String photoName = '$photoPrefix-$field$index.png';
+
+      final storageRef = FirebaseStorage.instance
+          .ref()
+          .child('userPhotos')
+          .child(userId)
+          .child(photoName);
+      await storageRef.putFile(File(imageFile.path));
+      // final downloadURL = await storageRef.getDownloadURL();
+      // return downloadURL;
+    } catch (e) {
+      print('Error uploading image: $e');
+    }
+  }
+
+  Future<String> getProfilePhotoLink(XFile imageFile) async {
+    final userId = await getUser();
+    String photoPrefix = userId.substring(userId.length - 4).toLowerCase();
+    final storageRef = FirebaseStorage.instance
+        .ref()
+        .child('userPhotos')
+        .child(userId)
+        .child('$photoPrefix-profile_pic4.png');
+        await storageRef.putFile(File(imageFile.path));
+        
+        
+    
+    return storageRef.getDownloadURL();
+  }
+
+  Future<List<String>> getImageURLsFromStorage() async {
+    try {
+      final userId = await getUser();
+      final storageRef =
+          FirebaseStorage.instance.ref().child('userPhotos').child(userId);
+      final ListResult result = await storageRef.listAll();
+      final List<String> imageURLs = [];
+
+      for (final item in result.items) {
+        final downloadURL = await item.getDownloadURL();
+        imageURLs.add(downloadURL);
+      }
+
+      return imageURLs;
+    } catch (e) {
+      print('Error getting image URLs: $e');
+      return [];
+    }
+  }
+
+  Future<void> updateFirestoreWithImageURLs(List<String> imageURLs) async {
+    try {
+      final userId = await getUser();
+      final userDocRef =
+          FirebaseFirestore.instance.collection('users').doc(userId);
+
+      await userDocRef.update({
+        'photos': imageURLs,
+      });
+    } catch (e) {
+      print('Error updating Firestore: $e');
+    }
+  }
+
+  Future<void> deleteAccount() async {
+    try {
+      final userId = await getUser();
+      DocumentReference userRef =
+          FirebaseFirestore.instance.collection('users').doc(userId);
+      await userRef.delete();
+      Reference userImagesRef =
+          FirebaseStorage.instance.ref().child('userPhotos').child(userId);
+
+      // Delete all images in the folder
+      await userImagesRef.listAll().then((result) async {
+        await Future.forEach(result.items, (Reference item) async {
+          await item.delete();
+        });
+      });
+      await FirebaseAuth.instance.currentUser?.delete();
+      print('User images deleted from Firebase Storage successfully');
+      return await FirebaseAuth.instance.currentUser?.delete();
+    } catch (e) {
+      throw Exception("Unable to delete user");
+    }
+  }
+
+  Future<GoogleSignInAccount> performGoogleSignIn() async {
+    final googleSignIn = GoogleSignIn();
+    final account = await googleSignIn.signIn();
+
+    if (account == null) {
+      throw 'Google Sign-In canceled by the user.';
+    }
+
+    return account;
+  }
 }
+/*
+
+firebase.auth()
+    .signInWithEmailAndPassword('you@domain.example', 'correcthorsebatterystaple')
+    .then(function(userCredential) {
+        userCredential.user.updateEmail('newyou@domain.example')
+    })
+
+    */

@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 
 class ProfileDetails extends StatelessWidget {
-  const ProfileDetails({Key? key}) : super(key: key);
+  final String name, age, uid;
+  const ProfileDetails(
+      {Key? key, required this.name, required this.age, required this.uid})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -9,33 +12,48 @@ class ProfileDetails extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         RichText(
-          text: const TextSpan(
+          text: TextSpan(
             text: "Name : ",
+            style: const TextStyle(
+              color: Colors.black,
+            ),
             children: [
               TextSpan(
-                text: "Aswanth",
-                style: TextStyle(
-                  fontWeight: FontWeight.bold,
-                ),
+                text: name.toUpperCase(),
+                style: const TextStyle(
+                    fontWeight: FontWeight.bold, color: Colors.black),
               ),
             ],
           ),
         ),
         const SizedBox(height: 15),
         RichText(
-          text: const TextSpan(
+          text: TextSpan(
             text: "Age : ",
+            style: const TextStyle(
+              color: Colors.black,
+            ),
             children: [
               TextSpan(
-                text: "18",
-                style: TextStyle(
+                text: age,
+                style: const TextStyle(
                   fontWeight: FontWeight.bold,
+                  color: Colors.black,
                 ),
               ),
             ],
           ),
         ),
-        const Text("ID"),
+        Padding(
+          padding: const EdgeInsets.only(
+            top: 15.0,
+          ),
+          child: Text(
+            uid.toUpperCase(),
+            style: const TextStyle(
+                fontWeight: FontWeight.bold, color: Colors.black),
+          ),
+        ),
       ],
     );
   }

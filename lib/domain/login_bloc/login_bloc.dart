@@ -3,9 +3,9 @@ import 'dart:async';
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 import 'package:ipicku_dating_app/data/functions/validators.dart';
 import 'package:ipicku_dating_app/data/repositories/user_repositories.dart';
-
 
 part 'login_event.dart';
 part 'login_state.dart';
@@ -19,6 +19,7 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
     on<EmailChanged>(_mapEmailChangedToState);
     on<PasswordChanged>(_mapPasswordChangedToState);
     on<LoginPressed>(_mapLoginButtonPressed);
+    on<GoogleSignUp>(_mapGoogleSignIn);
   }
 
   FutureOr<void> _mapEmailChangedToState(
@@ -46,6 +47,23 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
         emit(LoginState.sucess());
       }
     } catch (_) {
+      emit(LoginState.failure());
+    }
+  }
+
+  FutureOr<void> _mapGoogleSignIn(
+      GoogleSignUp event, Emitter<LoginState> emit) async {
+    try {
+      await _userRepository.signInWithCredentials(
+          event.account.email, event.account.id);
+      final id = await _userRepository.getUser();
+      final isFirst = await _userRepository.isFirstTime(id);
+      if (isFirst) {
+        emit(LoginState.profileNotSet());
+      } else {
+        emit(LoginState.sucess());
+      }
+    } catch (e) {
       emit(LoginState.failure());
     }
   }

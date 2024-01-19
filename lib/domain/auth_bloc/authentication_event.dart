@@ -21,3 +21,7 @@ class ResetPasswordRequested extends AuthenticationEvent {
  
   List<Object> get props =>[email];
 }
+class DeleteAccount extends AuthenticationEvent{}
+
+
+class GoogleSignInEvent  extends AuthenticationEvent{}

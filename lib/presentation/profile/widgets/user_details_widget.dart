@@ -1,17 +1,25 @@
-import 'dart:io';
+// ignore_for_file: use_build_context_synchronously
 
-import 'package:eva_icons_flutter/eva_icons_flutter.dart';
+import 'dart:io';
+import 'package:ipicku_dating_app/data/model/user.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:ipicku_dating_app/domain/profile_bloc/profile_bloc.dart';
+import 'package:ipicku_dating_app/domain/bloc/firebase_data_bloc.dart';
+import 'package:ipicku_dating_app/presentation/profile/user_profile/image_preview.dart';
+import 'package:ipicku_dating_app/presentation/profile/widgets/profile_date.dart';
 import 'package:ipicku_dating_app/presentation/profile/widgets/profile_details_list.dart';
 
 class UserDetailsList extends StatelessWidget {
-  const UserDetailsList({Key? key}) : super(key: key);
+  final UserModel? user;
+  const UserDetailsList({Key? key, required this.user}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
+    final TextEditingController nameController = TextEditingController();
+    final TextEditingController emailController = TextEditingController();
+    final TextEditingController bioController = TextEditingController();
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -25,169 +33,201 @@ class UserDetailsList extends StatelessWidget {
           ),
         ),
         ProfileDetailsListTile(
-          context: context,
           heading: 'Name',
-          value: 'Aswanth DS',
+          value: '${user?.name}',
           isEditable: true,
+          controller: nameController,
+          field: 'name',
         ),
         ProfileDetailsListTile(
-          context: context,
           heading: 'Email',
-          value: 'aswanthds2005@gmail.com',
+          value: '${user?.email}',
+          controller: emailController,
           isEditable: true,
         ),
-        ProfileDetailsListTile(
-          context: context,
-          heading: 'Age',
-          value: '18',
-          isEditable: true,
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            const Text(
+              'Age',
+              overflow: TextOverflow.ellipsis,
+              textAlign: TextAlign.start,
+              style: TextStyle(
+                color: Colors.black,
+              ),
+            ),
+            Padding(
+              padding:
+                  const EdgeInsets.only(right: 70.0, top: 8.0, bottom: 8.0),
+              child: Text(
+                '${user?.age} yrs old',
+                textAlign: TextAlign.justify,
+                style: const TextStyle(
+                  fontWeight: FontWeight.bold,
+                  color: Colors.black,
+                ),
+              ),
+            ),
+          ],
         ),
+        ProfileDateWidget(user: user),
+
         ProfileDetailsListTile(
-          context: context,
-          heading: 'Date of Birth',
-          value: 'June 18,2005',
-          isEditable: true,
-        ),
-        ProfileDetailsListTile(
-          context: context,
-          heading: 'Region',
-          value: 'Kerala',
-          isEditable: true,
-        ),
-        ProfileDetailsListTile(
-          context: context,
           heading: 'Bio',
-          value: 'Looking for a partner ',
+          value: user?.bio ?? '< Not Set >',
+          controller: bioController,
           isEditable: true,
+          field: 'bio',
         ),
-        // ProfileDetailsListTile(
+
         //  context: context,
-        //   heading: 'Interests',
-        //   value: 'Aswanth DS',
-        //   isEditable: true,
-        // ),
-        const UserPhotosOwnProfile(),
+
+        UserPhotosOwnProfile(user: user),
       ],
     );
   }
 }
 
 class UserPhotosOwnProfile extends StatefulWidget {
+  final UserModel? user;
+
   const UserPhotosOwnProfile({
-    super.key,
-  });
+    Key? key,
+    this.user,
+  }) : super(key: key);
 
   @override
   State<UserPhotosOwnProfile> createState() => _UserPhotosOwnProfileState();
 }
 
 class _UserPhotosOwnProfileState extends State<UserPhotosOwnProfile> {
+  final List<File?> _selectedImages = List.generate(3, (index) => null);
+
   @override
   Widget build(BuildContext context) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text(
-          "Photos",
-          textAlign: TextAlign.start,
-          style: TextStyle(
-            color: Colors.black,
+        const Padding(
+          padding: EdgeInsets.only(top: 8.0, bottom: 8.0),
+          child: Text(
+            "Photos",
+            textAlign: TextAlign.start,
+            style: TextStyle(
+              fontWeight: FontWeight.bold,
+              color: Colors.black,
+              fontSize: 18,
+            ),
           ),
         ),
-        IconButton(
-          onPressed: () {
-            showDialog(
-              context: context,
-              builder: (context) => const ImageUploadDialog(),
-            );
-          },
-          icon: const Icon(
-            EvaIcons.edit2,
-            color: Colors.black,
-            size: 18,
+        Row(
+          children: List<Widget>.generate(
+            3,
+            (index) => InkWell(
+              onTap: () {
+                if (widget.user?.userPhotos != null &&
+                    widget.user!.userPhotos!.isNotEmpty) {
+                  if (index < widget.user!.userPhotos!.length) {
+                    _selectedImages.isNotEmpty
+                        ? Navigator.of(context).push(MaterialPageRoute(
+                            builder: (context) => ImagePreviewPage(
+                              imageUrl: widget.user?.userPhotos?[index],
+                            ),
+                          ))
+                        : null;
+                  } else {
+                    _onImageSelection(index);
+                  }
+                } else {
+                  _onImageSelection(index);
+                }
+              },
+              onLongPress: () {
+                if (widget.user?.userPhotos != null &&
+                    widget.user!.userPhotos!.isNotEmpty &&
+                    index < widget.user!.userPhotos!.length) {
+                  _onImageSelection(index);
+                }
+              },
+              child: Card(
+                elevation: 5.0,
+                margin: const EdgeInsets.all(10),
+                child: Container(
+                  height: 120,
+                  width: 80,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(15),
+                    color: widget.user?.userPhotos != null &&
+                            widget.user!.userPhotos!.isNotEmpty &&
+                            index < widget.user!.userPhotos!.length
+                        ? null
+                        : Colors.black38,
+                    image: widget.user?.userPhotos != null &&
+                            widget.user!.userPhotos!.isNotEmpty &&
+                            index < widget.user!.userPhotos!.length
+                        ? DecorationImage(
+                            image: NetworkImage(
+                              widget.user?.userPhotos?[index],
+                            ),
+                            fit: BoxFit.cover,
+                          )
+                        : null,
+                  ),
+                  child: widget.user?.userPhotos != null &&
+                          widget.user!.userPhotos!.isNotEmpty &&
+                          index < widget.user!.userPhotos!.length
+                      ? null
+                      : Center(
+                          child: Icon(
+                            Icons.add_a_photo_outlined,
+                            color: Colors.white,
+                          ),
+                        ),
+                ),
+              ),
+            ),
           ),
         ),
       ],
     );
   }
-}
 
-class ImageUploadDialog extends StatefulWidget {
-  const ImageUploadDialog({super.key});
+  void _onImageSelection(int index) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        content: const Text("Select an Image"),
+        actions: [
+          TextButton(
+            onPressed: () {
+              Navigator.of(context).pop();
+            },
+            child: const Text("Cancel"),
+          ),
+          TextButton(
+            onPressed: () async {
+              final image = await ImagePicker().pickImage(
+                source: ImageSource.gallery,
+              );
 
-  @override
-  State<ImageUploadDialog>  createState() => _ImageUploadDialogState();
-}
+              if (image != null) {
+                setState(() {
+                  _selectedImages[index] = File(image.path);
+                });
+              }
 
-class _ImageUploadDialogState extends State<ImageUploadDialog> {
-  final List<File?> _selectedImages = List.generate(3, (index) => null);
-  final ImagePicker _imagePicker = ImagePicker();
-
-  @override
-  Widget build(BuildContext context) {
-    return Dialog(
-      child: Container(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            const Text(
-              'Image Upload',
-              style: TextStyle(
-                fontSize: 18,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-            const SizedBox(height: 16.0),
-            Row(
-              children: List.generate(
-                _selectedImages.length,
-                (index) => Padding(
-                  padding: const EdgeInsets.only(right: 8.0),
-                  child: GestureDetector(
-                    onTap: () async {
-                      final image = await _imagePicker.pickImage(
-                        source: ImageSource.gallery,
-                      );
-                      if (image != null) {
-                        setState(() {
-                          _selectedImages[index] = File(image.path);
-                        });
-                      }
-                      debugPrint(image!.name);
-                    },
-                    child: Container(
-                      height: 60,
-                      width: 60,
-                      color: Colors.grey[300],
-                      child: _selectedImages[index] != null
-                          ? Image.file(
-                              _selectedImages[index]!,
-                              fit: BoxFit.cover,
-                            )
-                          : const Icon(Icons.add),
-                    ),
-                  ),
+              BlocProvider.of<FirebaseDataBloc>(context).add(
+                FirebaseDataPhotoChanged(
+                  image!,
+                  index,
                 ),
-              ),
-            ),
-            const SizedBox(height: 16.0),
-            Align(
-              alignment: Alignment.bottomRight,
-              child: ElevatedButton(
-                onPressed: () {
-                  // Dispatch the event to update the profile with images
-                  BlocProvider.of<ProfileBloc>(context).add(
-                    PhotosChanged(photos: _selectedImages),
-                  );
-                  Navigator.of(context).pop();
-                },
-                child: const Text('Save'),
-              ),
-            ),
-          ],
-        ),
+              );
+
+              Navigator.of(context).pop();
+            },
+            child: const Text("Continue"),
+          ),
+        ],
       ),
     );
   }

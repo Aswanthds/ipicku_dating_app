@@ -8,6 +8,7 @@ import 'package:ipicku_dating_app/domain/auth_bloc/authentication_bloc.dart';
 import 'package:ipicku_dating_app/domain/login_bloc/login_bloc.dart';
 import 'package:ipicku_dating_app/presentation/log_in/widgets/create_account.dart';
 import 'package:ipicku_dating_app/presentation/log_in/widgets/forget_password.dart';
+import 'package:ipicku_dating_app/presentation/log_in/widgets/google_sign_in.dart';
 import 'package:ipicku_dating_app/presentation/log_in/widgets/login_button.dart';
 import 'package:ipicku_dating_app/presentation/main_page.dart';
 import 'package:ipicku_dating_app/presentation/sign_up/profile_signup.dart';
@@ -59,7 +60,7 @@ class _LoginFormState extends State<LoginForm> {
     );
   }
 
-  void _onFormSubmitted() {
+  void _onFormSubmitted(BuildContext ctx) {
     _loginBloc.add(
       LoginPressed(
           email: _emailController.text.trim(),
@@ -86,23 +87,29 @@ class _LoginFormState extends State<LoginForm> {
               errorCoustomSnackBar("Login Failed"),
             );
         }
-        if (!state.isProfileDone && !state.isFailure) {
-          Navigator.of(context).pushAndRemoveUntil(
-              MaterialPageRoute(
-                builder: (context) =>
-                    SignupProfilePage(userRepository: widget._userRepository),
-              ),
-              (route) => false);
+        if (state.isSubmitting) {
+          ScaffoldMessenger.of(context)
+            ..hideCurrentSnackBar()
+            ..showSnackBar(profileloading);
         }
         if (state.isSuccess) {
           debugPrint("Success");
           BlocProvider.of<AuthenticationBloc>(context).add(LoggedIn());
-          Navigator.of(context).pushAndRemoveUntil(
-              MaterialPageRoute(
-                builder: (context) =>
-                    MainPageNav(repository: widget._userRepository),
-              ),
-              (route) => false);
+          if (state.isProfileDone) {
+            Navigator.of(context).pushAndRemoveUntil(
+                MaterialPageRoute(
+                  builder: (context) =>
+                      SignupProfilePage(userRepository: widget._userRepository),
+                ),
+                (route) => false);
+          } else {
+            Navigator.of(context).pushAndRemoveUntil(
+                MaterialPageRoute(
+                  builder: (context) =>
+                      MainPageNav(repository: widget._userRepository),
+                ),
+                (route) => false);
+          }
         }
       },
       child: BlocBuilder<LoginBloc, LoginState>(
@@ -152,6 +159,7 @@ class _LoginFormState extends State<LoginForm> {
                     isPassword: true,
                   ),
                   const ForgetPasswordText(),
+                  GoogleLoginButton(userRepository: widget._userRepository),
                   Padding(
                     padding: const EdgeInsets.symmetric(vertical: 20),
                     child: Column(
@@ -159,15 +167,10 @@ class _LoginFormState extends State<LoginForm> {
                       children: <Widget>[
                         isPopulated
                             ? LoginButton(
-                                // onPressed: isLoginButtonEnabled(state)
-                                //     ? () {
-                                //         _onFormSubmitted;
-                                //       }
-                                //     : null,
                                 onPressed: () {
                                   if (state.isFormValid ||
                                       _formkey.currentState!.validate()) {
-                                    return _onFormSubmitted();
+                                    return _onFormSubmitted(context);
                                   }
                                 },
                               )
@@ -181,7 +184,6 @@ class _LoginFormState extends State<LoginForm> {
                                 onPressed: () {},
                                 child: const Text('Login'),
                               ),
-                        //const GoogleLoginButton(),
                         CreateAccountButton(
                             userRepository: widget._userRepository),
                       ],

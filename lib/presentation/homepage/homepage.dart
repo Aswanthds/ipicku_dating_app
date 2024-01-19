@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:ipicku_dating_app/data/repositories/user_repositories.dart';
+import 'package:ipicku_dating_app/domain/bloc/firebase_data_bloc.dart';
 import 'package:ipicku_dating_app/presentation/homepage/widgets/actions_button.dart';
 import 'package:ipicku_dating_app/presentation/homepage/widgets/date_container.dart';
 import 'package:ipicku_dating_app/presentation/homepage/widgets/date_details_section.dart';
@@ -14,30 +16,22 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  String? id;
-  String? email;
 
-  getid() async {
-    var ert = await widget.userRepository.getUser();
-    var ema = await widget.userRepository.getUserEmail();
-    setState(() {
-      id = ert;
-      email = ema;
-    });
+  @override
+  void initState() {
+     BlocProvider.of<FirebaseDataBloc>(context).add(FirebaseDataLoadedEvent());
+    super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
-    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
-      getid();
-    });
     final size = MediaQuery.of(context).size;
     return Scaffold(
       appBar: AppBar(
         title: const Text("I Pick U"),
         centerTitle: true,
       ),
-      drawer: ProfileDrawer(size: size, email: email, id: id, widget: widget),
+      drawer: ProfileDrawer(userRepository: widget.userRepository),
       body: Stack(
         children: [
           DateProfileContainer(size: size),

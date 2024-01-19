@@ -5,7 +5,7 @@ class ProfileSignUpFormField extends StatelessWidget {
   final TextEditingController controller;
   final ProfileState state;
   final IconData? icon;
-
+  final String? Function(String?)? validator;
   final String title;
 
   const ProfileSignUpFormField({
@@ -14,6 +14,7 @@ class ProfileSignUpFormField extends StatelessWidget {
     this.icon,
     required this.state,
     required this.title,
+    required this.validator,
   });
 
   @override
@@ -24,40 +25,34 @@ class ProfileSignUpFormField extends StatelessWidget {
         vertical: 10,
       ),
       child: TextFormField(
-        controller: controller,
-
-        decoration: InputDecoration(
-          labelText: title,
-          enabledBorder: const OutlineInputBorder(
-            borderRadius: BorderRadius.all(
-              Radius.circular(15),
+          controller: controller,
+          decoration: InputDecoration(
+            labelText: title,
+            enabledBorder: const OutlineInputBorder(
+              borderRadius: BorderRadius.all(
+                Radius.circular(15),
+              ),
+              borderSide: BorderSide(
+                color: Colors.white,
+                style: BorderStyle.solid,
+              ),
             ),
-            borderSide: BorderSide(
-              color: Colors.white,
-              style: BorderStyle.solid,
+            labelStyle: const TextStyle(color: Colors.white),
+            focusedBorder: const OutlineInputBorder(
+              borderRadius: BorderRadius.all(
+                Radius.circular(15),
+              ),
+              borderSide: BorderSide(
+                color: Colors.grey,
+                style: BorderStyle.solid,
+              ),
             ),
           ),
-          labelStyle: const TextStyle(color: Colors.white),
-          focusedBorder: const OutlineInputBorder(
-            borderRadius: BorderRadius.all(
-              Radius.circular(15),
-            ),
-            borderSide: BorderSide(
-              color: Colors.grey,
-              style: BorderStyle.solid,
-            ),
+          style: const TextStyle(
+            color: Colors.white,
           ),
-        ),
-        //autovalidate: true,
-        style: const TextStyle(
-          color: Colors.white,
-        ),
-        autocorrect: false,
-        validator: (value) {
-          value!.isEmpty ? "Enter your name" : null;
-          return null;
-        },
-      ),
+          autocorrect: false,
+          validator: validator),
     );
   }
 }

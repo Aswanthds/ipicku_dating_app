@@ -11,15 +11,11 @@ class ProfileDetailsAction extends StatelessWidget {
       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
       children: [
         ElevatedButton(
-          onPressed: () {
-            // Handle message button click
-          },
+          onPressed: () {},
           child: const Text('Message'),
         ),
         ElevatedButton(
-          onPressed: () {
-            // Handle share profile button click
-          },
+          onPressed: () {},
           child: const Text('Share Profile'),
         ),
       ],

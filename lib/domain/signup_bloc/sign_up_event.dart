@@ -1,6 +1,6 @@
-
 import 'package:equatable/equatable.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 
 @immutable
 abstract class SignUpEvent extends Equatable {
@@ -34,15 +34,7 @@ class PasswordChanged extends SignUpEvent {
   String toString() => 'PasswordChanged {password: $password}';
 }
 
-class Submitted extends SignUpEvent {
-  final String email;
-  final String password;
 
-  const Submitted({required this.email, required this.password});
-
-  @override
-  List<Object> get props => [email, password];
-}
 
 class SignUpPressed extends SignUpEvent {
   final String email;
@@ -54,4 +46,9 @@ class SignUpPressed extends SignUpEvent {
   List<Object> get props => [email, password];
 }
 
+class GoogleSignUpEvent extends SignUpEvent {
+  final GoogleSignInAccount account;
 
+  const GoogleSignUpEvent({required this.account});
+
+}

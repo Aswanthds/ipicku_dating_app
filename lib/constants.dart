@@ -6,6 +6,8 @@ import 'package:ipicku_dating_app/domain/auth_bloc/authentication_bloc.dart';
 import 'package:ipicku_dating_app/presentation/log_in/login.dart';
 
 const kPrimary = Color.fromRGBO(5, 0, 30, 0.8);
+const apiKey = "AIzaSyDiQu_1BMBYE6Cq2Dhro1FGnE1k_5iF4jM";
+
 LinearGradient whiteFade = const LinearGradient(
   begin: Alignment.bottomCenter,
   end: Alignment.center,
@@ -107,8 +109,6 @@ Future<void> showLogoutDialog(
               ),
             ),
             onPressed: () {
-              // Implement your logout logic here
-
               BlocProvider.of<AuthenticationBloc>(context).add(LoggedOut());
               Navigator.of(context).pop();
 
@@ -170,8 +170,24 @@ const profileSucessSnackBar = SnackBar(
 const profileloading = SnackBar(
   backgroundColor: Colors.grey,
   content: Row(
+    mainAxisAlignment: MainAxisAlignment.spaceBetween,
     children: [
-      Text("Details Submitted Succesfully"),
+      Text("Details are submitting....."),
+      CircularProgressIndicator(
+        strokeWidth: 2.0,
+        color: Colors.white,
+      ),
+    ],
+  ),
+  behavior: SnackBarBehavior.floating,
+);
+
+const profileGetSuccess = SnackBar(
+  backgroundColor: Colors.grey,
+  content: Row(
+    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+    children: [
+      Text("Details are fetching....."),
       CircularProgressIndicator(
         strokeWidth: 2.0,
         color: Colors.white,

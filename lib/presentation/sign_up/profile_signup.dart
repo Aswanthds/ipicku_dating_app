@@ -1,4 +1,4 @@
-// ignore_for_file: use_build_context_synchronously, must_be_immutable, unnecessary_null_comparison
+// ignore_for_file: use_build_context_synchronously
 
 import 'dart:io';
 
@@ -35,60 +35,20 @@ class _SignupProfilePageState extends State<SignupProfilePage> {
   XFile? _pickedImage;
   String? _gender;
   DateTime? _selectedDate;
-  int? _calculatedAge;
   final List<File?> _selectedImages = List.filled(3, null, growable: false);
-
-  Future<void> _pickImage() async {
-    final ImagePicker picker = ImagePicker();
-    final XFile? pickedImage =
-        await picker.pickImage(source: ImageSource.gallery);
-
-    if (pickedImage != null) {
-      setState(() {
-        _pickedImage = pickedImage;
-      });
-    }
-    debugPrint(_pickedImage!.path);
-  }
-
-  void _calculateAge() {
-    if (_selectedDate != null) {
-      final today = DateTime.now();
-      var age = today.year - _selectedDate!.year;
-      final monthDiff = today.month - _selectedDate!.month;
-
-      if (monthDiff < 0 || (monthDiff == 0 && today.day < _selectedDate!.day)) {
-        age--;
-      }
-
-      setState(() {
-        _calculatedAge = age;
-      });
-    }
-    debugPrint(_calculatedAge != null
-        ? 'Age: $_calculatedAge'
-        : 'Select your date of birth');
-  }
-
-  @override
-  void initState() {
-    // _nameController.addListener(_onNameChanged);
-
-    super.initState();
-  }
 
   bool isPopulated() =>
       _nameController.text.isNotEmpty &&
       _gender != null &&
       _pickedImage != null &&
-      _selectedImages != null &&
+      _selectedImages.isNotEmpty &&
       _selectedDate != null;
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
     return BlocListener<ProfileBloc, ProfileState>(
       listener: (context, state) {
-        if (state.isFailure) {
+        if (state is ProfileStateFailure) {
           ScaffoldMessenger.of(context)
             ..hideCurrentSnackBar()
             ..showSnackBar(
@@ -96,14 +56,14 @@ class _SignupProfilePageState extends State<SignupProfilePage> {
             );
         }
 
-        if (state.isSubmitting) {
+        if (state is ProfileStateLoading) {
           ScaffoldMessenger.of(context)
             ..hideCurrentSnackBar()
             ..showSnackBar(profileloading);
         }
-        if (state.isSuccess) {
+        if (state is ProfileStateSuccess) {
           BlocProvider.of<AuthenticationBloc>(context).add(LoggedIn());
-           ScaffoldMessenger.of(context)
+          ScaffoldMessenger.of(context)
             ..hideCurrentSnackBar()
             ..showSnackBar(profileSucessSnackBar);
           Navigator.of(context).pushAndRemoveUntil(
@@ -131,41 +91,57 @@ class _SignupProfilePageState extends State<SignupProfilePage> {
                     child: Column(
                       children: [
                         ProfilePicture(
-                          onTap: _pickImage,
+                          onTap: () async {
+                            final image = await ProfileFunctions.pickImage();
+                            setState(() {
+                              _pickedImage = image;
+                            });
+                          },
                           pickedImage: _pickedImage,
                         ),
-                        // TextFormFields for name, age, etc.
                         ProfileSignUpFormField(
                           controller: _nameController,
                           icon: Icons.person_4,
                           state: state,
                           title: 'Name',
+                          validator: (value) {
+                            if (value!.isEmpty) {
+                              return "Enter a name";
+                            } else {
+                              return null;
+                            }
+                          },
                         ),
-
                         ProfileDropdownButton(
                           gender: _gender,
                           onChanged: (value) => setState(() => _gender = value),
                         ),
-
+                        const SizedBox(
+                          height: 20,
+                        ),
                         ProfileDatePicker(
-                          onDateSelected: (value) {
+                          onTap: () async {
+                            final DateTime? pickedDate =
+                                await ProfileFunctions.pickDateofBirth(context);
                             setState(() {
-                              _selectedDate = value;
-                              _calculateAge(); // Calculate age when date is selected
+                              _selectedDate = pickedDate;
+                              debugPrint(
+                                  ProfileFunctions.calculateAge(pickedDate)
+                                      .toString());
                             });
                           },
                           selectedDate: _selectedDate,
                         ),
-                        TextButton.icon(
-                            onPressed: () {
-                              showDialog(
-                                  context: context,
-                                  builder: (context) => ImageUploadDialog(
-                                        selectedImages: _selectedImages,
-                                      ));
-                            },
-                            icon: const Icon(Icons.edit),
-                            label: const Text("Add photos max 3")),
+                        // TextButton.icon(
+                        //     onPressed: () {
+                        //       showDialog(
+                        //           context: context,
+                        //           builder: (context) => ImageUploadDialog(
+                        //                 selectedImages: _selectedImages,
+                        //               ));
+                        //     },
+                        //     icon: const Icon(Icons.edit),
+                        //     label: const Text("Add photos max 3")),
                         const SizedBox(
                           height: 20,
                         ),
@@ -212,25 +188,21 @@ class _SignupProfilePageState extends State<SignupProfilePage> {
 
   _onSubmitted() async {
     var location = await ProfileFunctions.getLocation();
-
-    BlocProvider.of<ProfileBloc>(context).add(Submitted(
-        age: ProfileFunctions.calculateAge(_selectedDate),
-        createdNow: Timestamp.now(),
-        interests: _interestController.text.trim().split(','),
-        name: _nameController.text.trim(),
-        gender: _gender,
-        location: location,
-        userPics: _selectedImages,
-        photo: File(_pickedImage?.path ?? '')));
+    ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+        backgroundColor: Colors.green, content: Text("Submitting your data")));
+    Future.delayed(const Duration(seconds: 5)).then((value) {
+      BlocProvider.of<ProfileBloc>(context).add(Submitted(
+          age: ProfileFunctions.calculateAge(_selectedDate),
+          dob: _selectedDate,
+          bio: '',
+          createdNow: Timestamp.now(),
+          interests: [],
+          name: _nameController.text.trim(),
+          gender: _gender,
+          location: location,
+          photo: File(_pickedImage?.path ?? '')));
+    });
   }
-
-  // void _onNameChanged() {
-  //   BlocProvider.of<ProfileBloc>(context)
-  //     ..add(NameChanged(_nameController.text.trim()))
-  //     ..add(PhotoChanged(File(_pickedImage?.path ?? '')))
-  //     ..add(AgeChanged(_selectedDate))
-  //     ..add(GenderChanged(_gender));
-  // }
 }
 
 class ProfilePicture extends StatelessWidget {
@@ -249,9 +221,15 @@ class ProfilePicture extends StatelessWidget {
       onTap: onTap,
       child: CircleAvatar(
         radius: 50,
+        backgroundColor: Colors.white,
         backgroundImage:
             pickedImage != null ? FileImage(File(pickedImage!.path)) : null,
-        child: pickedImage == null ? const Icon(Icons.add_a_photo) : null,
+        child: pickedImage == null
+            ? const Icon(
+                Icons.add_a_photo,
+                color: Colors.black,
+              )
+            : null,
       ),
     );
   }
@@ -268,7 +246,7 @@ class ProfileDropdownButton extends StatefulWidget {
   }) : super(key: key);
 
   @override
-  State<ProfileDropdownButton>  createState() => _ProfileDropdownButtonState();
+  State<ProfileDropdownButton> createState() => _ProfileDropdownButtonState();
 }
 
 class _ProfileDropdownButtonState extends State<ProfileDropdownButton> {
@@ -296,12 +274,11 @@ class _ProfileDropdownButtonState extends State<ProfileDropdownButton> {
 
 class ProfileDatePicker extends StatefulWidget {
   final DateTime? selectedDate;
-  final ValueChanged<DateTime?> onDateSelected;
-
+  final void Function()? onTap;
   const ProfileDatePicker({
     Key? key,
     required this.selectedDate,
-    required this.onDateSelected,
+    required this.onTap,
   }) : super(key: key);
 
   @override
@@ -312,18 +289,7 @@ class _ProfileDatePickerState extends State<ProfileDatePicker> {
   @override
   Widget build(BuildContext context) {
     return ListTile(
-      onTap: () async {
-        final DateTime? pickedDate = await showDatePicker(
-          context: context,
-          initialDate: DateTime.now().subtract(const Duration(days: 365 * 18)),
-          lastDate: DateTime.now().subtract(const Duration(days: 365 * 18)),
-          firstDate: DateTime(1900),
-        );
-
-        if (pickedDate != null) {
-          widget.onDateSelected(pickedDate);
-        }
-      },
+      onTap: widget.onTap,
       title: Container(
         padding: const EdgeInsets.all(15),
         decoration: BoxDecoration(
@@ -410,7 +376,6 @@ class _ImageGridState extends State<ImageGrid> {
 
 class ImageUploadDialog extends StatelessWidget {
   final List<File?> selectedImages;
-  // final ImagePicker imagePicker = ImagePicker();
 
   const ImageUploadDialog({
     required this.selectedImages,
@@ -440,10 +405,9 @@ class ImageUploadDialog extends StatelessWidget {
               alignment: Alignment.bottomRight,
               child: ElevatedButton(
                 onPressed: () {
-                  // Dispatch the event to update the profile with images
-                  BlocProvider.of<ProfileBloc>(context).add(
-                    PhotosChanged(photos: selectedImages),
-                  );
+                  // BlocProvider.of<ProfileBloc>(context).add(
+                  //   PhotosChanged(photos: selectedImages),
+                  // );
                   Navigator.of(context).pop();
                 },
                 child: const Text('Save'),

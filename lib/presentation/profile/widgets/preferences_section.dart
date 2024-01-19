@@ -1,9 +1,16 @@
+import 'package:eva_icons_flutter/eva_icons_flutter.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
+import 'package:ipicku_dating_app/data/model/user.dart';
+import 'package:ipicku_dating_app/data/repositories/user_repositories.dart';
+import 'package:ipicku_dating_app/presentation/log_in/forget_password_page.dart';
 import 'package:ipicku_dating_app/presentation/profile/widgets/delete_account.dart';
 import 'package:ipicku_dating_app/presentation/profile/widgets/profile_details_list.dart';
 
 class PreferencesSection extends StatelessWidget {
-  const PreferencesSection({Key? key}) : super(key: key);
+  final UserModel? model;
+  final UserRepository repo;
+  const PreferencesSection({Key? key, required this.model, required this.repo}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -20,21 +27,37 @@ class PreferencesSection extends StatelessWidget {
           ),
         ),
         const SizedBox(height: 10),
-        ProfileDetailsListTile(
-          context: context,
-          heading: 'Password',
-          value: 'Reset your Password',
-          isEditable: false,
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            const Text(
+              " Reset Pasword",
+              overflow: TextOverflow.ellipsis,
+              textAlign: TextAlign.start,
+              style: TextStyle(
+                color: Colors.black,
+              ),
+            ),
+            IconButton(
+              onPressed: () {
+                Navigator.of(context).push(MaterialPageRoute(
+                  builder: (context) => const ForgetPasswordPage(),
+                ));
+              },
+              icon: const Icon(
+                EvaIcons.arrowIosForward,
+              ),
+            )
+          ],
         ),
         const SizedBox(height: 20),
         ProfileDetailsListTile(
-          context: context,
           heading: 'Created on',
-          value: 'January 14,2024',
+          value: DateFormat('dd - MMM - yyyy').format(model!.created!.toDate()),
           isEditable: false,
         ),
         const SizedBox(height: 20),
-        const DeleteAccountWidget(),
+         DeleteAccountWidget(userRepository: repo),
       ],
     );
   }

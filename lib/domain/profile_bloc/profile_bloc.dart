@@ -12,19 +12,14 @@ part 'profile_event.dart';
 
 class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
   final UserRepository userRepository;
-  ProfileBloc(this.userRepository) : super(ProfileState.empty()) {
-    // on<NameChanged>(_nameChanged);
-    // on<AgeChanged>(_ageChanged);
-    // on<GenderChanged>(_genderChanged);
-    //on<InterestedInChanged>(_interestedChanged);
-    //on<LocationChanged>(_locationChanged);
+  ProfileBloc(this.userRepository) : super(const ProfileStateEmpty()) {
     on<Submitted>(_submitted);
-    on<PhotosChanged>(_photosChanged);
-    //on<PhotoChanged>(_photochanged);
+    //on<PhotosChanged>(_photosChanged);
+    on<NameChanged>(_nameChanged);
   }
 
   FutureOr<void> _submitted(Submitted event, Emitter<ProfileState> emit) async {
-    emit(ProfileState.loading());
+    emit(const ProfileStateLoading());
     final uid = await userRepository.getUser();
     final email = await userRepository.getUserEmail();
     try {
@@ -36,40 +31,42 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
         photoPath: event.photo,
         email: email,
         userId: uid,
+        dob: event.dob,
+        bio: event.bio ?? '',
         interests: event.interests,
-        userPhotos: event.userPics ,
-        created: Timestamp.now(),
+      
+        created: event.createdNow,
       );
-      emit(ProfileState.success());
+      emit(const ProfileStateSuccess());
     } catch (e) {
-      emit(ProfileState.failure());
+      emit(const ProfileStateFailure());
     }
   }
 
-  // FutureOr<void> _locationChanged(
-  //     LocationChanged event, Emitter<ProfileState> emit) {
-  //   emit(state.update(isLocationEmpty: event.location == null));
+  // FutureOr<void> _photosChanged(
+  //     PhotosChanged event, Emitter<ProfileState> emit)async {
+  //   //emit(state.update(isPicsEmpty: event.photos.isEmpty));
+  //   try {
+  //     final uid = await userRepository.getUser();
+  //   final docRef = FirebaseFirestore.instance.collection('users').doc(uid);
+  //   final currentImages = (await docRef.get()).data()!['images'] as List<dynamic>;
+
+  //   // Upload new images to Cloud Storage (if needed)
+  //   // final newImageUrls = await userRepository.getImagesToupload(event.photos);
+
+  //   // Update Firestore with new image URLs
+  //  // await docRef.update({'images': newImageUrls});
+  //  await userRepository.getImagesToupload(event.photos);
+
+  //   // Fetch updated profile data
+  //   final updatedProfileData = await userRepository.getUserData();
+  //   yield ProfileStateLoaded(profileData: updatedProfileData);
+  // } catch (error) {
+  //   yield ProfileStateFailure(error.toString());
+  // }
   // }
 
-  // FutureOr<void> _genderChanged(
-  //     GenderChanged event, Emitter<ProfileState> emit) {
-  //       emit(state.update(isGenderEmpty: event.gender == null));
-  //     }
-
-  // FutureOr<void> _ageChanged(AgeChanged event, Emitter<ProfileState> emit) {
-  //   emit(state.update(isAgeEmpty: event.age == null));
-  // }
-
-  // FutureOr<void> _nameChanged(NameChanged event, Emitter<ProfileState> emit) {
-  //   emit(state.update(isNameEmpty: event.name == null));
-  // }
-
-  // FutureOr<void> _photochanged(PhotoChanged event, Emitter<ProfileState> emit) {
-  //   emit(state.update(isPhotoEmpty: event.photo == null));
-  // }
-
-  FutureOr<void> _photosChanged(
-      PhotosChanged event, Emitter<ProfileState> emit) {
-    emit(state.update(isPicsEmpty: event.photos.isEmpty));
+  FutureOr<void> _nameChanged(NameChanged event, Emitter<ProfileState> emit) {
+    emit(state.update(isNameEmpty: event.name == null));
   }
 }

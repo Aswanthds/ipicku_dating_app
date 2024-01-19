@@ -65,70 +65,66 @@ class _ForgetPasswordPageState extends State<ForgetPasswordPage> {
           );
         }
       },
-      child: BlocBuilder<AuthenticationBloc, AuthenticationState>(
-        builder: (context, state) {
-          return Scaffold(
-            backgroundColor: kPrimary,
-            appBar: AppBar(
-              backgroundColor: kPrimary,
-              automaticallyImplyLeading: true,
-              iconTheme: const IconThemeData(color: Colors.white),
-            ),
-            body: SingleChildScrollView(
-              scrollDirection: Axis.vertical,
-              child: Form(
-                key: formKey,
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  children: [
-                    const LogoWidget(),
-                    Padding(
-                      padding: const EdgeInsets.all(10.0),
-                      child: FormFieldWidget(
-                        controller: emailCheckController,
-                        validator: (value) {
-                          if (value!.isEmpty) {
-                            return "Enter your email ";
-                          } else if (!Validators.isValidEmail(value)) {
-                            return "Enter your email correctly";
-                          }
+      child: Scaffold(
+        backgroundColor: kPrimary,
+        appBar: AppBar(
+          backgroundColor: kPrimary,
+          automaticallyImplyLeading: true,
+          iconTheme: const IconThemeData(color: Colors.white),
+        ),
+        body: SingleChildScrollView(
+          scrollDirection: Axis.vertical,
+          child: Form(
+            key: formKey,
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                const LogoWidget(),
+                Padding(
+                  padding: const EdgeInsets.all(10.0),
+                  child: FormFieldWidget(
+                    controller: emailCheckController,
+                    validator: (value) {
+                      if (value!.isEmpty) {
+                        return "Enter your email ";
+                      } else if (!Validators.isValidEmail(value)) {
+                        return "Enter your email correctly";
+                      }
 
-                          return null;
-                        },
-                        labelText: "Email",
-                        icon: EvaIcons.emailOutline,
-                        isPassword: false,
-                      ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.all(10.0),
-                      child: SizedBox(
-                        width: size.width - 30,
-                        height: 50,
-                        child: ElevatedButton(
-                          onPressed: () {
-                            if (formKey.currentState!.validate()) {
-                              BlocProvider.of<AuthenticationBloc>(context).add(
-                                  ResetPasswordRequested(
-                                      emailCheckController.text.trim()));
-                            }
-                          },
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.white,
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(12.0),
-                            ),
-                          ),
-                          child: const Text("Send Password Reset mail"),
+                      return null;
+                    },
+                    labelText: "Email",
+                    icon: EvaIcons.emailOutline,
+                    isPassword: false,
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.all(10.0),
+                  child: SizedBox(
+                    width: size.width - 30,
+                    height: 50,
+                    child: ElevatedButton(
+                      onPressed: () {
+                        if (emailCheckController.text.isNotEmpty) {
+                          BlocProvider.of<AuthenticationBloc>(context).add(
+                              ResetPasswordRequested(
+                                  emailCheckController.text.trim()));
+                        }
+                      },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.white,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12.0),
                         ),
                       ),
+                      child: const Text("Send Password Reset mail"),
                     ),
-                  ],
+                  ),
                 ),
-              ),
+              ],
             ),
-          );
-        },
+          ),
+        ),
       ),
     );
   }

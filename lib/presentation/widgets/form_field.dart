@@ -71,7 +71,6 @@ class _FormFieldWidgetState extends State<FormFieldWidget> {
           ),
         ),
       ),
-      //autovalidate: true,
       style: const TextStyle(
         color: Colors.white,
       ),

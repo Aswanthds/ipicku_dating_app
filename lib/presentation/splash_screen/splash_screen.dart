@@ -10,13 +10,16 @@ class SplashScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       BlocProvider.of<AuthenticationBloc>(context).add(AppStarted());
+      
       LocationPermission.always;
     });
     return Scaffold(
       backgroundColor: const Color.fromRGBO(5, 0, 30, 1.0),
       body: Center(
-        child: Image.asset('assets/images/logo_light.png',
-            width: MediaQuery.of(context).size.height),
+        child: Image.asset(
+          'assets/images/logo_light.png',
+          width: 200,
+        ),
       ),
     );
   }

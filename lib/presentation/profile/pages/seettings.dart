@@ -58,7 +58,7 @@ class SettingsPage extends StatelessWidget {
           textAlign: TextAlign.center,
           decoration: InputDecoration(
             hintText: text,
-            contentPadding: const EdgeInsets.all(0), // Adjust content padding
+            contentPadding: const EdgeInsets.all(0),
             border: const OutlineInputBorder(
               borderRadius: BorderRadius.all(
                 Radius.circular(10),

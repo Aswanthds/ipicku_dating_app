@@ -68,27 +68,29 @@ class PhotosChanged extends ProfileEvent {
 }
 
 class Submitted extends ProfileEvent {
-  final String? name, gender;
+  final String? name, gender,bio;
   final GeoPoint? location;
   final File? photo;
   final int? age;
+  final DateTime? dob;
   final List<String> interests;
-  final List<File?> userPics;
   final Timestamp? createdNow;
 
-  const Submitted(
+  const Submitted( 
       {required this.age,
       required this.name,
+      required this.bio,
+      required this.dob,
       required this.interests,
       required this.createdNow,
-      required this.userPics,
+    
       required this.gender,
       required this.location,
       required this.photo});
 
   @override
   List<Object> get props =>
-      [name!, gender!, location!, photo!, interests, userPics];
+      [name!, gender!, location!, photo!, interests,];
 }
 
 class FetchDataEvent extends ProfileEvent {
@@ -96,8 +98,7 @@ class FetchDataEvent extends ProfileEvent {
 
   const FetchDataEvent({required this.user});
 
-@override
-  
+  @override
   List<Object> get props => [user];
 }
 

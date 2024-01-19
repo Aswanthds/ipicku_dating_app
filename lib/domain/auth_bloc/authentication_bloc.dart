@@ -18,12 +18,12 @@ class AuthenticationBloc
     on<LoggedIn>(_mapLoggedInState);
     on<LoggedOut>(_mapLoggedOutToState);
     on<ResetPasswordRequested>(_mapResetpassword);
+    on<DeleteAccount>(_mapDeleteAccount);
   }
 
   Future<void> _mapAppStartedToState(
       AppStarted event, Emitter<AuthenticationState> emit) async {
     try {
-      //  emit(const AuthenticationLoading(true));
       final isSigned = await userRepository.isSignedIn();
       if (isSigned) {
         final userId = await userRepository.getUser();
@@ -37,7 +37,6 @@ class AuthenticationBloc
       } else {
         emit(Unauthenticated());
       }
-      // emit(const AuthenticationLoading(false));
     } catch (e) {
       emit(Unauthenticated());
     }
@@ -75,6 +74,18 @@ class AuthenticationBloc
     } catch (error) {
       debugPrint("error $error");
       emit(const ResetPasswordFailure('User not registered'));
+    }
+  }
+
+  FutureOr<void> _mapDeleteAccount(
+      DeleteAccount event, Emitter<AuthenticationState> emit) async {
+    emit(AccountDeletingState());
+    try {
+      await userRepository.deleteAccount();
+      emit(AccountDeletedState());
+       emit(Unauthenticated());
+    } catch (e) {
+      emit(AccountDeletingFailed(e.toString()));
     }
   }
 }

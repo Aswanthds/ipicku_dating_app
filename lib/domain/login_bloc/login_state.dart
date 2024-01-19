@@ -9,7 +9,7 @@ class LoginState {
   final bool isFailure;
   final bool isProfileDone;
 
-  const LoginState( {
+  const LoginState({
     required this.isEmailValid,
     required this.isPasswordValid,
     required this.isSubmitting,
@@ -20,14 +20,14 @@ class LoginState {
 
   bool get isFormValid => isEmailValid && isPasswordValid;
 
-  //initital
   factory LoginState.empty() {
     return const LoginState(
         isEmailValid: true,
         isPasswordValid: true,
         isSubmitting: false,
         isSuccess: false,
-        isFailure: false, isProfileDone: false);
+        isFailure: false,
+        isProfileDone: false);
   }
   factory LoginState.loading() {
     return const LoginState(
@@ -53,7 +53,8 @@ class LoginState {
         isPasswordValid: true,
         isSubmitting: false,
         isSuccess: false,
-        isFailure: true, isProfileDone: false);
+        isFailure: true,
+        isProfileDone: false);
   }
   factory LoginState.sucess() {
     return const LoginState(
@@ -77,7 +78,8 @@ class LoginState {
       isPasswordValid: isPasswordValid ?? this.isPasswordValid,
       isSubmitting: isSubmitting ?? this.isPasswordValid,
       isSuccess: isSuccess ?? this.isSuccess,
-      isFailure: isFailure ?? this.isFailure, isProfileDone: isProfileDone ?? this.isProfileDone,
+      isFailure: isFailure ?? this.isFailure,
+      isProfileDone: isProfileDone ?? this.isProfileDone,
     );
   }
 

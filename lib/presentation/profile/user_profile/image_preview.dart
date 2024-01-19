@@ -14,9 +14,9 @@ class ImagePreviewPage extends StatelessWidget {
         backgroundColor: Colors.transparent,
       ),
       body: Hero(
-        tag: 'userImage-$imageUrl', // Use the same tag as the thumbnail
+        tag: 'userImage-$imageUrl',
         child: InteractiveViewer(
-          panEnabled: false, // Set it to false to prevent panning.
+          panEnabled: false,
           boundaryMargin: const EdgeInsets.all(80),
           minScale: 0.5,
           maxScale: 4,

@@ -18,7 +18,6 @@ class SignUpState {
       required this.isSuccess,
       required this.isFailure});
 
-  //initial state
   factory SignUpState.empty() {
     return const SignUpState(
       isEmailValid: true,

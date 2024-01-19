@@ -13,7 +13,7 @@ class SignUpBloc extends Bloc<SignUpEvent, SignUpState> {
     on<EmailChanged>(_mapEmailChanged);
     on<PasswordChanged>(_mapPasswordChanged);
     on<SignUpPressed>(_mapSignUpPressed);
-    
+    on<GoogleSignUpEvent>(_mapGoogelSignUp);
   }
 
   FutureOr<void> _mapEmailChanged(
@@ -36,6 +36,17 @@ class SignUpBloc extends Bloc<SignUpEvent, SignUpState> {
           email: event.email, password: event.password);
       emit(SignUpState.success());
     } catch (_) {
+      emit(SignUpState.failure());
+    }
+  }
+
+  FutureOr<void> _mapGoogelSignUp(
+      GoogleSignUpEvent event, Emitter<SignUpState> emit) async {
+    try {
+      final account = await _userRepository.performGoogleSignIn();
+      await _userRepository.signUp(email: account.email, password: account.id);
+       emit(SignUpState.success());
+    } catch (e) {
       emit(SignUpState.failure());
     }
   }

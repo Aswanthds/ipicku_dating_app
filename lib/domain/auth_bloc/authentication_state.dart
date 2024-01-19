@@ -48,9 +48,7 @@ class AuthenticationLoading extends AuthenticationState {
   List<Object> get props => [isLoading];
 }
 
-class Unauthenticated extends AuthenticationState{}
-
-
+class Unauthenticated extends AuthenticationState {}
 
 class ResetPasswordInProgress extends AuthenticationState {}
 
@@ -60,4 +58,16 @@ class ResetPasswordFailure extends AuthenticationState {
   final String message;
 
   const ResetPasswordFailure(this.message);
+}
+
+class AccountDeleteReq extends AuthenticationState {}
+
+class AccountDeletedState extends AuthenticationState {}
+
+class AccountDeletingState extends AuthenticationState {}
+
+class AccountDeletingFailed extends AuthenticationState {
+  final String message;
+
+  const AccountDeletingFailed(this.message);
 }
