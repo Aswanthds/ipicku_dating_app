@@ -4,7 +4,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:ipicku_dating_app/constants.dart';
 import 'package:ipicku_dating_app/data/functions/validators.dart';
 import 'package:ipicku_dating_app/data/repositories/user_repositories.dart';
-import 'package:ipicku_dating_app/domain/auth_bloc/authentication_bloc.dart';
 import 'package:ipicku_dating_app/domain/login_bloc/login_bloc.dart';
 import 'package:ipicku_dating_app/presentation/log_in/widgets/create_account.dart';
 import 'package:ipicku_dating_app/presentation/log_in/widgets/forget_password.dart';
@@ -34,31 +33,11 @@ class _LoginFormState extends State<LoginForm> {
   @override
   void initState() {
     _loginBloc = BlocProvider.of<LoginBloc>(context);
-
-    _emailController.addListener(_onEmailChanged);
-    _passwordController.addListener(_onPasswordChanged);
-
     super.initState();
   }
 
   bool get isPopulated =>
       _emailController.text.isNotEmpty && _passwordController.text.isNotEmpty;
-
-  bool isLoginButtonEnabled(LoginState state) {
-    return !state.isSubmitting;
-  }
-
-  void _onEmailChanged() {
-    _loginBloc.add(
-      EmailChanged(email: _emailController.text.trim()),
-    );
-  }
-
-  void _onPasswordChanged() {
-    _loginBloc.add(
-      PasswordChanged(password: _passwordController.text.trim()),
-    );
-  }
 
   void _onFormSubmitted(BuildContext ctx) {
     _loginBloc.add(
@@ -70,6 +49,8 @@ class _LoginFormState extends State<LoginForm> {
 
   @override
   void dispose() {
+    _passwordController.clear();
+    _emailController.clear();
     _passwordController.dispose();
     _emailController.dispose();
 
@@ -80,36 +61,37 @@ class _LoginFormState extends State<LoginForm> {
   Widget build(BuildContext context) {
     return BlocListener<LoginBloc, LoginState>(
       listener: (context, state) {
-        if (state.isFailure) {
+        if (state is LoginFailed) {
           ScaffoldMessenger.of(context)
             ..hideCurrentSnackBar()
             ..showSnackBar(
-              errorCoustomSnackBar("Login Failed"),
+              SnackBarConstants.profileFailedSnackBar,
             );
         }
-        if (state.isSubmitting) {
+        if (state is LoginLoading) {
           ScaffoldMessenger.of(context)
             ..hideCurrentSnackBar()
-            ..showSnackBar(profileloading);
+            ..showSnackBar(SnackBarConstants.profileLoading);
         }
-        if (state.isSuccess) {
+        if (state is LoginSucess) {
           debugPrint("Success");
-          BlocProvider.of<AuthenticationBloc>(context).add(LoggedIn());
-          if (state.isProfileDone) {
-            Navigator.of(context).pushAndRemoveUntil(
-                MaterialPageRoute(
-                  builder: (context) =>
-                      SignupProfilePage(userRepository: widget._userRepository),
-                ),
-                (route) => false);
-          } else {
-            Navigator.of(context).pushAndRemoveUntil(
-                MaterialPageRoute(
-                  builder: (context) =>
-                      MainPageNav(repository: widget._userRepository),
-                ),
-                (route) => false);
-          }
+
+          Navigator.of(context).pushAndRemoveUntil(
+              MaterialPageRoute(
+                builder: (context) =>
+                    MainPageNav(repository: widget._userRepository),
+              ),
+              (route) => false);
+        }
+        if (state is LoginProfileNotSet) {
+          debugPrint("Success");
+
+          Navigator.of(context).pushAndRemoveUntil(
+              MaterialPageRoute(
+                builder: (context) =>
+                    SignupProfilePage(userRepository: widget._userRepository),
+              ),
+              (route) => false);
         }
       },
       child: BlocBuilder<LoginBloc, LoginState>(
@@ -148,8 +130,6 @@ class _LoginFormState extends State<LoginForm> {
                     validator: (value) {
                       if (value!.isEmpty) {
                         return "Enter your password ";
-                      } else if (!Validators.isValidPassword(value)) {
-                        return "Enter a valid password";
                       }
 
                       return null;
@@ -165,25 +145,13 @@ class _LoginFormState extends State<LoginForm> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.stretch,
                       children: <Widget>[
-                        isPopulated
-                            ? LoginButton(
-                                onPressed: () {
-                                  if (state.isFormValid ||
-                                      _formkey.currentState!.validate()) {
-                                    return _onFormSubmitted(context);
-                                  }
-                                },
-                              )
-                            : ElevatedButton(
-                                style: ElevatedButton.styleFrom(
-                                  backgroundColor: Colors.grey,
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(30.0),
-                                  ),
-                                ),
-                                onPressed: () {},
-                                child: const Text('Login'),
-                              ),
+                        LoginButton(
+                          onPressed: () {
+                            if (_formkey.currentState!.validate()) {
+                              return _onFormSubmitted(context);
+                            }
+                          },
+                        ),
                         CreateAccountButton(
                             userRepository: widget._userRepository),
                       ],

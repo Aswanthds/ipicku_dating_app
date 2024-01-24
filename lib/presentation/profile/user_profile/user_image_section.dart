@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:ipicku_dating_app/presentation/profile/user_profile/image_preview.dart';
 
 class UserImageSection extends StatelessWidget {
-  final String imageUrl;
+  final List<dynamic> imageUrl;
 
   const UserImageSection({
     super.key,
@@ -14,13 +14,11 @@ class UserImageSection extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.only(top: 30),
       child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceAround,
-        children: [
-          _buildUserPhoto(context, imageUrl),
-          _buildUserPhoto(context, imageUrl),
-          _buildUserPhoto(context, imageUrl),
-        ],
-      ),
+          mainAxisAlignment: MainAxisAlignment.start,
+          children: List<Widget>.generate(
+            imageUrl.length,
+            (index) => _buildUserPhoto(context, imageUrl[index]),
+          )),
     );
   }
 }
@@ -30,16 +28,24 @@ Widget _buildUserPhoto(BuildContext context, String imgUrl) {
     onTap: () {
       Navigator.of(context).push(_createImagePreviewRoute(imgUrl));
     },
-    child: Container(
-      height: 160,
-      width: 100,
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(15),
-        image: DecorationImage(
-          image: NetworkImage(imgUrl),
-          fit: BoxFit.cover,
+    child: Column(
+      children: [
+        const Text("Photos"),
+        Container(
+          height: 160,
+          width: 100,
+          margin: const EdgeInsets.only(
+            left: 20,
+          ),
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(15),
+            image: DecorationImage(
+              image: NetworkImage(imgUrl),
+              fit: BoxFit.cover,
+            ),
+          ),
         ),
-      ),
+      ],
     ),
   );
 }

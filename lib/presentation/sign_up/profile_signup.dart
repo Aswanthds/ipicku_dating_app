@@ -31,7 +31,6 @@ class SignupProfilePage extends StatefulWidget {
 class _SignupProfilePageState extends State<SignupProfilePage> {
   final _formKey = GlobalKey<FormState>();
   final TextEditingController _nameController = TextEditingController();
-  final TextEditingController _interestController = TextEditingController();
   XFile? _pickedImage;
   String? _gender;
   DateTime? _selectedDate;
@@ -52,20 +51,20 @@ class _SignupProfilePageState extends State<SignupProfilePage> {
           ScaffoldMessenger.of(context)
             ..hideCurrentSnackBar()
             ..showSnackBar(
-              profilefailedSnackBar,
+              SnackBarConstants.profileFailedSnackBar,
             );
         }
 
         if (state is ProfileStateLoading) {
           ScaffoldMessenger.of(context)
             ..hideCurrentSnackBar()
-            ..showSnackBar(profileloading);
+            ..showSnackBar(SnackBarConstants.profileLoading);
         }
         if (state is ProfileStateSuccess) {
           BlocProvider.of<AuthenticationBloc>(context).add(LoggedIn());
           ScaffoldMessenger.of(context)
             ..hideCurrentSnackBar()
-            ..showSnackBar(profileSucessSnackBar);
+            ..showSnackBar(SnackBarConstants.profileSuccessSnackBar);
           Navigator.of(context).pushAndRemoveUntil(
               MaterialPageRoute(
                 builder: (context) =>
@@ -75,7 +74,7 @@ class _SignupProfilePageState extends State<SignupProfilePage> {
         }
       },
       child: Scaffold(
-        backgroundColor: kPrimary,
+        backgroundColor: AppTheme.kPrimary,
         appBar: AppBar(
           automaticallyImplyLeading: true,
           backgroundColor: Colors.transparent,
@@ -132,16 +131,6 @@ class _SignupProfilePageState extends State<SignupProfilePage> {
                           },
                           selectedDate: _selectedDate,
                         ),
-                        // TextButton.icon(
-                        //     onPressed: () {
-                        //       showDialog(
-                        //           context: context,
-                        //           builder: (context) => ImageUploadDialog(
-                        //                 selectedImages: _selectedImages,
-                        //               ));
-                        //     },
-                        //     icon: const Icon(Icons.edit),
-                        //     label: const Text("Add photos max 3")),
                         const SizedBox(
                           height: 20,
                         ),
@@ -166,7 +155,7 @@ class _SignupProfilePageState extends State<SignupProfilePage> {
                                 child: ElevatedButton(
                                   onPressed: () {},
                                   style: ElevatedButton.styleFrom(
-                                    backgroundColor: Colors.grey,
+                                    backgroundColor: AppTheme.grey,
                                     shape: RoundedRectangleBorder(
                                       borderRadius: BorderRadius.circular(12.0),
                                     ),
@@ -194,9 +183,7 @@ class _SignupProfilePageState extends State<SignupProfilePage> {
       BlocProvider.of<ProfileBloc>(context).add(Submitted(
           age: ProfileFunctions.calculateAge(_selectedDate),
           dob: _selectedDate,
-          bio: '',
           createdNow: Timestamp.now(),
-          interests: [],
           name: _nameController.text.trim(),
           gender: _gender,
           location: location,
@@ -221,13 +208,13 @@ class ProfilePicture extends StatelessWidget {
       onTap: onTap,
       child: CircleAvatar(
         radius: 50,
-        backgroundColor: Colors.white,
+        backgroundColor: AppTheme.white,
         backgroundImage:
             pickedImage != null ? FileImage(File(pickedImage!.path)) : null,
         child: pickedImage == null
             ? const Icon(
                 Icons.add_a_photo,
-                color: Colors.black,
+                color: AppTheme.black,
               )
             : null,
       ),
@@ -255,10 +242,10 @@ class _ProfileDropdownButtonState extends State<ProfileDropdownButton> {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
       child: DropdownButtonFormField<String>(
-        style: const TextStyle(color: Colors.white),
-        dropdownColor: Colors.grey,
+        style: const TextStyle(color: AppTheme.white),
+        dropdownColor: AppTheme.grey,
         value: widget.gender,
-        decoration: inputDecoration,
+        decoration: InputDecorationManager.inputDecoration,
         onChanged: widget.onChanged,
         items: ['Male', 'Female']
             .map((gender) => DropdownMenuItem(
@@ -294,7 +281,7 @@ class _ProfileDatePickerState extends State<ProfileDatePicker> {
         padding: const EdgeInsets.all(15),
         decoration: BoxDecoration(
           border: Border.all(
-            color: Colors.white,
+            color: AppTheme.white,
             style: BorderStyle.solid,
           ),
           borderRadius: BorderRadius.circular(15),
@@ -304,13 +291,13 @@ class _ProfileDatePickerState extends State<ProfileDatePicker> {
               ? DateFormat('dd-MM-yyyy').format(widget.selectedDate!)
               : '<Not Set>',
           style: const TextStyle(
-            color: Colors.white,
+            color: AppTheme.white,
           ),
         ),
       ),
       trailing: const Icon(
         EvaIcons.calendarOutline,
-        color: Colors.white,
+        color: AppTheme.white,
       ),
     );
   }
@@ -356,7 +343,7 @@ class _ImageGridState extends State<ImageGrid> {
                   width: 72,
                   decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(15),
-                      color: Colors.grey[300],
+                      color: AppTheme.grey,
                       image: widget.selectedImages[index] != null
                           ? DecorationImage(
                               image: FileImage(

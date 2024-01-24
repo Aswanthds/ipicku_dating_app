@@ -68,29 +68,30 @@ class PhotosChanged extends ProfileEvent {
 }
 
 class Submitted extends ProfileEvent {
-  final String? name, gender,bio;
+  final String? name, gender;
   final GeoPoint? location;
   final File? photo;
   final int? age;
   final DateTime? dob;
-  final List<String> interests;
   final Timestamp? createdNow;
 
-  const Submitted( 
+  const Submitted(
       {required this.age,
       required this.name,
-      required this.bio,
       required this.dob,
-      required this.interests,
       required this.createdNow,
-    
       required this.gender,
       required this.location,
       required this.photo});
 
   @override
-  List<Object> get props =>
-      [name!, gender!, location!, photo!, interests,];
+  List<Object> get props => [
+        name!,
+        gender!,
+        location!,
+        photo!,
+  
+      ];
 }
 
 class FetchDataEvent extends ProfileEvent {
@@ -109,13 +110,4 @@ class UpdateDataEvent extends ProfileEvent {
 
   @override
   List<Object> get props => [newData];
-}
-
-class EnableDisableEvent extends ProfileEvent {
-  final bool isEnabled;
-
-  const EnableDisableEvent(this.isEnabled);
-
-  @override
-  List<Object> get props => [isEnabled];
 }

@@ -1,6 +1,5 @@
 import 'package:equatable/equatable.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:google_sign_in/google_sign_in.dart';
 
 @immutable
 abstract class SignUpEvent extends Equatable {
@@ -47,8 +46,6 @@ class SignUpPressed extends SignUpEvent {
 }
 
 class GoogleSignUpEvent extends SignUpEvent {
-  final GoogleSignInAccount account;
 
-  const GoogleSignUpEvent({required this.account});
 
 }

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:ipicku_dating_app/constants.dart';
 
 class RegisterTitle extends StatelessWidget {
   const RegisterTitle({
@@ -14,7 +15,7 @@ class RegisterTitle extends StatelessWidget {
         child: Text(
           "REGISTER",
           style: TextStyle(
-            color: Colors.white,
+            color: AppTheme.white,
             fontWeight: FontWeight.bold,
             fontSize: 28,
           ),

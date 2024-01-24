@@ -1,7 +1,7 @@
 import 'dart:async';
 
 import 'package:bloc/bloc.dart';
-import 'package:ipicku_dating_app/data/functions/validators.dart';
+import 'package:flutter/material.dart';
 
 import 'package:ipicku_dating_app/data/repositories/user_repositories.dart';
 import 'package:ipicku_dating_app/domain/signup_bloc/sign_up_event.dart';
@@ -9,45 +9,44 @@ import 'package:ipicku_dating_app/domain/signup_bloc/sign_up_state.dart';
 
 class SignUpBloc extends Bloc<SignUpEvent, SignUpState> {
   final UserRepository _userRepository;
-  SignUpBloc(this._userRepository) : super(SignUpState.empty()) {
-    on<EmailChanged>(_mapEmailChanged);
-    on<PasswordChanged>(_mapPasswordChanged);
+  SignUpBloc(this._userRepository) : super(SignupIntial()) {
     on<SignUpPressed>(_mapSignUpPressed);
     on<GoogleSignUpEvent>(_mapGoogelSignUp);
   }
 
-  FutureOr<void> _mapEmailChanged(
-      EmailChanged event, Emitter<SignUpState> emit) {
-    emit(state.update(isEmailValid: Validators.isValidEmail(event.email)));
-  }
-
-  FutureOr<void> _mapPasswordChanged(
-      PasswordChanged event, Emitter<SignUpState> emit) {
-    emit(
-        state.update(isEmailValid: Validators.isValidPassword(event.password)));
-  }
-
   FutureOr<void> _mapSignUpPressed(
       SignUpPressed event, Emitter<SignUpState> emit) async {
-    emit(SignUpState.loading());
+    emit(SignUpLoading());
 
     try {
       await _userRepository.signUp(
           email: event.email, password: event.password);
-      emit(SignUpState.success());
+      emit(SignUpSucess());
     } catch (_) {
-      emit(SignUpState.failure());
+      emit(SignUpFailed(message: 'SignIn Failed'));
     }
   }
 
   FutureOr<void> _mapGoogelSignUp(
       GoogleSignUpEvent event, Emitter<SignUpState> emit) async {
     try {
-      final account = await _userRepository.performGoogleSignIn();
-      await _userRepository.signUp(email: account.email, password: account.id);
-       emit(SignUpState.success());
+      final account = await _userRepository.googleSignUp();
+      final user = account?.user;
+      if (user != null) {
+        // Check if the user is new
+        if (account?.additionalUserInfo?.isNewUser ?? false) {
+          emit(SignUpSucess());
+          debugPrint('New user signed in: ${user.displayName}');
+        } else {
+          emit(SignUpFailed(message: 'SignIn Failed'));
+          debugPrint('Existing user signed in: ${user.displayName}');
+        }
+      } else {
+        emit(SignUpFailed(message: 'SignIn Failed'));
+        debugPrint('Sign-in failed.');
+      }
     } catch (e) {
-      emit(SignUpState.failure());
+      emit(SignUpFailed(message: 'SignUp Failed'));
     }
   }
 }

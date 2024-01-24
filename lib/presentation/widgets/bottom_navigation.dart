@@ -1,5 +1,6 @@
 import 'package:eva_icons_flutter/eva_icons_flutter.dart';
 import 'package:flutter/material.dart';
+import 'package:ipicku_dating_app/constants.dart';
 
 ValueNotifier<int> indexChangeNotifier = ValueNotifier(0);
 
@@ -16,7 +17,7 @@ class BottomNavigation extends StatelessWidget {
             indexChangeNotifier.value = value;
           },
           currentIndex: newIndex,
-          selectedItemColor: Colors.black,
+          selectedItemColor: AppTheme.black,
           type: BottomNavigationBarType.fixed,
           showSelectedLabels: false,
           showUnselectedLabels: false,
@@ -36,7 +37,7 @@ class BottomNavigation extends StatelessWidget {
               icon: Icon(
                 Icons.recommend_outlined,
                 size: 25,
-                color: Colors.grey,
+                color: AppTheme.grey,
               ),
               activeIcon: Icon(
                 Icons.recommend,

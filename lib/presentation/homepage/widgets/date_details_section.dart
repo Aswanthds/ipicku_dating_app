@@ -1,8 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:ipicku_dating_app/constants.dart';
 
 class DateDetailsSection extends StatelessWidget {
+  final String name, age, bio;
   const DateDetailsSection({
     super.key,
+    required this.name,
+    required this.age,
+    required this.bio,
   });
 
   @override
@@ -11,28 +16,28 @@ class DateDetailsSection extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         RichText(
-            text: const TextSpan(children: [
+            text: TextSpan(children: [
           TextSpan(
-            text: "Nithya ,",
-            style: TextStyle(
-              color: Colors.white,
+            text: "$name ,",
+            style: const TextStyle(
+              color: AppTheme.white,
               fontSize: 25,
               fontWeight: FontWeight.bold,
             ),
           ),
           TextSpan(
-            text: " 27 yrs old",
-            style: TextStyle(
-              color: Colors.white,
+            text: " $age yrs old",
+            style: const TextStyle(
+              color: AppTheme.white,
               fontSize: 20,
               fontWeight: FontWeight.bold,
             ),
           )
         ])),
-        const Text(
-          "Looking for a life partner",
-          style: TextStyle(
-            color: Colors.white,
+        Text(
+          (bio == 'null') ? '' : bio,
+          style: const TextStyle(
+            color: AppTheme.white,
             fontWeight: FontWeight.bold,
           ),
         ),

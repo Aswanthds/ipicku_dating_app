@@ -13,7 +13,7 @@ class FirebaseDataBloc extends Bloc<FirebaseDataEvent, FirebaseDataState> {
   FirebaseDataBloc(this.userRepository) : super(FirebaseDataInitial()) {
     on<FirebaseDataLoadedEvent>((event, emit) async {
       emit(FirebaseDataLoading());
-      await Future.delayed(const Duration(seconds: 5));
+      await Future.delayed(const Duration(seconds: 2));
       try {
         final data = await userRepository.getUserData();
 
@@ -60,14 +60,14 @@ class FirebaseDataBloc extends Bloc<FirebaseDataEvent, FirebaseDataState> {
         final docRef = FirebaseFirestore.instance.collection('users').doc(user);
 
         final currentImages =
-            (await docRef.get()).data()!['images'] as List<dynamic>?;
+            (await docRef.get()).data()!['photos'] as List<dynamic>?;
 
         // currentImages.removeAt(event.index);
         await docRef.update({
-          'images': FieldValue.arrayRemove([currentImages?[event.index]])
+          'photos': FieldValue.arrayRemove([currentImages?[event.index]])
         });
         await docRef.update({
-          'images': FieldValue.arrayUnion([""])
+          'photos': FieldValue.arrayUnion([""])
         });
 
         // await docRef.update({'images': currentImages});
@@ -102,10 +102,62 @@ class FirebaseDataBloc extends Bloc<FirebaseDataEvent, FirebaseDataState> {
           //     event.image, 4, 'profile_pic');
           final userDocRef =
               FirebaseFirestore.instance.collection('users').doc(user);
+          // final state = await userDocRef.get();
+          // if(state.exists){
+
+          // }
           final url = await userRepository.getProfilePhotoLink(event.image);
           await userDocRef.update({
             'photoUrl': url,
           });
+          final data = await userRepository.getUserData();
+          emit(FirebaseDataLoaded(data: data));
+        } catch (e) {
+          emit(FirebaseDataFailure(messge: e.toString()));
+        }
+      },
+    );
+    on<AddUseFieldData>(
+      (event, emit) async {
+        emit(FirebaseDataLoading());
+        try {
+          final user = await userRepository.getUser();
+
+          final CollectionReference usersCollection =
+              FirebaseFirestore.instance.collection('users');
+
+          final docRef = usersCollection.doc(user);
+          await docRef.update({event.fieldName: event.newValue});
+
+          final data = await userRepository.getUserData();
+          emit(FirebaseDataLoaded(data: data));
+        } catch (e) {
+          emit(FirebaseDataFailure(messge: e.toString()));
+        }
+      },
+    );
+    on<FirebaseAddData>(
+      (event, emit) async {
+        emit(FirebaseDataLoading());
+        try {
+          final user = await userRepository.getUser();
+
+          final CollectionReference usersCollection =
+              FirebaseFirestore.instance.collection('users');
+
+          final DocumentSnapshot userDoc =
+              await usersCollection.doc(user).get();
+
+          if (userDoc.exists) {
+            await usersCollection
+                .doc(user)
+                .update({event.field: FieldValue.arrayUnion(event.value)});
+          } else {
+            await usersCollection
+                .doc(user)
+                .set({event.field: FieldValue.arrayUnion(event.value)});
+          }
+
           final data = await userRepository.getUserData();
           emit(FirebaseDataLoaded(data: data));
         } catch (e) {

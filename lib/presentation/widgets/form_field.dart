@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:ipicku_dating_app/constants.dart';
 
 class FormFieldWidget extends StatefulWidget {
   const FormFieldWidget({
@@ -42,37 +43,37 @@ class _FormFieldWidgetState extends State<FormFieldWidget> {
             : null,
         icon: Icon(
           widget.icon,
-          color: Colors.white,
+          color: AppTheme.white,
         ),
         labelText: widget.labelText,
         focusedErrorBorder: OutlineInputBorder(
-            borderSide: const BorderSide(color: Colors.white),
+            borderSide: const BorderSide(color: AppTheme.white),
             borderRadius: BorderRadius.circular(15)),
         errorBorder: OutlineInputBorder(
-            borderSide: const BorderSide(color: Colors.red),
+            borderSide: const BorderSide(color: AppTheme.red),
             borderRadius: BorderRadius.circular(15)),
         enabledBorder: const OutlineInputBorder(
           borderRadius: BorderRadius.all(
             Radius.circular(15),
           ),
           borderSide: BorderSide(
-            color: Colors.red,
+            color: AppTheme.red,
             style: BorderStyle.solid,
           ),
         ),
-        labelStyle: const TextStyle(color: Colors.white),
+        labelStyle: const TextStyle(color: AppTheme.white),
         focusedBorder: const OutlineInputBorder(
           borderRadius: BorderRadius.all(
             Radius.circular(15),
           ),
           borderSide: BorderSide(
-            color: Colors.white,
+            color: AppTheme.white,
             style: BorderStyle.solid,
           ),
         ),
       ),
       style: const TextStyle(
-        color: Colors.white,
+        color: AppTheme.white,
       ),
       autocorrect: false,
       validator: widget.validator,

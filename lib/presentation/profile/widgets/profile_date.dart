@@ -4,9 +4,10 @@ import 'package:eva_icons_flutter/eva_icons_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
+import 'package:ipicku_dating_app/constants.dart';
 import 'package:ipicku_dating_app/data/functions/profile_functions.dart';
 import 'package:ipicku_dating_app/data/model/user.dart';
-import 'package:ipicku_dating_app/domain/bloc/firebase_data_bloc.dart';
+import 'package:ipicku_dating_app/domain/firebase_data/firebase_data_bloc.dart';
 
 class ProfileDateWidget extends StatelessWidget {
   const ProfileDateWidget({
@@ -26,7 +27,7 @@ class ProfileDateWidget extends StatelessWidget {
           overflow: TextOverflow.ellipsis,
           textAlign: TextAlign.start,
           style: TextStyle(
-            color: Colors.black,
+            color: AppTheme.black,
           ),
         ),
         Row(
@@ -41,7 +42,7 @@ class ProfileDateWidget extends StatelessWidget {
                 textAlign: TextAlign.justify,
                 style: const TextStyle(
                   fontWeight: FontWeight.bold,
-                  color: Colors.black,
+                  color: AppTheme.black,
                 ),
               ),
             ),
@@ -64,7 +65,7 @@ class ProfileDateWidget extends StatelessWidget {
               },
               icon: const Icon(
                 EvaIcons.edit2,
-                color: Colors.black,
+                color: AppTheme.black,
                 size: 18,
               ),
             ),

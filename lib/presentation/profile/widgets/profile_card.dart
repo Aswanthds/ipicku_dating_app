@@ -1,7 +1,10 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:ipicku_dating_app/constants.dart';
 import 'package:ipicku_dating_app/data/functions/profile_functions.dart';
-import 'package:ipicku_dating_app/domain/bloc/firebase_data_bloc.dart';
+import 'package:ipicku_dating_app/domain/firebase_data/firebase_data_bloc.dart';
 import 'package:ipicku_dating_app/presentation/profile/widgets/profile_card_text.dart';
 
 class ProfileCardWidget extends StatelessWidget {
@@ -21,10 +24,9 @@ class ProfileCardWidget extends StatelessWidget {
         return Card(
           elevation: 12.0,
           child: Container(
-            width: 100,
-            height: 200,
+            height: 180,
             decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(20),
+                borderRadius: BorderRadius.circular(15),
                 color: Colors.orangeAccent.shade100,
                 border: Border.all(
                   style: BorderStyle.solid,
@@ -39,48 +41,45 @@ class ProfileCardWidget extends StatelessWidget {
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(15),
                     ),
-                    color: Colors.yellow.shade300,
+                    color: AppTheme.red,
                     child: Padding(
                       padding: const EdgeInsets.all(15),
-                      child: SingleChildScrollView(
-                        scrollDirection: Axis.horizontal,
-                        child: Row(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            state is FirebaseDataLoaded
-                                ? Container(
-                                    height: 120,
-                                    width: 120,
-                                    decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(10),
-                                      image: DecorationImage(
-                                        image: NetworkImage(path),
-                                        fit: BoxFit.fill,
-                                      ),
-                                    ),
-                                  )
-                                : Container(
-                                    height: 100,
-                                    width: 100,
-                                    decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(100),
-                                      color: Colors.black,
+                      child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          state is FirebaseDataLoaded
+                              ? Container(
+                                  height: 120,
+                                  width: 120,
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(100),
+                                    image: DecorationImage(
+                                      image: NetworkImage(path),
+                                      fit: BoxFit.fill,
                                     ),
                                   ),
-                            const SizedBox(width: 8.0),
-                            ProfileDetails(
-                              age: age,
-                              name: name,
-                              uid: id,
-                            ),
-                          ],
-                        ),
+                                )
+                              : Container(
+                                  height: 100,
+                                  width: 100,
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(100),
+                                    color: AppTheme.black,
+                                  ),
+                                ),
+                          const SizedBox(width: 8.0),
+                          ProfileDetails(
+                            age: age,
+                            name: name,
+                            uid: id,
+                          ),
+                        ],
                       ),
                     ),
                   ),
                   Positioned(
-                    bottom: 50,
-                    left: 0,
+                    bottom: 30,
+                    left: 100,
                     child: IconButton.filled(
                         onPressed: () async {
                           final pickedImage =
@@ -90,7 +89,7 @@ class ProfileCardWidget extends StatelessWidget {
                                 .add(FirebaseProfilePhotochanged(pickedImage));
                           }
                         },
-                        icon: Icon(Icons.camera_alt)),
+                        icon: const Icon(Icons.camera_alt)),
                   )
                 ],
               ),

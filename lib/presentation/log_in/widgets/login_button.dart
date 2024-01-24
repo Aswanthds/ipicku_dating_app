@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:ipicku_dating_app/constants.dart';
 
 class LoginButton extends StatelessWidget {
   final VoidCallback? _onPressed;
@@ -11,7 +12,7 @@ class LoginButton extends StatelessWidget {
   Widget build(BuildContext context) {
     return ElevatedButton(
       style: ElevatedButton.styleFrom(
-        backgroundColor: Colors.white,
+        backgroundColor: AppTheme.white,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(30.0),
         ),

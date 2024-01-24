@@ -40,5 +40,22 @@ class FirebaseDataPhotoChanged extends FirebaseDataEvent {
 class FirebaseProfilePhotochanged extends FirebaseDataEvent {
   final XFile image;
 
-  FirebaseProfilePhotochanged(this.image);
+  const FirebaseProfilePhotochanged(this.image);
+}
+
+class FirebaseAddData extends FirebaseDataEvent {
+  final String field;
+  final List<dynamic> value;
+
+  const FirebaseAddData(this.field, this.value);
+}
+
+class AddUseFieldData extends FirebaseDataEvent {
+  final String fieldName;
+  final dynamic newValue;
+
+  const AddUseFieldData({required this.fieldName, required this.newValue});
+  @override
+  
+  List<Object> get props => [fieldName, newValue];
 }

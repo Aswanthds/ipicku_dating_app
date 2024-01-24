@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:ipicku_dating_app/constants.dart';
 
 class RegisterButton extends StatelessWidget {
   final VoidCallback? _onPressed;
@@ -11,7 +12,7 @@ class RegisterButton extends StatelessWidget {
   Widget build(BuildContext context) {
     return ElevatedButton(
       style: ElevatedButton.styleFrom(
-        backgroundColor: Colors.white,
+        backgroundColor: AppTheme.white,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(30.0),
         ),
@@ -20,7 +21,7 @@ class RegisterButton extends StatelessWidget {
       child: const Text(
         'Continue',
         style: TextStyle(
-          color: Colors.black,
+          color: AppTheme.black,
         ),
       ),
     );

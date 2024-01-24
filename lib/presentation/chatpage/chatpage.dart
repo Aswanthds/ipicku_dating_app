@@ -1,5 +1,7 @@
 import 'package:eva_icons_flutter/eva_icons_flutter.dart';
 import 'package:flutter/material.dart';
+import 'package:ipicku_dating_app/presentation/chatpage/call_history_page.dart';
+import 'package:ipicku_dating_app/presentation/chatpage/widget/chat_person.dart';
 
 class ChatPage extends StatelessWidget {
   const ChatPage({super.key});
@@ -11,7 +13,11 @@ class ChatPage extends StatelessWidget {
         title: const Text("Chats"),
         actions: [
           IconButton(
-            onPressed: () {},
+            onPressed: () {
+              Navigator.of(context).push(MaterialPageRoute(
+                builder: (context) => const CallHistoryPage(),
+              ));
+            },
             icon: const Icon(EvaIcons.phoneCall),
           ),
         ],
@@ -34,7 +40,11 @@ class ChatPage extends StatelessWidget {
           child: ListView.builder(
             itemCount: 5,
             itemBuilder: (context, index) => ListTile(
-              onTap: () {},
+              onTap: () {
+                Navigator.of(context).push(MaterialPageRoute(
+                  builder: (context) => const ChatPagePerson(),
+                ));
+              },
               leading: CircleAvatar(
                   radius: 20, backgroundColor: Colors.accents[index]),
               title: Text("Name ${index + 1}"),

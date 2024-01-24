@@ -1,20 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:ipicku_dating_app/constants.dart';
 import 'package:ipicku_dating_app/presentation/profile/user_profile/details_section.dart';
 import 'package:ipicku_dating_app/presentation/profile/user_profile/profile_details_action.dart';
 import 'package:ipicku_dating_app/presentation/profile/user_profile/user_image_section.dart';
 
 class UserProfileBottomSheet extends StatelessWidget {
-  final String name;
-  final int age;
-  final String bio;
-  final String imageUrl;
+  final Map<String, dynamic> data;
 
   const UserProfileBottomSheet({
     super.key,
-    required this.name,
-    required this.age,
-    required this.bio,
-    required this.imageUrl,
+    required this.data,
   });
 
   @override
@@ -34,9 +29,9 @@ class UserProfileBottomSheet extends StatelessWidget {
                         bottomRight: Radius.circular(15),
                         bottomLeft: Radius.circular(15),
                       ),
-                      color: Colors.black,
+                      color: AppTheme.black,
                       image: DecorationImage(
-                        image: NetworkImage(imageUrl),
+                        image: NetworkImage(data['photoUrl']),
                         fit: BoxFit.fitHeight,
                       ),
                     ),
@@ -47,13 +42,14 @@ class UserProfileBottomSheet extends StatelessWidget {
                       },
                       icon: const Icon(
                         Icons.arrow_back,
-                        color: Colors.white,
+                        color: AppTheme.white,
                       ))
                 ],
               ),
-              DetailsSection(name: name, age: age, bio: bio),
+              DetailsSection(
+                  name: data['name'], age: data['age'], bio: data['bio'] ?? ''),
               const SizedBox(height: 16),
-              UserImageSection(imageUrl: imageUrl),
+              UserImageSection(imageUrl: data['photos']),
               const SizedBox(height: 16),
               const ProfileDetailsAction(),
             ],

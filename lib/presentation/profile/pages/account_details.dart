@@ -3,7 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:ipicku_dating_app/constants.dart';
 import 'package:ipicku_dating_app/data/model/user.dart';
 import 'package:ipicku_dating_app/data/repositories/user_repositories.dart';
-import 'package:ipicku_dating_app/domain/bloc/firebase_data_bloc.dart';
+import 'package:ipicku_dating_app/domain/firebase_data/firebase_data_bloc.dart';
 import 'package:ipicku_dating_app/presentation/profile/widgets/preferences_section.dart';
 import 'package:ipicku_dating_app/presentation/profile/widgets/profile_card.dart';
 import 'package:ipicku_dating_app/presentation/profile/widgets/user_details_widget.dart';
@@ -13,7 +13,8 @@ class AccountDetails extends StatelessWidget {
   final UserRepository userRepository;
   const AccountDetails({
     Key? key,
-    required this.state, required this.userRepository,
+    required this.state,
+    required this.userRepository,
   }) : super(key: key);
 
   @override
@@ -30,7 +31,7 @@ class AccountDetails extends StatelessWidget {
           if (state is FirebaseDataLoading) {
             ScaffoldMessenger.of(context)
               ..hideCurrentMaterialBanner()
-              ..showSnackBar(profileGetSuccess);
+              ..showSnackBar(SnackBarConstants.profileSuccessSnackBar);
           }
         },
         child: BlocBuilder<FirebaseDataBloc, FirebaseDataState>(
@@ -48,7 +49,7 @@ class AccountDetails extends StatelessWidget {
                 child: Container(
                   padding: const EdgeInsets.all(20),
                   decoration: BoxDecoration(
-                    color: Colors.white,
+                    color: AppTheme.white,
                     borderRadius: BorderRadius.circular(15),
                   ),
                   child: Column(
@@ -64,7 +65,8 @@ class AccountDetails extends StatelessWidget {
                           name: state.data?.name ?? ''),
                       UserDetailsList(user: state.data),
                       const SizedBox(height: 20),
-                      PreferencesSection(model: state.data,repo: userRepository),
+                      PreferencesSection(
+                          model: state.data, repo: userRepository),
                     ],
                   ),
                 ),

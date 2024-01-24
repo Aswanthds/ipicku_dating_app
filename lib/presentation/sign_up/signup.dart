@@ -11,11 +11,11 @@ class RegisterScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: kPrimary,
+      backgroundColor: AppTheme.kPrimary,
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         iconTheme: const IconThemeData(
-          color: Colors.white,
+          color: AppTheme.white,
         ),
       ),
       body: Center(

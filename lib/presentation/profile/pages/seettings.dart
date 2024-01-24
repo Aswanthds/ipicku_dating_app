@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:ipicku_dating_app/constants.dart';
+import 'package:ipicku_dating_app/presentation/profile/widgets/age_pref_selector.dart';
 
 class SettingsPage extends StatelessWidget {
   const SettingsPage({super.key});
@@ -11,33 +12,68 @@ class SettingsPage extends StatelessWidget {
         title: const Text("Settings"),
       ),
       body: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           _enableListTile("Hide me from discovery"),
-          _ageListTile(),
+          _ageListTile(context),
           _enableListTile("Region Preference"),
+          const Padding(
+            padding: EdgeInsets.only(
+              left: 15.0,
+              top: 10,
+            ),
+            child: Text(
+              "Push Notifications",
+              style: TextStyle(
+                color: Colors.black54,
+                fontSize: 21,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ),
+          _enableListTile("Likes"),
+          _enableListTile("Picks"),
+          _enableListTile("Messgaes"),
+          _enableListTile("Recommendations"),
+          const Padding(
+            padding: EdgeInsets.only(
+              left: 15.0,
+              top: 10,
+            ),
+            child: Text(
+              "Theme",
+              style: TextStyle(
+                color: Colors.black54,
+                fontSize: 21,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ),
+          _enableListTile("Dark Theme"),
         ],
       ),
     );
   }
 
-  ListTile _ageListTile() {
+  ListTile _ageListTile(BuildContext context) {
     return ListTile(
+      onTap: () {
+        showDialog(
+            context: context, builder: (ctx) => const AgeSelectionWidget());
+      },
       title: const Text(
-        "Age",
-        style: TextStyle(
-          fontWeight: FontWeight.bold,
-        ),
+        "Age Preference",
       ),
       trailing: SizedBox(
         width: 150,
         child: Wrap(
           direction: Axis.horizontal,
           children: [
-            ageTextbox('Min'),
+            ageTextbox('18'),
             const SizedBox(
               width: 10,
             ),
-            ageTextbox('Max'),
+            ageTextbox('25'),
           ],
         ),
       ),
@@ -53,21 +89,13 @@ class SettingsPage extends StatelessWidget {
         color: const Color(0xffd9d9d9),
       ),
       child: Center(
-        child: TextField(
-          keyboardType: TextInputType.number,
-          textAlign: TextAlign.center,
-          decoration: InputDecoration(
-            hintText: text,
-            contentPadding: const EdgeInsets.all(0),
-            border: const OutlineInputBorder(
-              borderRadius: BorderRadius.all(
-                Radius.circular(10),
-              ),
-            ),
-            hintStyle: const TextStyle(color: Colors.black),
-          ),
+          child: Text(
+        text,
+        style: const TextStyle(
+          color: AppTheme.kPrimary,
+          fontSize: 18,
         ),
-      ),
+      )),
     );
   }
 
@@ -75,16 +103,13 @@ class SettingsPage extends StatelessWidget {
     return ListTile(
       title: Text(
         text,
-        style: const TextStyle(
-          fontWeight: FontWeight.bold,
-        ),
       ),
       trailing: Switch(
         value: true,
         onChanged: (value) {},
         splashRadius: 1.5,
-        activeColor: Colors.white,
-        activeTrackColor: kPrimary,
+        activeColor: AppTheme.white,
+        activeTrackColor: AppTheme.kPrimary,
       ),
     );
   }

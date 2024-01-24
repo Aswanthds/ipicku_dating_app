@@ -1,66 +1,62 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:ipicku_dating_app/constants.dart';
+import 'package:ipicku_dating_app/domain/bloc/matching_bloc.dart';
 
-class RecommendedPage extends StatelessWidget {
-  const RecommendedPage({super.key,});
+class RecommendedPage extends StatefulWidget {
+  const RecommendedPage({
+    super.key,
+  });
+
+  @override
+  State<RecommendedPage> createState() => _RecommendedPageState();
+}
+
+class _RecommendedPageState extends State<RecommendedPage> {
+  bool _isLoading = false;
+  @override
+  void initState() {
+    if (!_isLoading) {
+      BlocProvider.of<MatchingBloc>(context)
+          .add(const GetRegionUsers(radius: 1.0));
+      _isLoading = true;
+    }
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Recommended Profiles'),
-      ),
-      body: ListView(
-        children: [
-          buildSection('Age 20 - 30', _buildAgeGroup2030Profiles()),
-        ],
-      ),
-    );
-  }
-
-  List<Widget> _buildAgeGroup2030Profiles() {
-    return [
-      _buildProfileCard(
-        'Drishya',
-        '23',
-        'https://i.pinimg.com/236x/7f/30/bc/7f30bce838ae79bc1f85e8fd0717f1c7.jpg',
-        'Age',
-      ),
-      _buildProfileCard(
-        'Arya',
-        ' 25',
-        'https://i.pinimg.com/236x/3a/a4/09/3aa4097d7709bfb26b169eb82e457c52.jpg',
-        'Age',
-      ),
-      _buildProfileCard(
-        'Aishwarya',
-        ' 22',
-        'https://i.pinimg.com/236x/87/8e/e9/878ee9986c7c5d8625edb1197a26a1fd.jpg',
-        'Age',
-      ),
-      _buildProfileCard(
-        'Arpitha',
-        '26',
-        'https://i.pinimg.com/236x/1e/ae/7f/1eae7f5954ba954362bf482b7eae430c.jpg',
-        'Age',
-      ),
-      _buildProfileCard(
-        'Priya',
-        '28',
-        'https://i.pinimg.com/236x/9c/c1/6f/9cc16fc7fcc9beaca9b4d9ac4246e6e5.jpg',
-        'Age',
-      ),
-      _buildProfileCard(
-        'Srividya',
-        '25',
-        'https://i.pinimg.com/236x/43/54/db/4354dbcd90e8b1851d82c7838f9399ca.jpg',
-        'Age',
-      ),
-    ];
+        appBar: AppBar(
+          title: const Text('Recommended Profiles'),
+        ),
+        body: BlocBuilder<MatchingBloc, MatchingState>(
+          builder: (context, state) {
+            if (state is Regionprofiles) {
+              return buildSection(
+                "Location",
+                ListView.builder(
+                  itemCount: state.userProfile.length,
+                  scrollDirection: Axis.horizontal,
+                  itemBuilder: (context, index) {
+                    final data = state.userProfile[index];
+                    return _buildProfileCard(
+                      data['name'],
+                      data['age'],
+                      data['photoUrl'],
+                      'Age',
+                    );
+                  },
+                ),
+              );
+            }
+            return const SizedBox();
+          },
+        ));
   }
 
   Widget _buildProfileCard(
-      String name, String description, String imagePath, String title) {
+      String name, int description, String imagePath, String title) {
     return Card(
       elevation: 5,
       margin: const EdgeInsets.all(5.0),
@@ -82,7 +78,7 @@ class RecommendedPage extends StatelessWidget {
               width: 120,
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(20),
-                gradient: blackFade,
+                gradient: AppTheme.blackFade,
               ),
               child: Padding(
                 padding: const EdgeInsets.all(8.0),
@@ -94,7 +90,7 @@ class RecommendedPage extends StatelessWidget {
                       name,
                       style: const TextStyle(
                         fontWeight: FontWeight.bold,
-                        color: Colors.white,
+                        color: AppTheme.white,
                       ),
                     ),
                     RichText(
@@ -102,12 +98,12 @@ class RecommendedPage extends StatelessWidget {
                         text: "$title :",
                         style: const TextStyle(
                           fontWeight: FontWeight.bold,
-                          color: Colors.white,
+                          color: AppTheme.white,
                         ),
                         children: [
                           TextSpan(
-                            text: description,
-                            style: const TextStyle(color: Colors.white),
+                            text: description.toString(),
+                            style: const TextStyle(color: AppTheme.white),
                           )
                         ],
                       ),
@@ -122,7 +118,7 @@ class RecommendedPage extends StatelessWidget {
     );
   }
 
-  Widget buildSection(String s, List<Widget> buildInterestProfiles) {
+  Widget buildSection(String s, ListView buildInterestProfiles) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -141,11 +137,7 @@ class RecommendedPage extends StatelessWidget {
         const SizedBox(height: 10),
         SizedBox(
           height: 200,
-          child: ListView.builder(
-            scrollDirection: Axis.horizontal,
-            itemCount: buildInterestProfiles.length,
-            itemBuilder: (context, index) => buildInterestProfiles[index],
-          ),
+          child: buildInterestProfiles,
         ),
       ],
     );

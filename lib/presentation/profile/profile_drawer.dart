@@ -4,7 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:ipicku_dating_app/constants.dart';
 import 'package:ipicku_dating_app/data/model/user.dart';
 import 'package:ipicku_dating_app/data/repositories/user_repositories.dart';
-import 'package:ipicku_dating_app/domain/bloc/firebase_data_bloc.dart';
+import 'package:ipicku_dating_app/domain/firebase_data/firebase_data_bloc.dart';
 
 import 'package:ipicku_dating_app/presentation/profile/pages/account_details.dart';
 import 'package:ipicku_dating_app/presentation/profile/pages/contact_us.dart';
@@ -38,7 +38,7 @@ class ProfileDrawer extends StatelessWidget {
               return const Center(
                 child: CircularProgressIndicator(
                   strokeWidth: 2.0,
-                  color: kPrimary,
+                  color: AppTheme.kPrimary,
                 ),
               );
             }
@@ -79,12 +79,12 @@ class DrawerListView extends StatelessWidget {
             boxShadow: [
               BoxShadow(
                 blurRadius: 5,
-                color: Colors.black.withOpacity(0.4),
+                color: AppTheme.black.withOpacity(0.4),
                 spreadRadius: 12,
               ),
             ],
             borderRadius: BorderRadius.circular(10),
-            color: kPrimary,
+            color: AppTheme.kPrimary,
           ),
           accountName: Text("${user?.name}"),
           accountEmail: Text("${user?.email}"),
@@ -116,7 +116,7 @@ class DrawerListView extends StatelessWidget {
           leading: EvaIcons.settings,
           text: "Settings",
           onTap: () {
-            Navigator.pop(context);
+            Navigator.of(context).pop();
             Navigator.of(context).push(MaterialPageRoute(
               builder: (context) => const SettingsPage(),
             ));
@@ -126,7 +126,7 @@ class DrawerListView extends StatelessWidget {
           leading: EvaIcons.heartOutline,
           text: "My Picks",
           onTap: () {
-            Navigator.pop(context);
+            Navigator.of(context).pop();
             Navigator.of(context).push(MaterialPageRoute(
               builder: (context) => const MyPicksPage(),
             ));
@@ -136,7 +136,7 @@ class DrawerListView extends StatelessWidget {
           leading: EvaIcons.bookOutline,
           text: "Who Picks Me ?",
           onTap: () {
-            Navigator.pop(context);
+            Navigator.of(context).pop();
             Navigator.of(context).push(MaterialPageRoute(
               builder: (context) => const WhoPicksMePage(),
             ));
@@ -157,15 +157,15 @@ class DrawerListView extends StatelessWidget {
               OutlinedButton.styleFrom(minimumSize: Size(size.width - 30, 35)),
           onPressed: () {
             Navigator.of(context).pop();
-            showLogoutDialog(context, userRepository);
+            DialogManager.showLogoutDialog(context, userRepository);
           },
           icon: const Icon(
             EvaIcons.logOut,
-            color: Colors.black,
+            color: AppTheme.black,
           ),
           label: const Text(
             "Log Out",
-            style: TextStyle(color: Colors.black),
+            style: TextStyle(color: AppTheme.black),
           ),
         ),
       ],

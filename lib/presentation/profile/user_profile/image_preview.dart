@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:ipicku_dating_app/constants.dart';
 
 class ImagePreviewPage extends StatelessWidget {
   final String imageUrl;
@@ -10,7 +11,7 @@ class ImagePreviewPage extends StatelessWidget {
     return Scaffold(
       backgroundColor: Colors.black38,
       appBar: AppBar(
-        iconTheme: const IconThemeData(color: Colors.white),
+        iconTheme: const IconThemeData(color: AppTheme.white),
         backgroundColor: Colors.transparent,
       ),
       body: Hero(

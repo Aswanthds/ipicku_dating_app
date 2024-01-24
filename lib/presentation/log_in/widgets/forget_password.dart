@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:ipicku_dating_app/constants.dart';
 import 'package:ipicku_dating_app/presentation/log_in/forget_password_page.dart';
 
 class ForgetPasswordText extends StatelessWidget {
@@ -18,7 +19,7 @@ class ForgetPasswordText extends StatelessWidget {
           },
           child: const Text(
             "Forgot Password",
-            style: TextStyle(color: Colors.white),
+            style: TextStyle(color: AppTheme.white),
           )),
     );
   }

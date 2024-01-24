@@ -1,7 +1,9 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'package:eva_icons_flutter/eva_icons_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:google_sign_in/google_sign_in.dart';
+import 'package:ipicku_dating_app/constants.dart';
 import 'package:ipicku_dating_app/data/repositories/user_repositories.dart';
 import 'package:ipicku_dating_app/domain/login_bloc/login_bloc.dart';
 
@@ -18,13 +20,12 @@ class GoogleLoginButton extends StatelessWidget {
           borderRadius: BorderRadius.circular(30.0),
         ),
       ),
-      icon: const Icon(EvaIcons.google, color: Colors.white),
+      icon: const Icon(EvaIcons.google, color: AppTheme.white),
       onPressed: () async {
-        final account = await userRepository.performGoogleSignIn();
-        BlocProvider.of<LoginBloc>(context).add(GoogleSignUp(account: account));
+        BlocProvider.of<LoginBloc>(context).add(GoogleSignUp());
       },
       label: const Text('Sign in with Google',
-          style: TextStyle(color: Colors.white)),
+          style: TextStyle(color: AppTheme.white)),
     );
   }
 }

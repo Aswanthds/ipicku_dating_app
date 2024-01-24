@@ -1,12 +1,14 @@
 // ignore_for_file: use_build_context_synchronously
 
 import 'dart:io';
+import 'package:ipicku_dating_app/constants.dart';
 import 'package:ipicku_dating_app/data/model/user.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:ipicku_dating_app/domain/bloc/firebase_data_bloc.dart';
+import 'package:ipicku_dating_app/domain/firebase_data/firebase_data_bloc.dart';
 import 'package:ipicku_dating_app/presentation/profile/user_profile/image_preview.dart';
+import 'package:ipicku_dating_app/presentation/profile/widgets/iterests-data.dart';
 import 'package:ipicku_dating_app/presentation/profile/widgets/profile_date.dart';
 import 'package:ipicku_dating_app/presentation/profile/widgets/profile_details_list.dart';
 
@@ -19,6 +21,7 @@ class UserDetailsList extends StatelessWidget {
     final TextEditingController nameController = TextEditingController();
     final TextEditingController emailController = TextEditingController();
     final TextEditingController bioController = TextEditingController();
+    final TextEditingController interestController = TextEditingController();
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -27,7 +30,7 @@ class UserDetailsList extends StatelessWidget {
         const Text(
           'User Details',
           style: TextStyle(
-            color: Colors.black,
+            color: AppTheme.black,
             fontWeight: FontWeight.bold,
             fontSize: 18,
           ),
@@ -53,7 +56,7 @@ class UserDetailsList extends StatelessWidget {
               overflow: TextOverflow.ellipsis,
               textAlign: TextAlign.start,
               style: TextStyle(
-                color: Colors.black,
+                color: AppTheme.black,
               ),
             ),
             Padding(
@@ -64,14 +67,13 @@ class UserDetailsList extends StatelessWidget {
                 textAlign: TextAlign.justify,
                 style: const TextStyle(
                   fontWeight: FontWeight.bold,
-                  color: Colors.black,
+                  color: AppTheme.black,
                 ),
               ),
             ),
           ],
         ),
         ProfileDateWidget(user: user),
-
         ProfileDetailsListTile(
           heading: 'Bio',
           value: user?.bio ?? '< Not Set >',
@@ -79,14 +81,139 @@ class UserDetailsList extends StatelessWidget {
           isEditable: true,
           field: 'bio',
         ),
-
-        //  context: context,
-
+        InterestDataWidget(user: user, interestController: interestController),
         UserPhotosOwnProfile(user: user),
       ],
     );
   }
 }
+
+// class InterestDataWidget extends StatelessWidget {
+//   const InterestDataWidget({
+//     super.key,
+//     required this.user,
+//     required this.interestController,
+//   });
+
+//   final UserModel? user;
+//   final TextEditingController interestController;
+
+//   @override
+//   Widget build(BuildContext context) {
+//     return Row(
+//       mainAxisAlignment: MainAxisAlignment.spaceBetween,
+//       children: [
+//         const Text(
+//           "Interests",
+//           overflow: TextOverflow.ellipsis,
+//           textAlign: TextAlign.start,
+//           style: TextStyle(
+//             color: AppTheme.black,
+//           ),
+//         ),
+//         Row(
+//           mainAxisAlignment: MainAxisAlignment.spaceBetween,
+//           children: [
+//             BlocBuilder<FirebaseDataBloc, FirebaseDataState>(
+//               builder: (context, state) {
+//                 if (state is FirebaseDataLoaded) {
+//                   Padding(
+//                       padding: const EdgeInsets.only(left: 8.0, right: 15.0),
+//                       child: Wrap(
+//                         children: List<Widget>.generate(
+//                             3,
+//                             (index) => FittedBox(
+//                                   fit: BoxFit.contain,
+//                                   child: Container(
+//                                     width: 50,
+//                                     decoration: BoxDecoration(
+//                                         color: AppTheme.grey,
+//                                         borderRadius:
+//                                             BorderRadius.circular(10)),
+//                                     padding: const EdgeInsets.all(5.0),
+//                                     margin: const EdgeInsets.only(
+//                                       left: 5,
+//                                       right: 5,
+//                                     ),
+//                                     child: Center(
+//                                         child: user?.interests?[index] != null
+//                                             ? Text(
+//                                                 user?.interests?[index] ?? '')
+//                                             : const Text('')),
+//                                   ),
+//                                 )),
+//                       ));
+//                 }
+//                 return const SizedBox();
+//               },
+//             ),
+//             IconButton(
+//               onPressed: () {
+//                 showDialog(
+//                   context: context,
+//                   builder: (BuildContext context) {
+//                     return AlertDialog(
+//                       shape: const RoundedRectangleBorder(
+//                           borderRadius: BorderRadius.zero),
+//                       title: const Column(
+//                         crossAxisAlignment: CrossAxisAlignment.start,
+//                         children: [
+//                           Text(
+//                             "Edit Interests",
+//                             style: TextStyle(
+//                                 fontSize: 21, fontWeight: FontWeight.bold),
+//                           ),
+//                           Text(
+//                             "use ' , ' for more than one interests",
+//                             style: TextStyle(
+//                                 fontSize: 16,
+//                                 fontWeight: FontWeight.bold,
+//                                 color: AppTheme.grey),
+//                           ),
+//                         ],
+//                       ),
+//                       content: TextFormField(
+//                         controller: interestController,
+//                         autocorrect: true,
+//                         decoration: const InputDecoration(
+//                             hintText: "Enter your interests here"),
+//                       ),
+//                       actions: <Widget>[
+//                         TextButton(
+//                           child: const Text('Cancel'),
+//                           onPressed: () {
+//                             Navigator.of(context).pop();
+//                           },
+//                         ),
+//                         TextButton(
+//                           child: const Text('Submit'),
+//                           onPressed: () {
+//                             BlocProvider.of<FirebaseDataBloc>(context).add(
+//                               FirebaseAddData(
+//                                 'Interests',
+//                                 interestController.text.trim().split(','),
+//                               ),
+//                             );
+//                             Navigator.of(context).pop();
+//                           },
+//                         ),
+//                       ],
+//                     );
+//                   },
+//                 );
+//               },
+//               icon: const Icon(
+//                 EvaIcons.edit2,
+//                 color: AppTheme.black,
+//                 size: 18,
+//               ),
+//             ),
+//           ],
+//         )
+//       ],
+//     );
+//   }
+// }
 
 class UserPhotosOwnProfile extends StatefulWidget {
   final UserModel? user;
@@ -115,7 +242,7 @@ class _UserPhotosOwnProfileState extends State<UserPhotosOwnProfile> {
             textAlign: TextAlign.start,
             style: TextStyle(
               fontWeight: FontWeight.bold,
-              color: Colors.black,
+              color: AppTheme.black,
               fontSize: 18,
             ),
           ),
@@ -177,10 +304,10 @@ class _UserPhotosOwnProfileState extends State<UserPhotosOwnProfile> {
                           widget.user!.userPhotos!.isNotEmpty &&
                           index < widget.user!.userPhotos!.length
                       ? null
-                      : Center(
+                      : const Center(
                           child: Icon(
                             Icons.add_a_photo_outlined,
-                            color: Colors.white,
+                            color: AppTheme.white,
                           ),
                         ),
                 ),

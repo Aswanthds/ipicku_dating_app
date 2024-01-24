@@ -11,6 +11,7 @@ class UserModel {
   DateTime? dob;
   Timestamp? created;
   GeoPoint? location;
+  int? minAge, maxAge;
   List<dynamic>? userPhotos;
   List<dynamic>? interests;
 
@@ -25,6 +26,8 @@ class UserModel {
       this.age,
       this.bio,
       this.dob,
+      this.minAge,
+      this.maxAge,
       this.interests,
       this.userPhotos});
 
@@ -35,13 +38,15 @@ class UserModel {
       age: json['age'],
       gender: json['gender'],
       created: json['created'],
-      interests: json['interests'],
+      interests: json['Interests'],
       location: json['location'],
       photoPath: json['photoUrl'],
       userPhotos: json['photos'],
       email: json['email'],
       dob: (json['dob'] as Timestamp).toDate(),
-      bio: json['bio']
+      bio: json['bio'],
+      minAge: json['minAge'],
+      maxAge: json['maxAge'],
     );
   }
 }

@@ -1,3 +1,5 @@
+// ignore_for_file: avoid_print
+
 import 'dart:async';
 import 'dart:io';
 
@@ -22,6 +24,24 @@ class UserRepository {
       email: email,
       password: password,
     );
+  }
+
+  Future<void> signInwithGoogle() async {
+    try {
+      final GoogleSignInAccount? googleSignInAccount =
+          await _googleSignIn.signIn();
+      final GoogleSignInAuthentication googleSignInAuthentication =
+          await googleSignInAccount!.authentication;
+
+      final AuthCredential credential = GoogleAuthProvider.credential(
+        accessToken: googleSignInAuthentication.accessToken,
+        idToken: googleSignInAuthentication.idToken,
+      );
+
+      await _firebaseAuth.signInWithCredential(credential);
+    } catch (e) {
+      debugPrint("error");
+    }
   }
 
   Future<void> sentResetEmail(String email) async {
@@ -63,10 +83,8 @@ class UserRepository {
   }
 
   Future<void> signOut() async {
-    Future.wait([
-      _firebaseAuth.signOut(),
-      _googleSignIn.signOut(),
-    ]);
+    _firebaseAuth.signOut();
+    _googleSignIn.signOut();
   }
 
   Future<bool> isSignedIn() async {
@@ -93,7 +111,6 @@ class UserRepository {
     Timestamp? created,
     DateTime? dob,
     GeoPoint? location,
-    List<String>? interests,
   }) async {
     try {
       final Reference storageRef = FirebaseStorage.instance
@@ -137,33 +154,6 @@ class UserRepository {
           'bio': bio,
         });
       }
-      String photoPrefix = userId.substring(userId.length - 4).toLowerCase();
-
-      // for (int i = 0; i < userPhotos!.length; i++) {
-      //   File? photo = userPhotos[i];
-
-      //   String photoName = '$photoPrefix-pic$i.png';
-
-      //   final Reference storageRef = FirebaseStorage.instance
-      //       .ref()
-      //       .child('userPhotos')
-      //       .child(userId)
-      //       .child(photoName);
-
-      //   final UploadTask uploadTask = storageRef.putFile(photo!);
-      //   await uploadTask;
-      //   final String photoUrl = await storageRef.getDownloadURL();
-
-      //   await usersCollection.doc(userId).update({
-      //     'photos': FieldValue.arrayUnion([photoUrl]),
-      //   });
-      // }
-      for (int i = 0; i < interests!.length; i++) {
-        String interest = interests[i].trim();
-        await usersCollection.doc(userId).update({
-          'interests': FieldValue.arrayUnion([interest]),
-        });
-      }
     } catch (e) {
       debugPrint('Error during profile setup: $e');
 
@@ -204,8 +194,6 @@ class UserRepository {
     }
   }
 
-// ...
-
   Future<void> uploadImageToStorage(
       XFile imageFile, int index, String field) async {
     try {
@@ -223,7 +211,7 @@ class UserRepository {
       // final downloadURL = await storageRef.getDownloadURL();
       // return downloadURL;
     } catch (e) {
-      print('Error uploading image: $e');
+      debugPrint('Error uploading image: $e');
     }
   }
 
@@ -235,10 +223,8 @@ class UserRepository {
         .child('userPhotos')
         .child(userId)
         .child('$photoPrefix-profile_pic4.png');
-        await storageRef.putFile(File(imageFile.path));
-        
-        
-    
+    await storageRef.putFile(File(imageFile.path));
+
     return storageRef.getDownloadURL();
   }
 
@@ -251,13 +237,15 @@ class UserRepository {
       final List<String> imageURLs = [];
 
       for (final item in result.items) {
-        final downloadURL = await item.getDownloadURL();
-        imageURLs.add(downloadURL);
+        if (!item.name.contains("profile")) {
+          final downloadURL = await item.getDownloadURL();
+          imageURLs.add(downloadURL);
+        }
       }
 
       return imageURLs;
     } catch (e) {
-      print('Error getting image URLs: $e');
+      debugPrint('Error getting image URLs: $e');
       return [];
     }
   }
@@ -272,7 +260,7 @@ class UserRepository {
         'photos': imageURLs,
       });
     } catch (e) {
-      print('Error updating Firestore: $e');
+      debugPrint('Error updating Firestore: $e');
     }
   }
 
@@ -292,22 +280,53 @@ class UserRepository {
         });
       });
       await FirebaseAuth.instance.currentUser?.delete();
-      print('User images deleted from Firebase Storage successfully');
+      debugPrint('User images deleted from Firebase Storage successfully');
       return await FirebaseAuth.instance.currentUser?.delete();
     } catch (e) {
       throw Exception("Unable to delete user");
     }
   }
 
-  Future<GoogleSignInAccount> performGoogleSignIn() async {
-    final googleSignIn = GoogleSignIn();
-    final account = await googleSignIn.signIn();
+  Future<UserCredential?> googleSignUp() async {
+    try {
+      final GoogleSignInAccount? googleSignInAccount =
+          await _googleSignIn.signIn();
+      final GoogleSignInAuthentication? googleSignInAuthentication =
+          await googleSignInAccount?.authentication;
 
-    if (account == null) {
-      throw 'Google Sign-In canceled by the user.';
+      final AuthCredential credential = GoogleAuthProvider.credential(
+        accessToken: googleSignInAuthentication?.accessToken,
+        idToken: googleSignInAuthentication?.idToken,
+      );
+
+      return await _firebaseAuth.signInWithCredential(credential);
+    } catch (error) {
+      debugPrint('Error signing in with Google: $error');
+      return null;
     }
+  }
 
-    return account;
+  Future<GeoPoint?> getUserLocation() async {
+    String userId = await getUser();
+    DocumentSnapshot userSnapshot =
+        await FirebaseFirestore.instance.collection('users').doc(userId).get();
+
+    // Check if the user document exists
+    if (userSnapshot.exists) {
+      // Retrieve the GeoPoint from the 'location' field
+      GeoPoint geoPoint = userSnapshot['location'];
+
+      return geoPoint;
+
+      // Extract latitude and longitude
+      // double latitude = geoPoint.latitude;
+      // double longitude = geoPoint.longitude;
+
+      // debugPrint('User Latitude: $latitude, Longitude: $longitude');
+    } else {
+      debugPrint('User not found or document does not exist.');
+      return null;
+    }
   }
 }
 /*

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:ipicku_dating_app/constants.dart';
 import 'package:ipicku_dating_app/domain/profile_bloc/profile_state.dart';
 
 class ProfileSignUpFormField extends StatelessWidget {
@@ -33,23 +34,23 @@ class ProfileSignUpFormField extends StatelessWidget {
                 Radius.circular(15),
               ),
               borderSide: BorderSide(
-                color: Colors.white,
+                color: AppTheme.white,
                 style: BorderStyle.solid,
               ),
             ),
-            labelStyle: const TextStyle(color: Colors.white),
+            labelStyle: const TextStyle(color: AppTheme.white),
             focusedBorder: const OutlineInputBorder(
               borderRadius: BorderRadius.all(
                 Radius.circular(15),
               ),
               borderSide: BorderSide(
-                color: Colors.grey,
+                color: AppTheme.grey,
                 style: BorderStyle.solid,
               ),
             ),
           ),
           style: const TextStyle(
-            color: Colors.white,
+            color: AppTheme.white,
           ),
           autocorrect: false,
           validator: validator),

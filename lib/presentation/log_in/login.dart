@@ -15,7 +15,7 @@ class SignInPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       resizeToAvoidBottomInset: false,
-      backgroundColor: kPrimary,
+      backgroundColor: AppTheme.kPrimary,
       body: Center(
         child: BlocProvider(
           create: (context) => LoginBloc(userRepository: userRepository),

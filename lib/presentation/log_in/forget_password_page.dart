@@ -26,7 +26,7 @@ class _ForgetPasswordPageState extends State<ForgetPasswordPage> {
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(
               duration: Duration(seconds: 2),
-              backgroundColor: Colors.red,
+              backgroundColor: AppTheme.red,
               behavior: SnackBarBehavior.floating,
               content: Text("Email not Valid or not registered"),
             ),
@@ -36,7 +36,7 @@ class _ForgetPasswordPageState extends State<ForgetPasswordPage> {
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(
               duration: Duration(seconds: 2),
-              backgroundColor: Colors.grey,
+              backgroundColor: AppTheme.grey,
               behavior: SnackBarBehavior.floating,
               content: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -66,11 +66,11 @@ class _ForgetPasswordPageState extends State<ForgetPasswordPage> {
         }
       },
       child: Scaffold(
-        backgroundColor: kPrimary,
+        backgroundColor: AppTheme.kPrimary,
         appBar: AppBar(
-          backgroundColor: kPrimary,
+          backgroundColor: AppTheme.kPrimary,
           automaticallyImplyLeading: true,
-          iconTheme: const IconThemeData(color: Colors.white),
+          iconTheme: const IconThemeData(color: AppTheme.white),
         ),
         body: SingleChildScrollView(
           scrollDirection: Axis.vertical,
@@ -112,7 +112,7 @@ class _ForgetPasswordPageState extends State<ForgetPasswordPage> {
                         }
                       },
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.white,
+                        backgroundColor: AppTheme.white,
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(12.0),
                         ),

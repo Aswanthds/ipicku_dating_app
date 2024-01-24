@@ -32,14 +32,7 @@ class _RegisterFormState extends State<RegisterForm> {
 
   @override
   void initState() {
-    _emailController.addListener(_onEmailChanged);
-    _passwordController.addListener(_onPasswordChanged);
-
     super.initState();
-  }
-
-  bool isSignUpButtonEnabled(SignUpState state) {
-    return !state.isSubmitting;
   }
 
   void _onFormSubmitted() {
@@ -54,22 +47,22 @@ class _RegisterFormState extends State<RegisterForm> {
   Widget build(BuildContext context) {
     return BlocListener<SignUpBloc, SignUpState>(
       listener: (context, state) {
-        if (state.isFailure) {
+        if (state is SignUpFailed) {
           ScaffoldMessenger.of(context)
             ..hideCurrentMaterialBanner()
             ..showSnackBar(
-              failedSignUp,
+              SnackBarManager.failedSignUp,
             );
         }
 
-        if (state.isSubmitting) {
+        if (state is SignUpLoading) {
           debugPrint("isSubmitting");
 
           ScaffoldMessenger.of(context).showSnackBar(
-            submitiingSignUp,
+            SnackBarConstants.profileLoading,
           );
         }
-        if (state.isSuccess) {
+        if (state is SignUpSucess) {
           debugPrint("Success");
           BlocProvider.of<AuthenticationBloc>(context).add(LoggedIn());
           Navigator.of(context).pop();
@@ -108,7 +101,7 @@ class _RegisterFormState extends State<RegisterForm> {
                     validator: (value) {
                       if (value!.isEmpty) {
                         return "Enter your password ";
-                      } else if (!Validators.isValidPassword(value)) {
+                      } else if (!Validators.isValidPassword(value.trim())) {
                         return "Enter your password correctly";
                       }
 
@@ -119,23 +112,20 @@ class _RegisterFormState extends State<RegisterForm> {
                     isPassword: true,
                   ),
                   Padding(
-                    padding: const EdgeInsets.only(top: 20),
-                    child: isPopulated
-                        ? RegisterButton(
-                            onPressed: isSignUpButtonEnabled(state)
-                                ? _onFormSubmitted
-                                : null)
-                        : ElevatedButton(
-                            onPressed: () {},
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: Colors.grey,
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(30.0),
-                              ),
-                            ),
-                            child: const Text("Register"),
-                          ),
-                  ),
+                      padding: const EdgeInsets.only(top: 20),
+                      child: RegisterButton(onPressed: _onFormSubmitted)
+                      // ?
+                      // : ElevatedButton(
+                      //     onPressed: () {},
+                      //     style: ElevatedButton.styleFrom(
+                      //       backgroundColor: AppTheme.grey,
+                      //       shape: RoundedRectangleBorder(
+                      //         borderRadius: BorderRadius.circular(30.0),
+                      //       ),
+                      //     ),
+                      //     child: const Text("Register"),
+                      //),
+                      ),
                   ElevatedButton.icon(
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.redAccent,
@@ -143,15 +133,13 @@ class _RegisterFormState extends State<RegisterForm> {
                         borderRadius: BorderRadius.circular(30.0),
                       ),
                     ),
-                    icon: const Icon(EvaIcons.google, color: Colors.white),
-                    onPressed: () async {
-                      final account =
-                          await widget.userRepository.performGoogleSignIn();
+                    icon: const Icon(EvaIcons.google, color: AppTheme.white),
+                    onPressed: () {
                       BlocProvider.of<SignUpBloc>(context)
-                          .add(GoogleSignUpEvent(account: account));
+                          .add(GoogleSignUpEvent());
                     },
                     label: const Text('Sign in with Google',
-                        style: TextStyle(color: Colors.white)),
+                        style: TextStyle(color: AppTheme.white)),
                   ),
                 ],
               ),
@@ -159,18 +147,6 @@ class _RegisterFormState extends State<RegisterForm> {
           },
         ),
       ),
-    );
-  }
-
-  void _onEmailChanged() {
-    BlocProvider.of<SignUpBloc>(context).add(
-      EmailChanged(email: _emailController.text),
-    );
-  }
-
-  void _onPasswordChanged() {
-    BlocProvider.of<SignUpBloc>(context).add(
-      PasswordChanged(password: _passwordController.text),
     );
   }
 

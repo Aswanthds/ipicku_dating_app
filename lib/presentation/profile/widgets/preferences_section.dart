@@ -1,6 +1,7 @@
 import 'package:eva_icons_flutter/eva_icons_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:ipicku_dating_app/constants.dart';
 import 'package:ipicku_dating_app/data/model/user.dart';
 import 'package:ipicku_dating_app/data/repositories/user_repositories.dart';
 import 'package:ipicku_dating_app/presentation/log_in/forget_password_page.dart';
@@ -10,7 +11,8 @@ import 'package:ipicku_dating_app/presentation/profile/widgets/profile_details_l
 class PreferencesSection extends StatelessWidget {
   final UserModel? model;
   final UserRepository repo;
-  const PreferencesSection({Key? key, required this.model, required this.repo}) : super(key: key);
+  const PreferencesSection({Key? key, required this.model, required this.repo})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -21,7 +23,7 @@ class PreferencesSection extends StatelessWidget {
         const Text(
           'Security Details',
           style: TextStyle(
-            color: Colors.black,
+            color: AppTheme.black,
             fontWeight: FontWeight.bold,
             fontSize: 18,
           ),
@@ -35,7 +37,7 @@ class PreferencesSection extends StatelessWidget {
               overflow: TextOverflow.ellipsis,
               textAlign: TextAlign.start,
               style: TextStyle(
-                color: Colors.black,
+                color: AppTheme.black,
               ),
             ),
             IconButton(
@@ -57,7 +59,7 @@ class PreferencesSection extends StatelessWidget {
           isEditable: false,
         ),
         const SizedBox(height: 20),
-         DeleteAccountWidget(userRepository: repo),
+        DeleteAccountWidget(userRepository: repo),
       ],
     );
   }

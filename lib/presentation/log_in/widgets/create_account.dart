@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:ipicku_dating_app/constants.dart';
 import 'package:ipicku_dating_app/data/repositories/user_repositories.dart';
 import 'package:ipicku_dating_app/presentation/sign_up/signup.dart';
 
@@ -16,7 +17,7 @@ class CreateAccountButton extends StatelessWidget {
       children: [
         const Text(
           "Dont have an account ?",
-          style: TextStyle(color: Colors.white),
+          style: TextStyle(color: AppTheme.white),
         ),
         TextButton(
           child: const Text(

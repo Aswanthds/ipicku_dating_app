@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:ipicku_dating_app/constants.dart';
 
 class ProfileDetails extends StatelessWidget {
   final String name, age, uid;
@@ -15,13 +16,13 @@ class ProfileDetails extends StatelessWidget {
           text: TextSpan(
             text: "Name : ",
             style: const TextStyle(
-              color: Colors.black,
+              color: AppTheme.black,
             ),
             children: [
               TextSpan(
                 text: name.toUpperCase(),
                 style: const TextStyle(
-                    fontWeight: FontWeight.bold, color: Colors.black),
+                    fontWeight: FontWeight.bold, color: AppTheme.black),
               ),
             ],
           ),
@@ -31,14 +32,14 @@ class ProfileDetails extends StatelessWidget {
           text: TextSpan(
             text: "Age : ",
             style: const TextStyle(
-              color: Colors.black,
+              color: AppTheme.black,
             ),
             children: [
               TextSpan(
                 text: age,
                 style: const TextStyle(
                   fontWeight: FontWeight.bold,
-                  color: Colors.black,
+                  color: AppTheme.black,
                 ),
               ),
             ],
@@ -51,7 +52,7 @@ class ProfileDetails extends StatelessWidget {
           child: Text(
             uid.toUpperCase(),
             style: const TextStyle(
-                fontWeight: FontWeight.bold, color: Colors.black),
+                fontWeight: FontWeight.bold, color: AppTheme.black),
           ),
         ),
       ],

@@ -47,22 +47,19 @@ class DeleteAccountWidget extends StatelessWidget {
             child: OutlinedButton.icon(
               style: OutlinedButton.styleFrom(
                   side: const BorderSide(
-                color: kPrimary,
+                color: AppTheme.kPrimary,
                 style: BorderStyle.solid,
                 width: 1.5,
               )),
-              onPressed: () {
-                BlocProvider.of<AuthenticationBloc>(context)
-                    .add(DeleteAccount());
-              },
+              onPressed: () => DialogManager.showDeleteAccountDialog(context),
               icon: const Icon(
                 EvaIcons.trash2,
-                color: kPrimary,
+                color: AppTheme.kPrimary,
               ),
               label: const Text(
                 "Delete Account",
                 style: TextStyle(
-                  color: kPrimary,
+                  color: AppTheme.kPrimary,
                   fontWeight: FontWeight.bold,
                 ),
               ),
