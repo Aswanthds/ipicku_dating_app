@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:ipicku_dating_app/constants.dart';
 
 class NotificationsPage extends StatelessWidget {
   const NotificationsPage({super.key});
@@ -52,15 +51,11 @@ class NotificationItem extends StatelessWidget {
       ),
       title: Text(
         subtitle,
-        style: const TextStyle(
-          color: AppTheme.black,
-        ),
+        style: Theme.of(context).textTheme.titleMedium,
       ),
       trailing: Text(
         time,
-        style: const TextStyle(
-          color: AppTheme.grey,
-        ),
+        style: Theme.of(context).textTheme.titleSmall,
       ),
     );
   }

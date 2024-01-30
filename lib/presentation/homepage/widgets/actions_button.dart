@@ -2,15 +2,17 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:ipicku_dating_app/constants.dart';
 import 'package:ipicku_dating_app/data/repositories/user_repositories.dart';
-import 'package:ipicku_dating_app/domain/bloc/matching_bloc.dart';
+import 'package:ipicku_dating_app/domain/bloc/matches_data_bloc.dart';
 
 class ActionsButton extends StatelessWidget {
   final UserRepository repository;
   final String id;
+  final void Function() onActionPressed;
   const ActionsButton({
     super.key,
     required this.repository,
     required this.id,
+    required this.onActionPressed,
   });
 
   @override
@@ -20,10 +22,11 @@ class ActionsButton extends StatelessWidget {
       backgroundColor: AppTheme.white,
       child: IconButton(
         onPressed: () async {
-          BlocProvider.of<MatchingBloc>(context).add(AcceptUserEvent(
-              currentUser: await repository.getUser(), selectedUser: id));
+          //ProfileFunctions().showSelectionAnimation(context, Offset.zero);
+          BlocProvider.of<MatchesDataBloc>(context)
+              .add(AddUserAsAPick(selectedUserId: id));
 
-          //Navigator.of(context).pop();
+          onActionPressed();
         },
         icon: const ImageIcon(
           AssetImage('assets/images/logo_light.png'),

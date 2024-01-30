@@ -10,7 +10,8 @@ part 'firebase_data_state.dart';
 
 class FirebaseDataBloc extends Bloc<FirebaseDataEvent, FirebaseDataState> {
   final UserRepository userRepository;
-  FirebaseDataBloc(this.userRepository) : super(FirebaseDataInitial()) {
+ 
+  FirebaseDataBloc(this.userRepository,) : super(FirebaseDataInitial()) {
     on<FirebaseDataLoadedEvent>((event, emit) async {
       emit(FirebaseDataLoading());
       await Future.delayed(const Duration(seconds: 2));
@@ -165,5 +166,6 @@ class FirebaseDataBloc extends Bloc<FirebaseDataEvent, FirebaseDataState> {
         }
       },
     );
+    
   }
 }

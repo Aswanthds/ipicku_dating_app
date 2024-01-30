@@ -32,28 +32,38 @@ class UserProfileBottomSheet extends StatelessWidget {
                       color: AppTheme.black,
                       image: DecorationImage(
                         image: NetworkImage(data['photoUrl']),
-                        fit: BoxFit.fitHeight,
+                        fit: BoxFit
+                            .cover, // Adjusted to cover the entire container
                       ),
                     ),
                   ),
                   IconButton(
-                      onPressed: () {
-                        Navigator.of(context).pop();
-                      },
-                      icon: const Icon(
-                        Icons.arrow_back,
-                        color: AppTheme.white,
-                      ))
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                    },
+                    icon: const Icon(
+                      Icons.arrow_back,
+                      color: AppTheme.white,
+                    ),
+                  ),
                 ],
               ),
               DetailsSection(
-                  name: data['name'], age: data['age'], bio: data['bio'] ?? ''),
+                data: data,
+              ),
               const SizedBox(height: 16),
               UserImageSection(imageUrl: data['photos']),
               const SizedBox(height: 16),
               const ProfileDetailsAction(),
             ],
           ),
+        ),
+      ),
+      floatingActionButton: IconButton.filled(
+        onPressed: () {},
+        icon: const ImageIcon(
+          AssetImage("assets/images/logo_light.png"),
+          size: 50,
         ),
       ),
     );

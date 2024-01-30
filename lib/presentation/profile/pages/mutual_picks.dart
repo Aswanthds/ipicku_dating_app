@@ -1,26 +1,25 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
 import 'package:ipicku_dating_app/constants.dart';
 import 'package:ipicku_dating_app/data/model/user.dart';
 import 'package:ipicku_dating_app/domain/bloc/matches_data_bloc.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:ipicku_dating_app/presentation/homepage/progfilepage.dart';
 
-class MyPicksPage extends StatelessWidget {
+class MutualPicks extends StatelessWidget {
   final UserModel user;
-  const MyPicksPage({Key? key, required this.user}) : super(key: key);
+
+  const MutualPicks({super.key, required this.user});
 
   @override
   Widget build(BuildContext context) {
-    BlocProvider.of<MatchesDataBloc>(context).add(MatchesLoadingEvent());
+    BlocProvider.of<MatchesDataBloc>(context).add(MutualListLoadingEvent());
     return Scaffold(
         appBar: AppBar(
-          title: const Text("My Picks"),
+          title: const Text("Mutual Picks"),
         ),
         body: BlocBuilder<MatchesDataBloc, MatchesDataState>(
           builder: (context, state) {
-            if (state is MatchesListLoading) {
+            if (state is MutualListLoading) {
               return const Center(
                 child: CircularProgressIndicator(
                   color: AppTheme.red,
@@ -28,7 +27,7 @@ class MyPicksPage extends StatelessWidget {
                 ),
               );
             }
-            if (state is MatchesListLoaded) {
+            if (state is MutualListLoaded) {
               final data = state.userProfile;
               return ListView.builder(
                   itemCount: data.length,
@@ -53,16 +52,6 @@ class MyPicksPage extends StatelessWidget {
                               style: const TextStyle(
                                   color: AppTheme.black26,
                                   letterSpacing: 2.0,
-                                  fontWeight: FontWeight.bold)),
-                          subtitle: Text(
-                              DateFormat('dd MMM yy').format(
-                                (data[index]['timestamp'] as Timestamp)
-                                    .toDate(),
-                              ),
-                              style: const TextStyle(
-                                  color: Colors.white,
-                                  letterSpacing: 1.5,
-                                  fontSize: 12,
                                   fontWeight: FontWeight.bold)),
                           leading: CircleAvatar(
                             backgroundImage:

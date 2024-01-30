@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:ipicku_dating_app/constants.dart';
-import 'package:ipicku_dating_app/domain/bloc/matching_bloc.dart';
+import 'package:ipicku_dating_app/domain/matching_bloc/matching_bloc.dart';
+import 'package:ipicku_dating_app/presentation/homepage/progfilepage.dart';
 
 class RecommendedPage extends StatefulWidget {
   const RecommendedPage({
@@ -13,133 +14,139 @@ class RecommendedPage extends StatefulWidget {
 }
 
 class _RecommendedPageState extends State<RecommendedPage> {
-  bool _isLoading = false;
-  @override
-  void initState() {
-    if (!_isLoading) {
-      BlocProvider.of<MatchingBloc>(context)
-          .add(const GetRegionUsers(radius: 1.0));
-      _isLoading = true;
-    }
-    super.initState();
-  }
-
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-        appBar: AppBar(
-          title: const Text('Recommended Profiles'),
-        ),
-        body: BlocBuilder<MatchingBloc, MatchingState>(
-          builder: (context, state) {
-            if (state is Regionprofiles) {
-              return buildSection(
-                "Location",
-                ListView.builder(
-                  itemCount: state.userProfile.length,
-                  scrollDirection: Axis.horizontal,
-                  itemBuilder: (context, index) {
-                    final data = state.userProfile[index];
-                    return _buildProfileCard(
-                      data['name'],
-                      data['age'],
-                      data['photoUrl'],
-                      'Age',
-                    );
-                  },
-                ),
-              );
-            }
-            return const SizedBox();
-          },
-        ));
-  }
+    BlocProvider.of<MatchingBloc>(context)
+        .add(const GetRegionUsers(radius: 1.0));
 
-  Widget _buildProfileCard(
-      String name, int description, String imagePath, String title) {
-    return Card(
-      elevation: 5,
-      margin: const EdgeInsets.all(5.0),
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(20),
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Recommended Profiles'),
       ),
-      child: SizedBox(
-        width: 120,
-        child: Stack(
-          children: <Widget>[
-            Container(
-              width: 150,
-              decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(20),
-                  image: DecorationImage(
-                      image: NetworkImage(imagePath), fit: BoxFit.cover)),
-            ),
-            Container(
-              width: 120,
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(20),
-                gradient: AppTheme.blackFade,
+      body: BlocBuilder<MatchingBloc, MatchingState>(
+        builder: (context, state) {
+          if (state is Regionprofiles) {
+            return SingleChildScrollView(
+              scrollDirection: Axis.vertical,
+              child: Column(
+                children: [
+                  SectionRecommendedPage(
+                      state: state.locationUsers, title: "Location"),
+                  SectionRecommendedPage(
+                      state: state.interest, title: "Interest")
+                ],
               ),
-              child: Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  children: [
-                    Text(
-                      name,
-                      style: const TextStyle(
-                        fontWeight: FontWeight.bold,
-                        color: AppTheme.white,
-                      ),
-                    ),
-                    RichText(
-                      text: TextSpan(
-                        text: "$title :",
-                        style: const TextStyle(
-                          fontWeight: FontWeight.bold,
-                          color: AppTheme.white,
-                        ),
-                        children: [
-                          TextSpan(
-                            text: description.toString(),
-                            style: const TextStyle(color: AppTheme.white),
-                          )
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-          ],
-        ),
+            );
+          }
+          if (state is RegionprofilesLoading) {
+            return const Center(
+                child: CircularProgressIndicator(
+              strokeWidth: 5.0,
+            ));
+          }
+          if (state is RegionprofilesError) {
+            return const SizedBox();
+          }
+          return const SizedBox();
+        },
       ),
     );
   }
+}
 
-  Widget buildSection(String s, ListView buildInterestProfiles) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        const Divider(),
-        Padding(
-          padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 5.0),
-          child: Text(
-            s,
-            style: const TextStyle(
-              fontSize: 20.0,
-              fontWeight: FontWeight.bold,
+class SectionRecommendedPage extends StatelessWidget {
+  final List<Map<String, dynamic>> state;
+  final String title;
+  const SectionRecommendedPage({
+    Key? key,
+    required this.state,
+    required this.title,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Divider(),
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child:
+                Text(title, style: Theme.of(context).textTheme.displayMedium),
+          ),
+          SizedBox(
+            height: 220,
+            child: ListView.builder(
+              itemCount: state.length,
+              scrollDirection: Axis.horizontal,
+              itemBuilder: (context, index) {
+                final data = state[index];
+                return RecommendedCard(data: data);
+              },
             ),
           ),
+          const Divider(),
+        ],
+      ),
+    );
+  }
+}
+
+class RecommendedCard extends StatelessWidget {
+  const RecommendedCard({
+    super.key,
+    required this.data,
+  });
+
+  final Map<String, dynamic> data;
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: () {
+        Navigator.of(context).push(MaterialPageRoute(
+          builder: (context) => UserProfileBottomSheet(data: data),
+        ));
+        //print(data['location']);
+      },
+      child: Card(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
+        child: Stack(
+          children: [
+            Container(
+              height: 220,
+              width: 120,
+              foregroundDecoration: BoxDecoration(
+                gradient: AppTheme.blackFade,
+              ),
+              decoration: BoxDecoration(
+                  color: AppTheme.black26,
+                  image: DecorationImage(
+                    image: NetworkImage(data['photoUrl']),
+                    fit: BoxFit.cover,
+                  ),
+                  borderRadius: const BorderRadius.all(Radius.circular(15))),
+            ),
+            Positioned(
+              bottom: 20,
+              left: 12,
+              child: Row(
+                children: [
+                  Text(
+                    '${data['name'].toString().split(' ').first} , ${data['age'].toString()}',
+                    style: const TextStyle(
+                      color: AppTheme.white,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ],
+              ),
+            )
+          ],
         ),
-        const Divider(),
-        const SizedBox(height: 10),
-        SizedBox(
-          height: 200,
-          child: buildInterestProfiles,
-        ),
-      ],
+      ),
     );
   }
 }

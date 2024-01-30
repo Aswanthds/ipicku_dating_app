@@ -26,7 +26,7 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
       await _userRepository.signInWithCredentials(event.email, event.password);
       final id = await _userRepository.getUser();
       final isFirst = await _userRepository.isFirstTime(id);
-      if (isFirst) {
+      if (!isFirst) {
         emit(LoginProfileNotSet());
       } else {
         emit(LoginSucess());
@@ -42,7 +42,7 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
       await _userRepository.signInwithGoogle();
       final id = await _userRepository.getUser();
       final isFirst = await _userRepository.isFirstTime(id);
-      if (isFirst) {
+      if (!isFirst) {
         emit(LoginProfileNotSet());
       } else {
         emit(LoginSucess());

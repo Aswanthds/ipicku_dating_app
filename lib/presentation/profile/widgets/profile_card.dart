@@ -82,12 +82,13 @@ class ProfileCardWidget extends StatelessWidget {
                     left: 100,
                     child: IconButton.filled(
                         onPressed: () async {
-                          final pickedImage =
-                              await ProfileFunctions.pickImage();
-                          if (pickedImage != null) {
-                            BlocProvider.of<FirebaseDataBloc>(context)
-                                .add(FirebaseProfilePhotochanged(pickedImage));
-                          }
+                          // final pickedImage =
+                          //     await ProfileFunctions.pickImage();
+                          // if (pickedImage != null) {
+                          //   BlocProvider.of<FirebaseDataBloc>(context)
+                          //       .add(FirebaseProfilePhotochanged(pickedImage));
+                          // }
+                          ProfileFunctions.pickAndCropImage(context);
                         },
                         icon: const Icon(Icons.camera_alt)),
                   )

@@ -26,3 +26,5 @@ class FirebaseDataFailure extends FirebaseDataState {
 
   const FirebaseDataFailure({required this.messge});
 }
+
+

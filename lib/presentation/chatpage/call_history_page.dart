@@ -10,9 +10,9 @@ class CallHistoryPage extends StatelessWidget {
         title: const Text("Call History"),
       ),
       body: ListView(
-        children: const [
+        children: [
           ListTile(
-            leading: CircleAvatar(
+            leading: const CircleAvatar(
               radius: 30,
               backgroundImage: AssetImage(
                 "assets/images/logo_dark.png",
@@ -21,28 +21,25 @@ class CallHistoryPage extends StatelessWidget {
             ),
             subtitle: Row(
               children: [
-                Text("Outgoing",
-                    style: TextStyle(
-                      fontSize: 12,
-                      fontWeight: FontWeight.w400,
-                    )),
-                Icon(
+                Text(
+                  "Outgoing",
+                  style: Theme.of(context).textTheme.bodySmall,
+                ),
+                const Icon(
                   Icons.call_made_rounded,
                   color: Colors.green,
                   size: 15,
                 )
               ],
             ),
-            title: Text("Devika",
-                style: TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.w400,
-                )),
-            trailing: Text("12:30 PM",
-                style: TextStyle(
-                  fontSize: 12,
-                  fontWeight: FontWeight.w400,
-                )),
+            title: Text(
+              "Devika",
+              style: Theme.of(context).textTheme.displayMedium,
+            ),
+            trailing: Text(
+              "12:30 PM",
+              style: Theme.of(context).textTheme.bodySmall,
+            ),
           )
         ],
       ),

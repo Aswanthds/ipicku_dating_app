@@ -4,11 +4,14 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:ipicku_dating_app/data/repositories/matches_repo.dart';
 import 'package:ipicku_dating_app/data/repositories/user_repositories.dart';
 import 'package:ipicku_dating_app/domain/auth_bloc/authentication_bloc.dart';
-import 'package:ipicku_dating_app/domain/bloc/matching_bloc.dart';
+import 'package:ipicku_dating_app/domain/bloc/matches_data_bloc.dart';
 import 'package:ipicku_dating_app/domain/firebase_data/firebase_data_bloc.dart';
 import 'package:ipicku_dating_app/domain/login_bloc/login_bloc.dart';
+import 'package:ipicku_dating_app/domain/matching_bloc/matching_bloc.dart';
 import 'package:ipicku_dating_app/domain/profile_bloc/profile_bloc.dart';
 import 'package:ipicku_dating_app/domain/signup_bloc/sign_up_bloc.dart';
+import 'package:ipicku_dating_app/domain/theme/theme_bloc.dart';
+import 'package:ipicku_dating_app/domain/theme/theme_event.dart';
 import 'package:ipicku_dating_app/presentation/log_in/login.dart';
 import 'package:ipicku_dating_app/presentation/main_page.dart';
 import 'package:ipicku_dating_app/presentation/sign_up/profile_signup.dart';
@@ -40,7 +43,13 @@ void main() async {
       create: (context) => FirebaseDataBloc(userRepository),
     ),
     BlocProvider(
-      create: (context) => MatchingBloc(repository)
+      create: (context) => MatchesDataBloc(repository),
+    ),
+    BlocProvider(
+      create: (context) => MatchingBloc(repository),
+    ),
+    BlocProvider(
+      create: (context) => ThemeBloc()..add(InitialThemeSetEvent()),
     )
   ], child: const MyApp()));
 }
@@ -52,34 +61,38 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     final UserRepository userRepository = UserRepository();
 
-    return MaterialApp(
-        title: 'IPickU Dating App | Where relations blossoms ',
-        debugShowCheckedModeBanner: false,
-        theme: ThemeData(
-       
-          useMaterial3: true,
-        ),
-        home: BlocBuilder<AuthenticationBloc, AuthenticationState>(
-          builder: (context, state) {
-            if (state is IntialAuthenticationState) {
-              return const SplashScreen();
-            }
-            if (state is AuthenticationSuccess) {
-              return MainPageNav(
-                repository: userRepository,
-              );
-            }
-            if (state is Unauthenticated) {
-              return SignInPage(userRepository: userRepository);
-            }
-            if (state is AuthenticationSucessButNotSet) {
-              return SignupProfilePage(
-                userRepository: userRepository,
-              );
-            } else {
-              return const SplashScreen();
-            }
-          },
-        ));
+    return BlocBuilder<ThemeBloc, ThemeData>(
+      builder: (context, state) {
+        return MaterialApp(
+            title: 'IPickU Dating App | Where relations blossoms ',
+            debugShowCheckedModeBanner: false,
+            theme: state,
+            // theme: ThemeData.light(
+            //   useMaterial3: true,
+            // ),
+            home: BlocBuilder<AuthenticationBloc, AuthenticationState>(
+              builder: (context, state) {
+                if (state is IntialAuthenticationState) {
+                  return const SplashScreen();
+                }
+                if (state is AuthenticationSuccess) {
+                  return MainPageNav(
+                    repository: userRepository,
+                  );
+                }
+                if (state is Unauthenticated) {
+                  return SignInPage(userRepository: userRepository);
+                }
+                if (state is AuthenticationSucessButNotSet) {
+                  return SignupProfilePage(
+                    userRepository: userRepository,
+                  );
+                } else {
+                  return const SplashScreen();
+                }
+              },
+            ));
+      },
+    );
   }
 }

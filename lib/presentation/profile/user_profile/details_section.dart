@@ -1,16 +1,17 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:eva_icons_flutter/eva_icons_flutter.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
+import 'package:ipicku_dating_app/constants.dart';
+import 'package:ipicku_dating_app/data/functions/profile_functions.dart';
 
 class DetailsSection extends StatelessWidget {
   const DetailsSection({
-    super.key,
-    required this.name,
-    required this.age,
-    required this.bio,
-  });
+    Key? key,
+    required this.data,
+  }) : super(key: key);
 
-  final String name;
-  final int age;
-  final String bio;
+  final Map<String, dynamic> data;
 
   @override
   Widget build(BuildContext context) {
@@ -20,25 +21,64 @@ class DetailsSection extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         mainAxisAlignment: MainAxisAlignment.start,
         children: [
-          Text(
-            name,
-            style: const TextStyle(
-              fontSize: 20,
-              fontWeight: FontWeight.bold,
+          ListTile(
+            contentPadding:
+                EdgeInsets.zero, // Remove ListTile's default padding
+            title: Text("${data['name']} , ${data['age']}",
+                style: Theme.of(context).textTheme.displayLarge),
+          ),
+          userDataListTile(EvaIcons.person, "${data['gender']}", context),
+          userDataListTile(
+            EvaIcons.bookmark,
+            data['bio'] == "null" ? " " : "${data['bio']}",
+            context,
+          ),
+          userDataListTile(
+              EvaIcons.calendarOutline,
+              DateFormat('dd - MMM - yyy')
+                  .format((data['dob'] as Timestamp).toDate()),
+              context),
+          //userDataListTile(EvaIcons.calendarOutline, (data['dob'].toString())),
+
+          FutureBuilder<String?>(
+            future: ProfileFunctions.getAddressFromCoordinates(
+              (data['location'] as GeoPoint).latitude,
+              (data['location'] as GeoPoint).longitude,
             ),
-          ),
-          const SizedBox(height: 8),
-          Text(
-            'Age: $age',
-            style: const TextStyle(fontSize: 16),
-          ),
-          const SizedBox(height: 8),
-          Text(
-            'Bio: $bio',
-            style: const TextStyle(fontSize: 16),
+            builder: (context, snapshot) {
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                return const CircularProgressIndicator();
+              } else if (snapshot.hasError) {
+                return Text("Error: ${snapshot.error}");
+              } else {
+                return ListTile(
+                  contentPadding: EdgeInsets.zero,
+                  minLeadingWidth: 2,
+                  leading: const Icon(
+                    Icons.location_on,
+                    size: 18,
+                    color: AppTheme.grey,
+                  ),
+                  title: Text(snapshot.data ?? "No address available",
+                      style: Theme.of(context).textTheme.bodyLarge,),
+                );
+              }
+            },
           ),
         ],
       ),
+    );
+  }
+
+  userDataListTile(IconData person, String s, BuildContext context) {
+    return ListTile(
+      contentPadding: EdgeInsets.zero,
+      minLeadingWidth: 2,
+      leading: Icon(
+        person,
+        size: 18,
+      ),
+      title: Text(s, style: Theme.of(context).textTheme.bodyLarge),
     );
   }
 }

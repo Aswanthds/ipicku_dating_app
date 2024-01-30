@@ -56,8 +56,8 @@ class AuthenticationBloc
 
   Future<void> _mapLoggedOutToState(
       LoggedOut event, Emitter<AuthenticationState> emit) async {
-    emit(Unauthenticated());
     await userRepository.signOut();
+    emit(Unauthenticated());
   }
 
   FutureOr<void> _mapResetpassword(
@@ -83,7 +83,7 @@ class AuthenticationBloc
     try {
       await userRepository.deleteAccount();
       emit(AccountDeletedState());
-       emit(Unauthenticated());
+      emit(Unauthenticated());
     } catch (e) {
       emit(AccountDeletingFailed(e.toString()));
     }

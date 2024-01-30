@@ -29,8 +29,18 @@ Widget _buildUserPhoto(BuildContext context, String imgUrl) {
       Navigator.of(context).push(_createImagePreviewRoute(imgUrl));
     },
     child: Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text("Photos"),
+        Padding(
+          padding: const EdgeInsets.only(
+            left: 20.0,
+            bottom: 10,
+          ),
+          child: Text(
+            "Photos",
+            style: Theme.of(context).textTheme.displayMedium,
+          ),
+        ),
         Container(
           height: 160,
           width: 100,

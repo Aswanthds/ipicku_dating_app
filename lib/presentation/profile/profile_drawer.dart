@@ -8,18 +8,29 @@ import 'package:ipicku_dating_app/domain/firebase_data/firebase_data_bloc.dart';
 
 import 'package:ipicku_dating_app/presentation/profile/pages/account_details.dart';
 import 'package:ipicku_dating_app/presentation/profile/pages/contact_us.dart';
+import 'package:ipicku_dating_app/presentation/profile/pages/mutual_picks.dart';
 import 'package:ipicku_dating_app/presentation/profile/pages/mypicks.dart';
 import 'package:ipicku_dating_app/presentation/profile/pages/seettings.dart';
 import 'package:ipicku_dating_app/presentation/profile/pages/who_picks_me.dart';
 import 'package:ipicku_dating_app/presentation/profile/user_profile/image_preview.dart';
 import 'package:ipicku_dating_app/presentation/profile/widgets/profile_list.dart';
 
-class ProfileDrawer extends StatelessWidget {
+class ProfileDrawer extends StatefulWidget {
   const ProfileDrawer({
     super.key,
     required this.userRepository,
   });
   final UserRepository userRepository;
+
+  @override
+  State<ProfileDrawer> createState() => _ProfileDrawerState();
+}
+
+class _ProfileDrawerState extends State<ProfileDrawer> {
+  @override
+  void initState() {
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -48,7 +59,7 @@ class ProfileDrawer extends StatelessWidget {
               return DrawerListView(
                 user: user,
                 size: size,
-                userRepository: userRepository,
+                userRepository: widget.userRepository,
               );
             }
             return const SizedBox();
@@ -128,7 +139,7 @@ class DrawerListView extends StatelessWidget {
           onTap: () {
             Navigator.of(context).pop();
             Navigator.of(context).push(MaterialPageRoute(
-              builder: (context) => const MyPicksPage(),
+              builder: (context) => MyPicksPage(user: user!),
             ));
           },
         ),
@@ -138,7 +149,21 @@ class DrawerListView extends StatelessWidget {
           onTap: () {
             Navigator.of(context).pop();
             Navigator.of(context).push(MaterialPageRoute(
-              builder: (context) => const WhoPicksMePage(),
+              builder: (context) => WhoPicksMePag(
+                user: user!,
+              ),
+            ));
+          },
+        ),
+        ProfileListTile(
+          leading: EvaIcons.npm,
+          text: "Mutual Picks",
+          onTap: () {
+            Navigator.of(context).pop();
+            Navigator.of(context).push(MaterialPageRoute(
+              builder: (context) => MutualPicks(
+                user: user!,
+              ),
             ));
           },
         ),

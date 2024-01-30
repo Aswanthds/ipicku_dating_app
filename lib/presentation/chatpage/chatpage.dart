@@ -47,9 +47,18 @@ class ChatPage extends StatelessWidget {
               },
               leading: CircleAvatar(
                   radius: 20, backgroundColor: Colors.accents[index]),
-              title: Text("Name ${index + 1}"),
-              subtitle: const Text("hii"),
-              trailing: Text("9:0${index + 1} AM"),
+              title: Text(
+                "Name ${index + 1}",
+                style: Theme.of(context).textTheme.displaySmall,
+              ),
+              subtitle: Text(
+                "hii",
+                style: Theme.of(context).textTheme.bodySmall,
+              ),
+              trailing: Text(
+                "9:0${index + 1} AM",
+                style: Theme.of(context).textTheme.bodySmall,
+              ),
             ),
           ),
         ),
