@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:ipicku_dating_app/constants.dart';
 import 'package:ipicku_dating_app/domain/matching_bloc/matching_bloc.dart';
-import 'package:ipicku_dating_app/presentation/homepage/progfilepage.dart';
+import 'package:ipicku_dating_app/presentation/recommended/widgets/recommended_section.dart';
 
 class RecommendedPage extends StatefulWidget {
+  final String repository;
   const RecommendedPage({
     super.key,
+    required this.repository,
   });
 
   @override
@@ -22,6 +23,7 @@ class _RecommendedPageState extends State<RecommendedPage> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Recommended Profiles'),
+        surfaceTintColor: Colors.transparent,
       ),
       body: BlocBuilder<MatchingBloc, MatchingState>(
         builder: (context, state) {
@@ -31,9 +33,15 @@ class _RecommendedPageState extends State<RecommendedPage> {
               child: Column(
                 children: [
                   SectionRecommendedPage(
-                      state: state.locationUsers, title: "Location"),
+                    state: state.locationUsers,
+                    title: "Location",
+                    id: widget.repository,
+                  ),
                   SectionRecommendedPage(
-                      state: state.interest, title: "Interest")
+                    state: state.interest,
+                    title: "Interest",
+                    id: widget.repository,
+                  )
                 ],
               ),
             );
@@ -49,103 +57,6 @@ class _RecommendedPageState extends State<RecommendedPage> {
           }
           return const SizedBox();
         },
-      ),
-    );
-  }
-}
-
-class SectionRecommendedPage extends StatelessWidget {
-  final List<Map<String, dynamic>> state;
-  final String title;
-  const SectionRecommendedPage({
-    Key? key,
-    required this.state,
-    required this.title,
-  }) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.all(8.0),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          const Divider(),
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child:
-                Text(title, style: Theme.of(context).textTheme.displayMedium),
-          ),
-          SizedBox(
-            height: 220,
-            child: ListView.builder(
-              itemCount: state.length,
-              scrollDirection: Axis.horizontal,
-              itemBuilder: (context, index) {
-                final data = state[index];
-                return RecommendedCard(data: data);
-              },
-            ),
-          ),
-          const Divider(),
-        ],
-      ),
-    );
-  }
-}
-
-class RecommendedCard extends StatelessWidget {
-  const RecommendedCard({
-    super.key,
-    required this.data,
-  });
-
-  final Map<String, dynamic> data;
-
-  @override
-  Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: () {
-        Navigator.of(context).push(MaterialPageRoute(
-          builder: (context) => UserProfileBottomSheet(data: data),
-        ));
-        //print(data['location']);
-      },
-      child: Card(
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
-        child: Stack(
-          children: [
-            Container(
-              height: 220,
-              width: 120,
-              foregroundDecoration: BoxDecoration(
-                gradient: AppTheme.blackFade,
-              ),
-              decoration: BoxDecoration(
-                  color: AppTheme.black26,
-                  image: DecorationImage(
-                    image: NetworkImage(data['photoUrl']),
-                    fit: BoxFit.cover,
-                  ),
-                  borderRadius: const BorderRadius.all(Radius.circular(15))),
-            ),
-            Positioned(
-              bottom: 20,
-              left: 12,
-              child: Row(
-                children: [
-                  Text(
-                    '${data['name'].toString().split(' ').first} , ${data['age'].toString()}',
-                    style: const TextStyle(
-                      color: AppTheme.white,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ],
-              ),
-            )
-          ],
-        ),
       ),
     );
   }

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:ipicku_dating_app/constants.dart';
+import 'package:ipicku_dating_app/presentation/ui_utils/colors.dart';
 import 'package:ipicku_dating_app/domain/profile_bloc/profile_state.dart';
 
 class ProfileSignUpFormField extends StatelessWidget {

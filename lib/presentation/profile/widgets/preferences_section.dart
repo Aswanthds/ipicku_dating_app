@@ -1,7 +1,7 @@
 import 'package:eva_icons_flutter/eva_icons_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:ipicku_dating_app/constants.dart';
+import 'package:ipicku_dating_app/presentation/ui_utils/colors.dart';
 import 'package:ipicku_dating_app/data/model/user.dart';
 import 'package:ipicku_dating_app/data/repositories/user_repositories.dart';
 import 'package:ipicku_dating_app/presentation/log_in/forget_password_page.dart';

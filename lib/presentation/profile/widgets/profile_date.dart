@@ -4,7 +4,7 @@ import 'package:eva_icons_flutter/eva_icons_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
-import 'package:ipicku_dating_app/constants.dart';
+import 'package:ipicku_dating_app/presentation/ui_utils/colors.dart';
 import 'package:ipicku_dating_app/data/functions/profile_functions.dart';
 import 'package:ipicku_dating_app/data/model/user.dart';
 import 'package:ipicku_dating_app/domain/firebase_data/firebase_data_bloc.dart';
@@ -50,18 +50,20 @@ class ProfileDateWidget extends StatelessWidget {
               onPressed: () async {
                 final pickedDate =
                     await ProfileFunctions.pickDateofBirth(context);
-                BlocProvider.of<FirebaseDataBloc>(context).add(
-                  UpdateUserFieldEvent(
-                    'dob',
-                    pickedDate,
-                  ),
-                );
-                BlocProvider.of<FirebaseDataBloc>(context).add(
-                  UpdateUserFieldEvent(
-                    'age',
-                    ProfileFunctions.calculateAge(pickedDate),
-                  ),
-                );
+              if(pickedDate != null){
+                  BlocProvider.of<FirebaseDataBloc>(context).add(
+                    UpdateUserFieldEvent(
+                      'dob',
+                      pickedDate,
+                    ),
+                  );
+                  BlocProvider.of<FirebaseDataBloc>(context).add(
+                    UpdateUserFieldEvent(
+                      'age',
+                      ProfileFunctions.calculateAge(pickedDate),
+                    ),
+                  );
+              }
               },
               icon: const Icon(
                 EvaIcons.edit2,

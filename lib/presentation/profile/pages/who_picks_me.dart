@@ -1,11 +1,13 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:ipicku_dating_app/constants.dart';
+import 'package:ipicku_dating_app/data/repositories/user_repositories.dart';
+import 'package:ipicku_dating_app/presentation/ui_utils/colors.dart';
 import 'package:ipicku_dating_app/data/model/user.dart';
-import 'package:ipicku_dating_app/domain/bloc/matches_data_bloc.dart';
+import 'package:ipicku_dating_app/domain/matches_data_bloc/matches_data_bloc.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:ipicku_dating_app/presentation/homepage/progfilepage.dart';
+import 'package:ipicku_dating_app/presentation/widgets/empty_list.dart';
 
 class WhoPicksMePag extends StatelessWidget {
   final UserModel user;
@@ -41,10 +43,14 @@ class WhoPicksMePag extends StatelessWidget {
                         margin: const EdgeInsets.all(10),
                         elevation: 5.0,
                         child: ListTile(
-                          onTap: () {
+                          onTap: () async {
+                            final id = await UserRepository().getUser();
                             Navigator.of(context).push(MaterialPageRoute(
-                              builder: (context) =>
-                                  UserProfileBottomSheet(data: data[index]),
+                              builder: (context) => UserProfileBottomSheet(
+                                data: data[index],
+                                userid: id,
+                                isMyPick: false,
+                              ),
                             ));
                           },
                           shape: RoundedRectangleBorder(
@@ -69,18 +75,16 @@ class WhoPicksMePag extends StatelessWidget {
                             backgroundImage:
                                 NetworkImage(data[index]['photoUrl']),
                           ),
-                          trailing: IconButton(
-                            onPressed: () {},
-                            icon: const Icon(
-                              Icons.close,
-                              color: AppTheme.white,
-                            ),
-                          ),
                         ),
                       );
                     }
                     return const Center(child: Text("No picks by others"));
                   });
+            }
+            if (state is SelectedListLoadError) {
+              return const EmptyListPage(
+                text: 'No one picks you',
+              );
             }
             return const SizedBox();
           },

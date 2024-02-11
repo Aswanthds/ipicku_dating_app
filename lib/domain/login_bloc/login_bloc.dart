@@ -39,18 +39,30 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
   FutureOr<void> _mapGoogleSignIn(
       GoogleSignUp event, Emitter<LoginState> emit) async {
     try {
+      // Sign in with Google
       await _userRepository.signInwithGoogle();
-      final id = await _userRepository.getUser();
-      final isFirst = await _userRepository.isFirstTime(id);
-      if (!isFirst) {
+
+      // Get user ID
+      final userId = await _userRepository.getUser();
+
+      // Check if it's the first time signing in
+      final isFirstTime = await _userRepository.isFirstTime(userId);
+
+      // Check if the profile is set
+      final isProfileSet = await _userRepository.isProfileSet(userId);
+
+      if (!isFirstTime || !isProfileSet) {
+        // User is either not signing in for the first time or the profile is not set
         emit(LoginProfileNotSet());
       } else {
+        // User is signing in for the first time and the profile is set
         emit(LoginSucess());
       }
     } catch (e) {
       emit(LoginFailed(message: e.toString()));
     }
   }
+
 }
 
   

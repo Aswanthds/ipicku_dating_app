@@ -1,6 +1,6 @@
 import 'package:eva_icons_flutter/eva_icons_flutter.dart';
 import 'package:flutter/material.dart';
-import 'package:ipicku_dating_app/constants.dart';
+import 'package:ipicku_dating_app/presentation/ui_utils/colors.dart';
 
 ValueNotifier<int> indexChangeNotifier = ValueNotifier(0);
 
@@ -31,19 +31,18 @@ class BottomNavigation extends StatelessWidget {
                 AssetImage('assets/images/logo_light.png'),
                 size: 25,
               ),
-              label: 'Home',
+              label: '',
             ),
             BottomNavigationBarItem(
               icon: Icon(
                 Icons.recommend_outlined,
                 size: 25,
-                color: AppTheme.grey,
               ),
               activeIcon: Icon(
                 Icons.recommend,
                 size: 25,
               ),
-              label: 'Recommended',
+              label: '',
             ),
             BottomNavigationBarItem(
               icon: Icon(

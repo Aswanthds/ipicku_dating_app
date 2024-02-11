@@ -1,16 +1,17 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:ipicku_dating_app/constants.dart';
-import 'package:ipicku_dating_app/data/model/user.dart';
-import 'package:ipicku_dating_app/domain/bloc/matches_data_bloc.dart';
+import 'package:ipicku_dating_app/data/repositories/user_repositories.dart';
+import 'package:ipicku_dating_app/presentation/ui_utils/colors.dart';
+import 'package:ipicku_dating_app/domain/matches_data_bloc/matches_data_bloc.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:ipicku_dating_app/presentation/homepage/progfilepage.dart';
+import 'package:ipicku_dating_app/presentation/ui_utils/dialog_manager.dart';
+import 'package:ipicku_dating_app/presentation/widgets/empty_list.dart';
 
 class MyPicksPage extends StatelessWidget {
-  final UserModel user;
-  const MyPicksPage({Key? key, required this.user}) : super(key: key);
-
+  const MyPicksPage({Key? key}) : super(key: key);
+  static const route = '/picks';
   @override
   Widget build(BuildContext context) {
     BlocProvider.of<MatchesDataBloc>(context).add(MatchesLoadingEvent());
@@ -40,10 +41,14 @@ class MyPicksPage extends StatelessWidget {
                         margin: const EdgeInsets.all(10),
                         elevation: 5.0,
                         child: ListTile(
-                          onTap: () {
+                          onTap: () async {
+                            final id = await UserRepository().getUser();
                             Navigator.of(context).push(MaterialPageRoute(
-                              builder: (context) =>
-                                  UserProfileBottomSheet(data: data[index]),
+                              builder: (context) => UserProfileBottomSheet(
+                                data: data[index],
+                                userid: id,
+                                isMyPick: true,
+                              ),
                             ));
                           },
                           shape: RoundedRectangleBorder(
@@ -69,7 +74,10 @@ class MyPicksPage extends StatelessWidget {
                                 NetworkImage(data[index]['photoUrl']),
                           ),
                           trailing: IconButton(
-                            onPressed: () {},
+                            onPressed: () {
+                              DialogManager.showdeletePickDialog(
+                                  context: context, data: data[index]);
+                            },
                             icon: const Icon(
                               Icons.close,
                               color: AppTheme.white,
@@ -78,8 +86,14 @@ class MyPicksPage extends StatelessWidget {
                         ),
                       );
                     }
+
                     return const Center(child: Text("No picks by others"));
                   });
+            }
+            if (state is MatchesListLoadError) {
+              return const EmptyListPage(
+                text: 'No picks from you',
+              );
             }
             return const SizedBox();
           },

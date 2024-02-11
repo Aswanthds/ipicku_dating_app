@@ -82,6 +82,7 @@ class AuthenticationBloc
     emit(AccountDeletingState());
     try {
       await userRepository.deleteAccount();
+      await userRepository.deleteUserAccount();
       emit(AccountDeletedState());
       emit(Unauthenticated());
     } catch (e) {

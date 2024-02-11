@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:ipicku_dating_app/constants.dart';
+import 'package:ipicku_dating_app/presentation/ui_utils/colors.dart';
 import 'package:ipicku_dating_app/data/repositories/user_repositories.dart';
 import 'package:ipicku_dating_app/presentation/sign_up/widgets/register_form.dart';
 

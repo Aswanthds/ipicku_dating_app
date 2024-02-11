@@ -1,23 +1,16 @@
 import 'dart:async';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
+import 'package:ipicku_dating_app/data/repositories/local_notifications.dart';
 import 'package:ipicku_dating_app/data/repositories/user_repositories.dart';
-import 'package:geoflutterfire2/geoflutterfire2.dart';
 
 final usersCollection = FirebaseFirestore.instance.collection('users');
-final geo = GeoFlutterFire();
 
 class MatchesRepository {
   final UserRepository userRepository = UserRepository();
   MatchesRepository();
 
-  // Stream<QuerySnapshot> getMatchedList(String userId) {
-  //   return usersCollection.doc(userId).collection('matchedList').snapshots();
-  // }
-
-  // Stream<QuerySnapshot> getSelectedList(String userId) {
-  //   return usersCollection.doc(userId).collection('selectedList').snapshots();
-  // }
   Future<List<Map<String, dynamic>>> getMatchedList(String userId) async {
     try {
       final snapshot = await usersCollection
@@ -53,23 +46,36 @@ class MatchesRepository {
   ) async {
     //deleteUser(currentUserId, selectedUserId);
 
-    await usersCollection
-        .doc(currentUserId)
-        .collection('myPicks')
-        .doc(selectedUserId)
-        .set({
-      'selectedUserId': selectedUserId,
-      'timestamp': FieldValue.serverTimestamp(),
-    });
+    try {
+      await usersCollection
+          .doc(currentUserId)
+          .collection('myPicks')
+          .doc(selectedUserId)
+          .set({
+        'selectedUserId': selectedUserId,
+        'timestamp': FieldValue.serverTimestamp(),
+      });
 
-    await usersCollection
-        .doc(selectedUserId)
-        .collection('whoPicksMe')
-        .doc(currentUserId)
-        .set({
-      'selectedby': currentUserId,
-      'timestamp': FieldValue.serverTimestamp(),
-    });
+      await usersCollection
+          .doc(selectedUserId)
+          .collection('whoPicksMe')
+          .doc(currentUserId)
+          .set({
+        'selectedby': currentUserId,
+        'timestamp': FieldValue.serverTimestamp(),
+      });
+
+      FirebaseMessaging.instance.getToken().then((token) async {
+        // final selectedUserDeviceToken =
+        //     await userRepository.getSelectedUserIdToken(selectedUserId);
+
+        // Send notification using Firebase Cloud Messaging API
+
+        debugPrint('Notification sent successfully!');
+      });
+    } catch (e) {
+      debugPrint(e.toString());
+    }
   }
 
   Future<String> getCurrentUserGender(String userId) async {
@@ -215,9 +221,20 @@ class MatchesRepository {
           Map<String, dynamic> userData = userSnapshot.data()!;
           userData['timestamp'] = document['timestamp'];
           matchedList.add(userData);
+          if ((userData['timestamp'] as Timestamp).toDate().isAfter(
+                userData['lastActive'].toDate().subtract(
+                      const Duration(
+                          minutes: 5), // Adjust the duration as needed
+                    ),
+              )) {
+            NotificationService().showNotification(notification: {
+              "title": "New USer Picked you",
+              "body": "A USer ${userData['name']}"
+            });
+          }
         }
       }
-
+      debugPrint("data : $matchedList");
       return matchedList;
     } catch (e) {
       debugPrint("Error fetching matched users: $e");
@@ -260,5 +277,32 @@ class MatchesRepository {
     }
 
     return userDataList;
+  }
+
+  Future<void> deleteMyPickDocument(String userId, String myPickId) async {
+    try {
+      // Get a reference to the 'myPicks' subcollection document
+      final DocumentReference<Map<String, dynamic>> myPickDocRef =
+          FirebaseFirestore.instance
+              .collection('users')
+              .doc(userId)
+              .collection('myPicks')
+              .doc(myPickId);
+
+      // Delete the document
+      await myPickDocRef.delete();
+
+      debugPrint('Document deleted successfully.');
+    } catch (e) {
+      debugPrint('Error deleting document: $e');
+    }
+  }
+
+  Future<bool> isUserInPickedList(String targetUserId) async {
+    final currentUserId = await UserRepository().getUser();
+    final source =
+        await usersCollection.doc(currentUserId).collection('myPicks').get();
+
+    return source.docs.any((e) => e.id == targetUserId);
   }
 }

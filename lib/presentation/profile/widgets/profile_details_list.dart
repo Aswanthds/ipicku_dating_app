@@ -1,6 +1,7 @@
 import 'package:eva_icons_flutter/eva_icons_flutter.dart';
 import 'package:flutter/material.dart';
-import 'package:ipicku_dating_app/constants.dart';
+import 'package:ipicku_dating_app/presentation/ui_utils/colors.dart';
+import 'package:ipicku_dating_app/presentation/ui_utils/dialog_manager.dart';
 
 class ProfileDetailsListTile extends StatelessWidget {
   final String? heading;

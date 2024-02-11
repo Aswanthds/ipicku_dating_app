@@ -1,9 +1,9 @@
 import 'package:eva_icons_flutter/eva_icons_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:ipicku_dating_app/constants.dart';
 import 'package:ipicku_dating_app/data/functions/validators.dart';
 import 'package:ipicku_dating_app/data/repositories/user_repositories.dart';
+import 'package:ipicku_dating_app/domain/firebase_data/firebase_data_bloc.dart';
 import 'package:ipicku_dating_app/domain/login_bloc/login_bloc.dart';
 import 'package:ipicku_dating_app/presentation/log_in/widgets/create_account.dart';
 import 'package:ipicku_dating_app/presentation/log_in/widgets/forget_password.dart';
@@ -11,6 +11,7 @@ import 'package:ipicku_dating_app/presentation/log_in/widgets/google_sign_in.dar
 import 'package:ipicku_dating_app/presentation/log_in/widgets/login_button.dart';
 import 'package:ipicku_dating_app/presentation/main_page.dart';
 import 'package:ipicku_dating_app/presentation/sign_up/profile_signup.dart';
+import 'package:ipicku_dating_app/presentation/ui_utils/constants.dart';
 import 'package:ipicku_dating_app/presentation/widgets/form_field.dart';
 
 class LoginForm extends StatefulWidget {
@@ -40,6 +41,12 @@ class _LoginFormState extends State<LoginForm> {
       _emailController.text.isNotEmpty && _passwordController.text.isNotEmpty;
 
   void _onFormSubmitted(BuildContext ctx) {
+      BlocProvider.of<FirebaseDataBloc>(context)
+        .add(const UpdateUserFieldEvent('notifications_picks', true));
+    BlocProvider.of<FirebaseDataBloc>(context)
+        .add(const UpdateUserFieldEvent('notifications_messages', true));
+    BlocProvider.of<FirebaseDataBloc>(context)
+        .add(const UpdateUserFieldEvent('notifications_recomendations', true));
     _loginBloc.add(
       LoginPressed(
           email: _emailController.text.trim(),
@@ -65,13 +72,13 @@ class _LoginFormState extends State<LoginForm> {
           ScaffoldMessenger.of(context)
             ..hideCurrentSnackBar()
             ..showSnackBar(
-              SnackBarConstants.profileFailedSnackBar,
+              SnackBarManager.profileFailedSnackBar,
             );
         }
         if (state is LoginLoading) {
           ScaffoldMessenger.of(context)
             ..hideCurrentSnackBar()
-            ..showSnackBar(SnackBarConstants.profileLoading);
+            ..showSnackBar(SnackBarManager.profileLoading);
         }
         if (state is LoginSucess) {
           debugPrint("Success");

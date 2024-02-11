@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:ipicku_dating_app/constants.dart';
+import 'package:ipicku_dating_app/presentation/ui_utils/colors.dart';
 import 'package:ipicku_dating_app/data/model/user.dart';
 import 'package:ipicku_dating_app/data/repositories/user_repositories.dart';
 import 'package:ipicku_dating_app/domain/firebase_data/firebase_data_bloc.dart';
 import 'package:ipicku_dating_app/presentation/profile/widgets/preferences_section.dart';
 import 'package:ipicku_dating_app/presentation/profile/widgets/profile_card.dart';
 import 'package:ipicku_dating_app/presentation/profile/widgets/user_details_widget.dart';
+import 'package:ipicku_dating_app/presentation/ui_utils/constants.dart';
 
 class AccountDetails extends StatelessWidget {
   final UserModel state;
@@ -31,7 +32,7 @@ class AccountDetails extends StatelessWidget {
           if (state is FirebaseDataLoading) {
             ScaffoldMessenger.of(context)
               ..hideCurrentMaterialBanner()
-              ..showSnackBar(SnackBarConstants.profileSuccessSnackBar);
+              ..showSnackBar(SnackBarManager.profileSuccessSnackBar);
           }
         },
         child: BlocBuilder<FirebaseDataBloc, FirebaseDataState>(

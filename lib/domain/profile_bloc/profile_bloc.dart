@@ -12,14 +12,13 @@ part 'profile_event.dart';
 
 class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
   final UserRepository userRepository;
-  ProfileBloc(this.userRepository) : super( ProfileStateEmpty()) {
+  ProfileBloc(this.userRepository) : super(ProfileStateEmpty()) {
     on<Submitted>(_submitted);
     //on<PhotosChanged>(_photosChanged);
-
   }
 
   FutureOr<void> _submitted(Submitted event, Emitter<ProfileState> emit) async {
-    emit( ProfileStateLoading());
+    emit(ProfileStateLoading());
     final uid = await userRepository.getUser();
     final email = await userRepository.getUserEmail();
     try {
@@ -32,15 +31,12 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
         email: email,
         userId: uid,
         dob: event.dob,
-        // bio: event.bio ?? '',
-      //  interests: event.interests,
-      
+        bio: '',
         created: event.createdNow,
       );
-      emit( ProfileStateSuccess());
+      emit(ProfileStateSuccess());
     } catch (e) {
-      emit( ProfileStateFailure());
+      emit(ProfileStateFailure());
     }
   }
-
 }

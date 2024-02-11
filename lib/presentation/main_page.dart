@@ -5,16 +5,36 @@ import 'package:ipicku_dating_app/presentation/homepage/homepage.dart';
 import 'package:ipicku_dating_app/presentation/recommended/recomended_page.dart';
 import 'package:ipicku_dating_app/presentation/widgets/bottom_navigation.dart';
 
-class MainPageNav extends StatelessWidget {
+class MainPageNav extends StatefulWidget {
   final UserRepository repository;
   const MainPageNav({super.key, required this.repository});
 
   @override
+  State<MainPageNav> createState() => _MainPageNavState();
+}
+
+class _MainPageNavState extends State<MainPageNav> {
+  String userId = '';
+  getUserId() async {
+    await widget.repository.storeDeviceToken();
+    return userId = await widget.repository.getUser();
+    
+  }
+
+  @override
+  void initState() {
+    getUserId();
+    super.initState();
+  }
+
+  @override
   Widget build(BuildContext context) {
     var pages = [
-      HomePage(userRepository: repository),
-      const RecommendedPage(),
-      const ChatPage(),
+      HomePage(userRepository: widget.repository),
+      RecommendedPage(repository: userId),
+      ChatPage(
+        userid: userId,
+      ),
     ];
     return Scaffold(
       body: ValueListenableBuilder(

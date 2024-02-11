@@ -1,0 +1,27 @@
+{
+  "indexes": [
+    {
+      "collectionGroup": "users",
+      "queryScope": "COLLECTION_GROUP",
+      "fields": [
+        {
+          "fieldPath": "gender",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "minAge",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "maxAge",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "interests",
+          "arrayConfig": "CONTAINS"
+        }
+      ]
+    }
+  ],
+  "fieldOverrides": []
+}

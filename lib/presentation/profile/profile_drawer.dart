@@ -1,11 +1,10 @@
 import 'package:eva_icons_flutter/eva_icons_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:ipicku_dating_app/constants.dart';
+import 'package:ipicku_dating_app/presentation/ui_utils/colors.dart';
 import 'package:ipicku_dating_app/data/model/user.dart';
 import 'package:ipicku_dating_app/data/repositories/user_repositories.dart';
 import 'package:ipicku_dating_app/domain/firebase_data/firebase_data_bloc.dart';
-
 import 'package:ipicku_dating_app/presentation/profile/pages/account_details.dart';
 import 'package:ipicku_dating_app/presentation/profile/pages/contact_us.dart';
 import 'package:ipicku_dating_app/presentation/profile/pages/mutual_picks.dart';
@@ -14,6 +13,7 @@ import 'package:ipicku_dating_app/presentation/profile/pages/seettings.dart';
 import 'package:ipicku_dating_app/presentation/profile/pages/who_picks_me.dart';
 import 'package:ipicku_dating_app/presentation/profile/user_profile/image_preview.dart';
 import 'package:ipicku_dating_app/presentation/profile/widgets/profile_list.dart';
+import 'package:ipicku_dating_app/presentation/ui_utils/dialog_manager.dart';
 
 class ProfileDrawer extends StatefulWidget {
   const ProfileDrawer({
@@ -139,7 +139,7 @@ class DrawerListView extends StatelessWidget {
           onTap: () {
             Navigator.of(context).pop();
             Navigator.of(context).push(MaterialPageRoute(
-              builder: (context) => MyPicksPage(user: user!),
+              builder: (context) => const MyPicksPage(),
             ));
           },
         ),

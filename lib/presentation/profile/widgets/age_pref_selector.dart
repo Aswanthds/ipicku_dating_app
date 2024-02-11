@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:ipicku_dating_app/constants.dart';
+import 'package:ipicku_dating_app/presentation/ui_utils/colors.dart';
 import 'package:ipicku_dating_app/domain/firebase_data/firebase_data_bloc.dart';
 
 class AgeSelectionWidget extends StatefulWidget {
@@ -103,15 +103,18 @@ class _AgeSelectionWidgetState extends State<AgeSelectionWidget> {
               ),
             ],
           ),
-          TextButton(
-              onPressed: () {
-                BlocProvider.of<FirebaseDataBloc>(context).add(
-                    AddUseFieldData(fieldName: 'minAge', newValue: minAge));
-                BlocProvider.of<FirebaseDataBloc>(context).add(
-                    AddUseFieldData(fieldName: 'maxAge', newValue: maxAge));
-                Navigator.pop(context);
-              },
-              child: const Text("Submit")),
+          Align(
+            alignment: Alignment.center,
+            child: TextButton(
+                onPressed: () {
+                  BlocProvider.of<FirebaseDataBloc>(context).add(
+                      AddUseFieldData(fieldName: 'minAge', newValue: minAge));
+                  BlocProvider.of<FirebaseDataBloc>(context).add(
+                      AddUseFieldData(fieldName: 'maxAge', newValue: maxAge));
+                  Navigator.pop(context);
+                },
+                child: const Text("Submit")),
+          ),
         ],
       ),
     );

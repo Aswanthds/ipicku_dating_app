@@ -17,3 +17,8 @@ class AddUserAsAPick extends MatchesDataEvent {
 
   const AddUserAsAPick({required this.selectedUserId});
 }
+class RemoveUserFromPick extends MatchesDataEvent {
+  final String selectedUserId;
+
+  const RemoveUserFromPick({required this.selectedUserId});
+}

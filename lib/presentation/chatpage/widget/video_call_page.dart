@@ -1,88 +1,67 @@
-import 'package:flutter/material.dart';
-import 'package:ipicku_dating_app/constants.dart';
+// ignore_for_file: unnecessary_null_comparison
 
-class VideoChatPage extends StatelessWidget {
-  const VideoChatPage({super.key});
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:ipicku_dating_app/data/repositories/vc_repository.dart';
+import 'package:ipicku_dating_app/domain/video_chat/videochat_bloc.dart';
+import 'package:zego_uikit_prebuilt_call/zego_uikit_prebuilt_call.dart';
+import 'package:zego_uikit_signaling_plugin/zego_uikit_signaling_plugin.dart';
+
+class PrebuiltCallPage extends StatefulWidget {
+  final String userID;
+  const PrebuiltCallPage({Key? key, required this.userID}) : super(key: key);
+
+  @override
+  State<StatefulWidget> createState() => PrebuiltCallPageState();
+}
+
+class PrebuiltCallPageState extends State<PrebuiltCallPage> {
+  String id = '';
+  @override
+  void initState() {
+    super.initState();
+    VideoRepository.getUniqueUserId().then((value) {
+      setState(() {
+        id = value;
+      });
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: AppTheme.grey900,
-      appBar: AppBar(
-        title: const Text('Video Chat'),
-        iconTheme: const IconThemeData(color: AppTheme.white),
-        automaticallyImplyLeading: false,
-        backgroundColor: AppTheme.grey900,
-      ),
-      body: Center(
-        child: Stack(
-          alignment: Alignment.bottomCenter,
-          children: [
-            // Video stream placeholder (replace with actual video stream widget)
-            Container(
-              width: MediaQuery.of(context).size.width - 10,
-              height: MediaQuery.of(context).size.height - 130,
-              margin: const EdgeInsets.all(12),
-              color: AppTheme.black,
-              child: const Center(
-                child: Text(
-                  'User Video', // Replace with actual video stream
-                  style: TextStyle(color: AppTheme.white),
+    final uid = FirebaseAuth.instance.currentUser!.uid;
+    BlocProvider.of<VideochatBloc>(context)
+        .add(SendVideoChatData(token: id, selectedUser: widget.userID));
+    return id == null
+        ? const Scaffold(
+            body: Center(child: CircularProgressIndicator.adaptive()),
+          )
+        : SafeArea(
+            child: ZegoUIKitPrebuiltCall(
+              appID: 501520519,
+              appSign:
+                  "0c21665018bcedca21ce6078c992156918b5618611eb63ef025930e1e7faa34d",
+              userID: uid,
+              userName: FirebaseAuth.instance.currentUser!.uid
+                  .substring(uid.length - 6),
+              callID: 'call_id',
+              plugins: [ZegoUIKitSignalingPlugin()],
+              config: ZegoUIKitPrebuiltCallConfig.oneOnOneVideoCall()
+                ..turnOnCameraWhenJoining = false
+                ..layout = ZegoLayout.gallery(
+                    addBorderRadiusAndSpacingBetweenView: true)
+                ..duration = ZegoCallDurationConfig(
+                  isVisible: true,
+                  onDurationUpdate: (p0) {
+                    if (p0.inSeconds == 300) {
+                      ZegoCallEndEvent(
+                          reason: ZegoCallEndReason.localHangUp,
+                          isFromMinimizing: false);
+                    }
+                  },
                 ),
-              ),
             ),
-            Positioned(
-              bottom: 0,
-              right: 100,
-              child: Padding(
-                padding: const EdgeInsets.all(15.0),
-                child: Row(
-                  children: [
-                    IconButton.filled(
-                        style: IconButton.styleFrom(
-                            backgroundColor: AppTheme.white),
-                        onPressed: () {
-                          // Implement end call logic
-                        },
-                        icon: const Icon(
-                          Icons.call_end_rounded,
-                          color: AppTheme.red,
-                          size: 40,
-                        )),
-                    const SizedBox(width: 16),
-                    IconButton(
-                        onPressed: () {
-                          // Implement mute microphone logic
-                        },
-                        icon: const Icon(Icons.mic_rounded,
-                            color: AppTheme.white, size: 40)),
-                  ],
-                ),
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
+          );
   }
 }
-/*
-
-Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                IconButton(
-                    onPressed: () {
-                      // Implement end call logic
-                    },
-                    icon: Icon(Icons.call_end_rounded)),
-                SizedBox(width: 16),
-                IconButton(
-                    onPressed: () {
-                      // Implement mute microphone logic
-                    },
-                    icon: Icon(Icons.mic_rounded)),
-              ],
-            ),
-
-            */

@@ -5,11 +5,13 @@ import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:ipicku_dating_app/data/model/user.dart';
+import 'package:ipicku_dating_app/data/repositories/matches_repo.dart';
 
 class UserRepository {
   final FirebaseAuth _firebaseAuth;
@@ -19,14 +21,15 @@ class UserRepository {
       : _firebaseAuth = firebaseAuth ?? FirebaseAuth.instance,
         _googleSignIn = googleSignin ?? GoogleSignIn();
 
-  Future<void> signInWithCredentials(String email, String password) {
-    return _firebaseAuth.signInWithEmailAndPassword(
+  Future<void> signInWithCredentials(String email, String password) async {
+    _firebaseAuth.signInWithEmailAndPassword(
       email: email,
       password: password,
     );
+    await storeDeviceToken();
   }
 
-  Future<void> signInwithGoogle() async {
+  Future<UserCredential?> signInwithGoogle() async {
     try {
       final GoogleSignInAccount? googleSignInAccount =
           await _googleSignIn.signIn();
@@ -38,9 +41,10 @@ class UserRepository {
         idToken: googleSignInAuthentication.idToken,
       );
 
-      await _firebaseAuth.signInWithCredential(credential);
+      return await _firebaseAuth.signInWithCredential(credential);
     } catch (e) {
-      debugPrint("error");
+      debugPrint("error $e");
+      return null;
     }
   }
 
@@ -59,6 +63,21 @@ class UserRepository {
     });
 
     return exist;
+  }
+
+  Future<bool> isProfileSet(String userId) async {
+    late bool isSet;
+    await FirebaseFirestore.instance
+        .collection('users')
+        .doc(userId)
+        .get()
+        .then((userDoc) {
+      // Check if the profile data is set, adjust this according to your data structure
+      isSet =
+          userDoc.exists && userDoc['name'] != null && userDoc['email'] != null;
+    });
+
+    return isSet;
   }
 
   Future<void> signUp({required String email, required String password}) async {
@@ -127,7 +146,7 @@ class UserRepository {
           FirebaseFirestore.instance.collection('users');
 
       final DocumentSnapshot userDoc = await usersCollection.doc(userId).get();
-
+      final dataToken = await FirebaseMessaging.instance.getToken();
       if (userDoc.exists) {
         await usersCollection.doc(userId).update({
           'photoUrl': photoUrl,
@@ -139,6 +158,7 @@ class UserRepository {
           'created': created,
           'dob': dob,
           'bio': bio,
+          'deviceToken': dataToken
         });
       } else {
         await usersCollection.doc(userId).set({
@@ -152,6 +172,7 @@ class UserRepository {
           'created': created,
           'dob': dob,
           'bio': bio,
+          'deviceToken': dataToken
         });
       }
     } catch (e) {
@@ -188,6 +209,20 @@ class UserRepository {
       final data = await users.get();
 
       return UserModel.fromJson(data.data() ?? {});
+    } catch (e) {
+      debugPrint("$e");
+      return null;
+    }
+  }
+
+  Future<Map<String, dynamic>?> getUserMap() async {
+    try {
+      final userId = await getUser();
+      final users = FirebaseFirestore.instance.collection('users').doc(userId);
+
+      final data = await users.get();
+
+      return data.data();
     } catch (e) {
       debugPrint("$e");
       return null;
@@ -270,20 +305,71 @@ class UserRepository {
       DocumentReference userRef =
           FirebaseFirestore.instance.collection('users').doc(userId);
       await userRef.delete();
+
+      FirebaseStorage.instance.ref().child('userPhotos').child(userId).delete();
+    } catch (e) {
+      throw Exception("Unable to delete user account: $e");
+    }
+  }
+
+  Future<void> deleteUserAccount() async {
+    try {
+      // Get the current user ID
+      final userId = FirebaseAuth.instance.currentUser!.uid;
+
+      // Reference to Firestore document
+      DocumentReference userRef =
+          FirebaseFirestore.instance.collection('users').doc(userId);
+
+      // Reference to Firebase Storage folder
       Reference userImagesRef =
           FirebaseStorage.instance.ref().child('userPhotos').child(userId);
 
-      // Delete all images in the folder
+      // Delete user data from Firestore
+      await userRef.delete();
+
+      // Delete all images in the Firebase Storage folder
       await userImagesRef.listAll().then((result) async {
         await Future.forEach(result.items, (Reference item) async {
           await item.delete();
         });
       });
-      await FirebaseAuth.instance.currentUser?.delete();
-      debugPrint('User images deleted from Firebase Storage successfully');
-      return await FirebaseAuth.instance.currentUser?.delete();
+
+      // Sign out from Google if signed in using Google Sign-In
+      if (_firebaseAuth.currentUser != null) {
+        await _firebaseAuth.currentUser?.delete();
+        await _googleSignIn.signOut();
+      }
+    } on FirebaseAuthException catch (e) {
+      debugPrint(e.toString());
+
+      if (e.code == "requires-recent-login") {
+        // Handle the case where re-authentication is required
+        await _reauthenticateAndDelete();
+        await _firebaseAuth.currentUser?.delete();
+        await _googleSignIn.signOut();
+      } else {
+        // Handle other Firebase exceptions
+      }
     } catch (e) {
-      throw Exception("Unable to delete user");
+      debugPrint(e.toString());
+
+      // Handle general exception
+    }
+  }
+
+  Future<void> _reauthenticateAndDelete() async {
+    try {
+      final providerData = _firebaseAuth.currentUser?.providerData.first;
+
+      if (GoogleAuthProvider().providerId == providerData!.providerId) {
+        await _firebaseAuth.currentUser!
+            .reauthenticateWithProvider(GoogleAuthProvider());
+      }
+
+      await _firebaseAuth.currentUser?.delete();
+    } catch (e) {
+      // Handle exceptions
     }
   }
 
@@ -327,6 +413,35 @@ class UserRepository {
       debugPrint('User not found or document does not exist.');
       return null;
     }
+  }
+
+  Future<String> getSelectedUserIdToken(String userId) async {
+    final tokenSnapshot = await usersCollection.doc(userId).get();
+    if (!tokenSnapshot.data()!.containsKey('deviceToken')) {
+      await storeDeviceToken();
+      final userData = tokenSnapshot.data() as Map<String, dynamic>;
+      return userData['deviceToken'] as String;
+    } else {
+      final userData = tokenSnapshot.data() as Map<String, dynamic>;
+      return userData['deviceToken'] as String;
+    }
+  }
+
+  Future<void> storeDeviceToken() async {
+    final id = await getUser();
+
+    await FirebaseMessaging.instance.getToken().then((token) async {
+      await usersCollection.doc(id).update({"deviceToken": token});
+      debugPrint('My token is $token');
+    });
+  }
+
+  void setStatus(bool status) async {
+    final userId = await getUser();
+    debugPrint(status.toString());
+    await usersCollection
+        .doc(userId)
+        .update({'status': status, 'lastActive': Timestamp.now()});
   }
 }
 /*

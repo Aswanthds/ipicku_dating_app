@@ -1,14 +1,17 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:eva_icons_flutter/eva_icons_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:ipicku_dating_app/constants.dart';
+import 'package:ipicku_dating_app/domain/notifications/notifications_bloc.dart';
+import 'package:ipicku_dating_app/presentation/ui_utils/colors.dart';
 import 'package:ipicku_dating_app/data/repositories/user_repositories.dart';
-import 'package:ipicku_dating_app/domain/bloc/matches_data_bloc.dart';
+import 'package:ipicku_dating_app/domain/matches_data_bloc/matches_data_bloc.dart';
 import 'package:ipicku_dating_app/domain/matching_bloc/matching_bloc.dart';
 import 'package:ipicku_dating_app/domain/firebase_data/firebase_data_bloc.dart';
 import 'package:ipicku_dating_app/presentation/homepage/notifications_page.dart';
 import 'package:ipicku_dating_app/presentation/homepage/widgets/date_container.dart';
 import 'package:ipicku_dating_app/presentation/profile/profile_drawer.dart';
+import 'package:ipicku_dating_app/presentation/widgets/empty_list.dart';
 
 class HomePage extends StatefulWidget {
   final UserRepository userRepository;
@@ -19,7 +22,7 @@ class HomePage extends StatefulWidget {
   State<HomePage> createState() => _HomePageState();
 }
 
-class _HomePageState extends State<HomePage> {
+class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
   bool isRandomUsersLoaded = false;
 
   @override
@@ -29,6 +32,18 @@ class _HomePageState extends State<HomePage> {
 
     BlocProvider.of<MatchingBloc>(context).add(GetRandomUsers());
     BlocProvider.of<FirebaseDataBloc>(context).add(FirebaseDataLoadedEvent());
+    WidgetsBinding.instance.addObserver(this);
+    BlocProvider.of<NotificationsBloc>(context).add(GetNotifications());
+    UserRepository().setStatus(true);
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.resumed) {
+      UserRepository().setStatus(true);
+    } else {
+      UserRepository().setStatus(false);
+    }
   }
 
   @override
@@ -40,7 +55,7 @@ class _HomePageState extends State<HomePage> {
         if (state is DatePickedState) {
           ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
               backgroundColor: AppTheme.green,
-              duration: Durations.short2,
+              duration: Durations.medium4,
               behavior: SnackBarBehavior.floating,
               content: Text("User added as a pick")));
         }
@@ -51,14 +66,98 @@ class _HomePageState extends State<HomePage> {
           centerTitle: true,
           actions: [
             IconButton(
-              onPressed: () {
-                Navigator.of(context).push(
-                  MaterialPageRoute(
-                    builder: (context) => const NotificationsPage(),
-                  ),
-                );
+                onPressed: () {
+                  BlocProvider.of<MatchingBloc>(context).add(GetRandomUsers());
+                  BlocProvider.of<FirebaseDataBloc>(context)
+                      .add(FirebaseDataLoadedEvent());
+                },
+                icon: const Icon(EvaIcons.refresh)),
+            BlocBuilder<NotificationsBloc, NotificationsState>(
+              builder: (context, state) {
+                if (state is GetNotificationsLoaded) {
+                  final data = state.data;
+                  return StreamBuilder<QuerySnapshot<Map<String, dynamic>>>(
+                      stream: data,
+                      builder: (context, snapshot) {
+                        final userdata = snapshot.data?.docs ?? [];
+                        return IconButton(
+                          onPressed: () {
+                            Navigator.of(context).push(
+                              MaterialPageRoute(
+                                builder: (context) =>  NotificationsPage(data: userdata),
+                              ),
+                            );
+                          },
+                          icon: Stack(
+                            children: [
+                              const Icon(
+                                EvaIcons.bellOutline,
+                              ),
+                              Positioned(
+                                right: 0,
+                                child: Container(
+                                  padding: const EdgeInsets.all(1),
+                                  decoration: BoxDecoration(
+                                    color: Colors.red,
+                                    borderRadius: BorderRadius.circular(6),
+                                  ),
+                                  constraints: const BoxConstraints(
+                                    minWidth: 12,
+                                    minHeight: 12,
+                                  ),
+                                  child: Text(
+                                    userdata.length.toString(),
+                                    style: const TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 8,
+                                    ),
+                                    textAlign: TextAlign.center,
+                                  ),
+                                ),
+                              )
+                            ],
+                          ),
+                        );
+                      });
+                }
+                if (state is GetNotificationsError) {
+                  return IconButton(
+                    onPressed: () {
+                      
+                    },
+                    icon: Stack(
+                      children: [
+                        const Icon(
+                          EvaIcons.bellOutline,
+                        ),
+                        Positioned(
+                          right: 0,
+                          child: Container(
+                            padding: const EdgeInsets.all(1),
+                            decoration: BoxDecoration(
+                              color: Colors.red,
+                              borderRadius: BorderRadius.circular(6),
+                            ),
+                            constraints: const BoxConstraints(
+                              minWidth: 12,
+                              minHeight: 12,
+                            ),
+                            child: const Text(
+                              '0',
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 8,
+                              ),
+                              textAlign: TextAlign.center,
+                            ),
+                          ),
+                        )
+                      ],
+                    ),
+                  );
+                }
+                return const SizedBox();
               },
-              icon: const Icon(EvaIcons.bellOutline),
             ),
           ],
         ),
@@ -82,7 +181,7 @@ class _HomePageState extends State<HomePage> {
               );
             }
             if (state is RandomProfileError) {
-              return const Text("Error Occurred");
+              return const EmptyListPage(text: "Please Refresh the Page");
             }
             return Center(
               child: GestureDetector(

@@ -1,7 +1,7 @@
 import 'package:eva_icons_flutter/eva_icons_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:ipicku_dating_app/constants.dart';
+import 'package:ipicku_dating_app/presentation/ui_utils/colors.dart';
 import 'package:ipicku_dating_app/data/functions/validators.dart';
 import 'package:ipicku_dating_app/domain/auth_bloc/authentication_bloc.dart';
 import 'package:ipicku_dating_app/presentation/widgets/form_field.dart';

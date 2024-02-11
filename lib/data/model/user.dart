@@ -14,9 +14,13 @@ class UserModel {
   int? minAge, maxAge;
   List<dynamic>? userPhotos;
   List<dynamic>? interests;
+  bool? isOnline;
+  DateTime? lastActive;
 
   UserModel(
       {this.uid,
+      this.isOnline,
+      this.lastActive,
       this.name,
       this.gender,
       this.email,
@@ -47,6 +51,8 @@ class UserModel {
       bio: json['bio'],
       minAge: json['minAge'],
       maxAge: json['maxAge'],
+      isOnline: json['status'],
+      lastActive: (json['lastActive'] as Timestamp).toDate(),
     );
   }
 }

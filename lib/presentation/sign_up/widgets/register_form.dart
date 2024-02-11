@@ -1,7 +1,7 @@
 import 'package:eva_icons_flutter/eva_icons_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:ipicku_dating_app/constants.dart';
+import 'package:ipicku_dating_app/presentation/ui_utils/colors.dart';
 import 'package:ipicku_dating_app/data/functions/validators.dart';
 import 'package:ipicku_dating_app/data/repositories/user_repositories.dart';
 import 'package:ipicku_dating_app/domain/auth_bloc/authentication_bloc.dart';
@@ -10,6 +10,7 @@ import 'package:ipicku_dating_app/domain/signup_bloc/sign_up_event.dart';
 import 'package:ipicku_dating_app/domain/signup_bloc/sign_up_state.dart';
 import 'package:ipicku_dating_app/presentation/sign_up/widgets/forget_password.dart';
 import 'package:ipicku_dating_app/presentation/sign_up/widgets/register_button.dart';
+import 'package:ipicku_dating_app/presentation/ui_utils/constants.dart';
 import 'package:ipicku_dating_app/presentation/widgets/form_field.dart';
 import 'package:ipicku_dating_app/presentation/widgets/logo_widget.dart';
 
@@ -59,7 +60,7 @@ class _RegisterFormState extends State<RegisterForm> {
           debugPrint("isSubmitting");
 
           ScaffoldMessenger.of(context).showSnackBar(
-            SnackBarConstants.profileLoading,
+            SnackBarManager.profileLoading,
           );
         }
         if (state is SignUpSucess) {
@@ -113,19 +114,7 @@ class _RegisterFormState extends State<RegisterForm> {
                   ),
                   Padding(
                       padding: const EdgeInsets.only(top: 20),
-                      child: RegisterButton(onPressed: _onFormSubmitted)
-                      // ?
-                      // : ElevatedButton(
-                      //     onPressed: () {},
-                      //     style: ElevatedButton.styleFrom(
-                      //       backgroundColor: AppTheme.grey,
-                      //       shape: RoundedRectangleBorder(
-                      //         borderRadius: BorderRadius.circular(30.0),
-                      //       ),
-                      //     ),
-                      //     child: const Text("Register"),
-                      //),
-                      ),
+                      child: RegisterButton(onPressed: _onFormSubmitted)),
                   ElevatedButton.icon(
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.redAccent,

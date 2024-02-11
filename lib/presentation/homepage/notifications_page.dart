@@ -1,45 +1,41 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:eva_icons_flutter/eva_icons_flutter.dart';
 import 'package:flutter/material.dart';
+import 'package:timeago/timeago.dart';
 
 class NotificationsPage extends StatelessWidget {
-  const NotificationsPage({super.key});
+  final List<QueryDocumentSnapshot<Map<String, dynamic>>> data;
+  const NotificationsPage({super.key, required this.data});
+  static const route = '/notification_page';
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Notification'),
-      ),
-      body: const Column(
-        mainAxisAlignment: MainAxisAlignment.start,
-        children: [
-          SizedBox(
-            height: 20,
-          ),
-          NotificationItem(
-            time: 'now',
-            subtitle: 'You have a new message.',
-          ),
-          NotificationItem(
-            time: '3 min ago',
-            subtitle: 'You have a new match! Check it out.',
-          ),
-          NotificationItem(
-            time: '4h ago',
-            subtitle: 'Someone likes your profile.',
-          ),
-        ],
-      ),
-    );
+        appBar: AppBar(
+          title: const Text('Notification'),
+        ),
+        body: ListView.separated(
+            itemBuilder: (context, index) => NotificationItem(
+                  time: format((data[index]['time'] as Timestamp).toDate(),
+                      allowFromNow: true, clock: DateTime.now(), locale: 'en'),
+                  subtitle: '${data[index]['body']}',
+                  title: data[index]['title'],
+                ),
+            separatorBuilder: (context, index) => const Divider(),
+            itemCount: data.length));
   }
 }
 
 class NotificationItem extends StatelessWidget {
   final String subtitle, time;
 
+  final String title;
+
   const NotificationItem({
     super.key,
     required this.subtitle,
     required this.time,
+    required this.title,
   });
 
   @override
@@ -48,9 +44,14 @@ class NotificationItem extends StatelessWidget {
       leading: const CircleAvatar(
         radius: 20,
         backgroundColor: Colors.orange,
+        child: Icon(EvaIcons.alertTriangle),
+      ),
+      subtitle: Text(
+        subtitle,
+        style: Theme.of(context).textTheme.titleMedium,
       ),
       title: Text(
-        subtitle,
+        title,
         style: Theme.of(context).textTheme.titleMedium,
       ),
       trailing: Text(

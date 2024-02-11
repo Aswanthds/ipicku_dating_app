@@ -1,6 +1,6 @@
 // ignore_for_file: use_build_context_synchronously
 
-import 'package:ipicku_dating_app/constants.dart';
+import 'package:ipicku_dating_app/presentation/ui_utils/colors.dart';
 import 'package:ipicku_dating_app/data/model/user.dart';
 import 'package:flutter/material.dart';
 import 'package:ipicku_dating_app/presentation/profile/widgets/bio_edit_profile.dart';

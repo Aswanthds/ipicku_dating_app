@@ -1,14 +1,13 @@
 // ignore_for_file: use_build_context_synchronously
 
 import 'dart:io';
-
+import 'package:ipicku_dating_app/presentation/ui_utils/colors.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:eva_icons_flutter/eva_icons_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
-import 'package:ipicku_dating_app/constants.dart';
 import 'package:ipicku_dating_app/data/functions/profile_functions.dart';
 import 'package:ipicku_dating_app/data/repositories/user_repositories.dart';
 import 'package:ipicku_dating_app/domain/auth_bloc/authentication_bloc.dart';
@@ -16,6 +15,8 @@ import 'package:ipicku_dating_app/domain/profile_bloc/profile_bloc.dart';
 import 'package:ipicku_dating_app/domain/profile_bloc/profile_state.dart';
 import 'package:ipicku_dating_app/presentation/main_page.dart';
 import 'package:ipicku_dating_app/presentation/sign_up/widgets/profile_form.dart';
+import 'package:ipicku_dating_app/presentation/ui_utils/constants.dart';
+import 'package:ipicku_dating_app/presentation/ui_utils/input_decoration.dart';
 
 class SignupProfilePage extends StatefulWidget {
   final UserRepository userRepository;
@@ -51,20 +52,20 @@ class _SignupProfilePageState extends State<SignupProfilePage> {
           ScaffoldMessenger.of(context)
             ..hideCurrentSnackBar()
             ..showSnackBar(
-              SnackBarConstants.profileFailedSnackBar,
+              SnackBarManager.profileFailedSnackBar,
             );
         }
 
         if (state is ProfileStateLoading) {
           ScaffoldMessenger.of(context)
             ..hideCurrentSnackBar()
-            ..showSnackBar(SnackBarConstants.profileLoading);
+            ..showSnackBar(SnackBarManager.profileLoading);
         }
         if (state is ProfileStateSuccess) {
           BlocProvider.of<AuthenticationBloc>(context).add(LoggedIn());
           ScaffoldMessenger.of(context)
             ..hideCurrentSnackBar()
-            ..showSnackBar(SnackBarConstants.profileSuccessSnackBar);
+            ..showSnackBar(SnackBarManager.profileSuccessSnackBar);
           Navigator.of(context).pushAndRemoveUntil(
               MaterialPageRoute(
                 builder: (context) =>
@@ -92,9 +93,14 @@ class _SignupProfilePageState extends State<SignupProfilePage> {
                         ProfilePicture(
                           onTap: () async {
                             final image = await ProfileFunctions.pickImage();
-                            setState(() {
-                              _pickedImage = image;
-                            });
+                            if (image != null) {
+                              var croppedImage =
+                                  await ProfileFunctions.cropProfileImage(
+                                      File(image.path));
+                              setState(() {
+                                _pickedImage = XFile(croppedImage!.path);
+                              });
+                            }
                           },
                           pickedImage: _pickedImage,
                         ),
@@ -179,6 +185,7 @@ class _SignupProfilePageState extends State<SignupProfilePage> {
     var location = await ProfileFunctions.getLocation();
     ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
         backgroundColor: Colors.green, content: Text("Submitting your data")));
+
     Future.delayed(const Duration(seconds: 5)).then((value) {
       BlocProvider.of<ProfileBloc>(context).add(Submitted(
           age: ProfileFunctions.calculateAge(_selectedDate),

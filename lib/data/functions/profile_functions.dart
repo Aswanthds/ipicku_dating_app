@@ -7,7 +7,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:ipicku_dating_app/constants.dart';
+import 'package:ipicku_dating_app/presentation/ui_utils/colors.dart';
 import 'package:ipicku_dating_app/domain/firebase_data/firebase_data_bloc.dart';
 import 'package:ipicku_dating_app/presentation/profile/widgets/image_cropping.dart';
 
@@ -26,11 +26,37 @@ class ProfileFunctions {
     return 0;
   }
 
-  static Future<GeoPoint> getLocation() async {
-    Position position = await Geolocator.getCurrentPosition(
-        desiredAccuracy: LocationAccuracy.high);
+  static Future<GeoPoint?> getLocation() async {
+    if (!await isLocationServiceEnabled()) {
+      // Handle location service disabled
+      return null;
+    }
 
-    return GeoPoint(position.latitude, position.longitude);
+    LocationPermission permission = await requestLocationPermission();
+    handlePermission(permission);
+
+    if (permission == LocationPermission.always ||
+        permission == LocationPermission.whileInUse) {
+      Position? position = await getCurrentLocation();
+      if (position != null) {
+        return GeoPoint(position.latitude, position.longitude);
+      }
+    }
+
+    return null;
+  }
+
+  static Future<Position?> getCurrentLocation() async {
+    if (!await isLocationServiceEnabled()) {
+      return null; // Handle case where location service is disabled
+    }
+
+    LocationPermission permission = await Geolocator.requestPermission();
+    if (permission == LocationPermission.always ||
+        permission == LocationPermission.whileInUse) {
+      return await Geolocator.getCurrentPosition();
+    }
+    return null;
   }
 
   static Future<XFile?> pickImage() async {
@@ -52,6 +78,7 @@ class ProfileFunctions {
         compressQuality: 100,
         maxHeight: 1000,
         maxWidth: 1000,
+        cropStyle: CropStyle.circle,
         compressFormat: ImageCompressFormat.jpg,
         aspectRatioPresets: [
           CropAspectRatioPreset.square,
@@ -62,9 +89,35 @@ class ProfileFunctions {
         ],
         uiSettings: [
           AndroidUiSettings(
-            toolbarColor: AppTheme.kPrimary,
+            toolbarColor: AppTheme.white,
             toolbarTitle: "Crop Image",
-            statusBarColor: Colors.deepOrange.shade900,
+            statusBarColor: AppTheme.kPrimary,
+            backgroundColor: Colors.white,
+          ),
+        ]);
+
+    return File(croppedFile!.path);
+  }
+
+  static Future<File?> cropProfileImage(File image) async {
+    final croppedFile = await ImageCropper().cropImage(
+        sourcePath: image.path,
+        aspectRatio: const CropAspectRatio(ratioX: 1, ratioY: 1),
+        compressQuality: 100,
+        maxHeight: 1000,
+        maxWidth: 1000,
+        cropStyle: CropStyle.circle,
+        compressFormat: ImageCompressFormat.jpg,
+        aspectRatioPresets: [
+          CropAspectRatioPreset.square,
+          CropAspectRatioPreset.original,
+          CropAspectRatioPreset.ratio4x3,
+        ],
+        uiSettings: [
+          AndroidUiSettings(
+            toolbarColor: AppTheme.white,
+            toolbarTitle: "Crop Image",
+            statusBarColor: AppTheme.kPrimary,
             backgroundColor: Colors.white,
           ),
         ]);
@@ -77,7 +130,7 @@ class ProfileFunctions {
 
     if (pickedImage != null) {
       // Crop the picked image
-      File? croppedImage = await cropImage(File(pickedImage.path));
+      File? croppedImage = await cropProfileImage(File(pickedImage.path));
 
       if (croppedImage != null) {
         // Navigate to the upload page with the cropped image
@@ -92,13 +145,15 @@ class ProfileFunctions {
   static Future<DateTime?> pickDateofBirth(BuildContext context) async {
     final DateTime? pickedDate = await showDatePicker(
       context: context,
+      confirmText: "Add your D.O.B",
+      currentDate: DateTime.now(),
       initialDate: DateTime.now().subtract(const Duration(days: 365 * 18)),
       lastDate: DateTime.now().subtract(const Duration(days: 365 * 18)),
       firstDate: DateTime(1900),
     );
     if (pickedDate != null) {
       debugPrint(pickedDate.day.toString());
-      return pickedDate;
+      return pickedDate.toLocal();
     }
     return null;
   }
@@ -180,5 +235,49 @@ class ProfileFunctions {
       ),
     );
     return croppedImage;
+  }
+
+  static Future<LocationPermission> checkPermission() async {
+    var permission = await Geolocator.checkPermission();
+
+    if (permission == LocationPermission.denied) {
+      permission = await Geolocator.requestPermission();
+    } else {
+      permission = LocationPermission.whileInUse;
+    }
+    return permission;
+  }
+
+  static Future<bool> isLocationServiceEnabled() async {
+    final serviceEnabled = await Geolocator.isLocationServiceEnabled();
+    return serviceEnabled;
+  }
+
+  static Future<LocationPermission> requestLocationPermission() async {
+    if (!await isLocationServiceEnabled()) {
+      // Handle case where location service is disabled
+      return LocationPermission.denied;
+    }
+
+    LocationPermission permission = await Geolocator.requestPermission();
+    return permission;
+  }
+
+  static void handlePermission(LocationPermission permission) {
+    switch (permission) {
+      case LocationPermission.always:
+        // Permission granted for both foreground and background usage
+        break;
+      case LocationPermission.whileInUse:
+        // Permission granted only while the app is in the foreground
+        break;
+      case LocationPermission.denied:
+        // Permission denied
+        break;
+      case LocationPermission.deniedForever:
+        break;
+      case LocationPermission.unableToDetermine:
+        break;
+    }
   }
 }

@@ -10,14 +10,15 @@ class UploadPage extends StatelessWidget {
 
   const UploadPage({super.key, required this.croppedImage});
 
-  // Implement your Firebase upload logic here
+
 
   @override
   Widget build(BuildContext context) {
     return Dialog(
+      shape: const RoundedRectangleBorder(borderRadius: BorderRadius.zero),
       child: Center(
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.start,
           mainAxisSize: MainAxisSize.min,
           children: [
             Image.file(

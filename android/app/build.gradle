@@ -2,7 +2,7 @@ plugins {
     id "com.android.application"
     id "kotlin-android"
     id "dev.flutter.flutter-gradle-plugin"
-
+    id 'com.google.gms.google-services' 
     
    
 }
@@ -27,7 +27,7 @@ if (flutterVersionName == null) {
 
 android {
     namespace "com.aswanth.ipicku"
-    compileSdkVersion flutter.compileSdkVersion
+    compileSdkVersion 33
     ndkVersion flutter.ndkVersion
 
     compileOptions {
@@ -60,6 +60,8 @@ android {
             // TODO: Add your own signing config for the release build.
             // Signing with the debug keys for now, so `flutter run --release` works.
             signingConfig signingConfigs.debug
+
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
 }
@@ -71,5 +73,10 @@ flutter {
 dependencies {
 
     implementation 'androidx.multidex:multidex:2.0.1'
-    implementation 'com.google.firebase:firebase-appcheck-safetynet:16.0.0' 
+    implementation(platform("com.google.firebase:firebase-bom:32.6.0"))
+    implementation("com.google.firebase:firebase-analytics") 
+    implementation 'com.google.firebase:firebase-messaging:21.1.0'
+    
+
+     
 }

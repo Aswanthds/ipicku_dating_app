@@ -12,7 +12,20 @@
           "package_name": "com.aswanth.ipicku"
         }
       },
-      "oauth_client": [],
+      "oauth_client": [
+        {
+          "client_id": "471585294652-hrp8uf8gi4oqsi24pusrmeft09740r25.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.aswanth.ipicku",
+            "certificate_hash": "bf40d2711f6aa60ba0999ac0c38c8468c457e897"
+          }
+        },
+        {
+          "client_id": "471585294652-500mhbhj3g5t5t378b73pbumh6ck6rrq.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
       "api_key": [
         {
           "current_key": "AIzaSyAMn7tajC_IWjNo3x_pBwphIm113JiLj7o"
@@ -20,7 +33,12 @@
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": []
+          "other_platform_oauth_client": [
+            {
+              "client_id": "471585294652-500mhbhj3g5t5t378b73pbumh6ck6rrq.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
         }
       }
     }

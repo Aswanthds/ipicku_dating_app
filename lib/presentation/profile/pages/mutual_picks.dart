@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:ipicku_dating_app/constants.dart';
+import 'package:ipicku_dating_app/presentation/ui_utils/colors.dart';
 import 'package:ipicku_dating_app/data/model/user.dart';
-import 'package:ipicku_dating_app/domain/bloc/matches_data_bloc.dart';
+import 'package:ipicku_dating_app/domain/matches_data_bloc/matches_data_bloc.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:ipicku_dating_app/presentation/homepage/progfilepage.dart';
+import 'package:ipicku_dating_app/presentation/widgets/empty_list.dart';
 
 class MutualPicks extends StatelessWidget {
   final UserModel user;
@@ -42,7 +43,7 @@ class MutualPicks extends StatelessWidget {
                           onTap: () {
                             Navigator.of(context).push(MaterialPageRoute(
                               builder: (context) =>
-                                  UserProfileBottomSheet(data: data[index]),
+                                  UserProfileBottomSheet(data: data[index],userid: user.uid ?? '',isMyPick: false),
                             ));
                           },
                           shape: RoundedRectangleBorder(
@@ -57,18 +58,14 @@ class MutualPicks extends StatelessWidget {
                             backgroundImage:
                                 NetworkImage(data[index]['photoUrl']),
                           ),
-                          trailing: IconButton(
-                            onPressed: () {},
-                            icon: const Icon(
-                              Icons.close,
-                              color: AppTheme.white,
-                            ),
-                          ),
                         ),
                       );
                     }
                     return const Center(child: Text("No picks by others"));
                   });
+            }
+            if (state is MutualListLoadError) {
+              return const EmptyListPage(text: 'No mutual Picks');
             }
             return const SizedBox();
           },

@@ -2,7 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:eva_icons_flutter/eva_icons_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:ipicku_dating_app/constants.dart';
+import 'package:ipicku_dating_app/presentation/ui_utils/colors.dart';
 import 'package:ipicku_dating_app/data/functions/profile_functions.dart';
 
 class DetailsSection extends StatelessWidget {
@@ -19,66 +19,82 @@ class DetailsSection extends StatelessWidget {
       padding: const EdgeInsets.all(8.0),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
-        mainAxisAlignment: MainAxisAlignment.start,
         children: [
-          ListTile(
-            contentPadding:
-                EdgeInsets.zero, // Remove ListTile's default padding
-            title: Text("${data['name']} , ${data['age']}",
-                style: Theme.of(context).textTheme.displayLarge),
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Text(
+              "User Details",
+              style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                    fontWeight: FontWeight.w300,
+                  ),
+            ),
           ),
           userDataListTile(EvaIcons.person, "${data['gender']}", context),
-          userDataListTile(
-            EvaIcons.bookmark,
-            data['bio'] == "null" ? " " : "${data['bio']}",
-            context,
-          ),
+          data['bio'] == "null"
+              ? userDataListTile(
+                  EvaIcons.bookmark,
+                  data['bio'] == "null" ? " " : "${data['bio']}",
+                  context,
+                )
+              : const SizedBox(),
           userDataListTile(
               EvaIcons.calendarOutline,
               DateFormat('dd - MMM - yyy')
                   .format((data['dob'] as Timestamp).toDate()),
               context),
-          //userDataListTile(EvaIcons.calendarOutline, (data['dob'].toString())),
-
-          FutureBuilder<String?>(
-            future: ProfileFunctions.getAddressFromCoordinates(
-              (data['location'] as GeoPoint).latitude,
-              (data['location'] as GeoPoint).longitude,
-            ),
-            builder: (context, snapshot) {
-              if (snapshot.connectionState == ConnectionState.waiting) {
-                return const CircularProgressIndicator();
-              } else if (snapshot.hasError) {
-                return Text("Error: ${snapshot.error}");
-              } else {
-                return ListTile(
-                  contentPadding: EdgeInsets.zero,
-                  minLeadingWidth: 2,
-                  leading: const Icon(
-                    Icons.location_on,
-                    size: 18,
-                    color: AppTheme.grey,
-                  ),
-                  title: Text(snapshot.data ?? "No address available",
-                      style: Theme.of(context).textTheme.bodyLarge,),
-                );
-              }
-            },
-          ),
+          (data['location'] == 'null') ? _locationDataTile() : const SizedBox()
         ],
       ),
     );
   }
 
+  FutureBuilder<String?> _locationDataTile() {
+    return FutureBuilder<String?>(
+      future: ProfileFunctions.getAddressFromCoordinates(
+          (data['location'] as GeoPoint?)?.latitude ?? 0.0,
+          (data['location'] as GeoPoint?)?.longitude ?? 0.0),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          // While the future is still resolving, show a loading indicator.
+          return const CircularProgressIndicator();
+        } else if (snapshot.hasError) {
+          // If there's an error in fetching the data, display the error message.
+          return Text("Error: ${snapshot.error}");
+        } else {
+          // If the data retrieval is successful, display it in a ListTile.
+          return ListTile(
+            contentPadding: EdgeInsets.zero,
+            minLeadingWidth: 2,
+            leading: const Icon(
+              Icons.location_on,
+              size: 18,
+              color: AppTheme.grey,
+            ),
+            title: Text(
+              snapshot.data ?? "No address available",
+              style: Theme.of(context).textTheme.bodyLarge,
+            ),
+          );
+        }
+      },
+    );
+  }
+
   userDataListTile(IconData person, String s, BuildContext context) {
-    return ListTile(
-      contentPadding: EdgeInsets.zero,
-      minLeadingWidth: 2,
-      leading: Icon(
-        person,
-        size: 18,
+    return Container(
+      decoration: BoxDecoration(
+          border: const Border.symmetric(
+              horizontal: BorderSide(width: 2.0, style: BorderStyle.solid)),
+          borderRadius: BorderRadius.circular(20)),
+      margin: const EdgeInsets.only(top: 10),
+      child: ListTile(
+        minLeadingWidth: 2,
+        leading: Icon(
+          person,
+          size: 18,
+        ),
+        title: Text(s, style: Theme.of(context).textTheme.bodyLarge),
       ),
-      title: Text(s, style: Theme.of(context).textTheme.bodyLarge),
     );
   }
 }

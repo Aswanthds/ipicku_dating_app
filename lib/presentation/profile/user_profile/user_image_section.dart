@@ -2,23 +2,48 @@ import 'package:flutter/material.dart';
 import 'package:ipicku_dating_app/presentation/profile/user_profile/image_preview.dart';
 
 class UserImageSection extends StatelessWidget {
-  final List<dynamic> imageUrl;
+  final List<dynamic>? imageUrl;
 
   const UserImageSection({
-    super.key,
+    Key? key,
     required this.imageUrl,
-  });
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.only(top: 30),
-      child: Row(
-          mainAxisAlignment: MainAxisAlignment.start,
-          children: List<Widget>.generate(
-            imageUrl.length,
-            (index) => _buildUserPhoto(context, imageUrl[index]),
-          )),
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Text(
+            "User Photos",
+            style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                  fontWeight: FontWeight.w300,
+                ),
+          ),
+        ),
+        Padding(
+          padding: const EdgeInsets.only(top: 30),
+          child: (imageUrl != null && imageUrl!.isNotEmpty)
+              ? Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: List<Widget>.generate(
+                    imageUrl!.length,
+                    (index) => _buildUserPhoto(context, imageUrl![index]),
+                  ),
+                )
+              : SizedBox(
+                  height: 100,
+                  child: Center(
+                    child: Text(
+                      'No user images available.',
+                      style: Theme.of(context).textTheme.bodyMedium,
+                    ),
+                  ),
+                ),
+        ),
+      ],
     );
   }
 }
@@ -34,7 +59,6 @@ Widget _buildUserPhoto(BuildContext context, String imgUrl) {
         Padding(
           padding: const EdgeInsets.only(
             left: 20.0,
-            bottom: 10,
           ),
           child: Text(
             "Photos",

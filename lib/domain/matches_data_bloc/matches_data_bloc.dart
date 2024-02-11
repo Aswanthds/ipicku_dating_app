@@ -32,8 +32,8 @@ class MatchesDataBloc extends Bloc<MatchesDataEvent, MatchesDataState> {
 
         List<Map<String, dynamic>> selectedList =
             await _matcheRepo.getSelectedList(userId);
+        
         emit(SelectedListLoaded(userProfile: selectedList));
-        debugPrint("data : ${selectedList[0]['name']}");
       } catch (e) {
         debugPrint("Error :$e");
         emit(const SelectedListLoadError(
@@ -50,7 +50,8 @@ class MatchesDataBloc extends Bloc<MatchesDataEvent, MatchesDataState> {
           emit(DatePickedState());
         } catch (e) {
           debugPrint("Error :$e");
-          emit(const DatePickedErrorState('Error occured white fetching profiles'));
+          emit(const DatePickedErrorState(
+              'Error occured white fetching profiles'));
         }
       },
     );
@@ -65,6 +66,25 @@ class MatchesDataBloc extends Bloc<MatchesDataEvent, MatchesDataState> {
         } catch (e) {
           debugPrint("Error :$e");
           emit(const MutualListLoadError(
+              errorMessage: 'Error occured white fetching profiles'));
+        }
+      },
+    );
+
+    on<RemoveUserFromPick>(
+      (event, emit) async {
+        emit(MatchesListLoading());
+        try {
+          final userId = await UserRepository().getUser();
+
+          _matcheRepo.deleteMyPickDocument(userId, event.selectedUserId);
+          List<Map<String, dynamic>> matchedList =
+              await _matcheRepo.getMatchedList(userId);
+
+          emit(MatchesListLoaded(userProfile: matchedList));
+        } catch (e) {
+          debugPrint("Error :$e");
+          emit(const MatchesListLoadError(
               errorMessage: 'Error occured white fetching profiles'));
         }
       },

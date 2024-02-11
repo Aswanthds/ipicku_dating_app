@@ -1,10 +1,12 @@
 import 'package:eva_icons_flutter/eva_icons_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:ipicku_dating_app/constants.dart';
+import 'package:ipicku_dating_app/presentation/ui_utils/colors.dart';
 import 'package:ipicku_dating_app/data/repositories/user_repositories.dart';
 import 'package:ipicku_dating_app/domain/auth_bloc/authentication_bloc.dart';
 import 'package:ipicku_dating_app/presentation/log_in/login.dart';
+import 'package:ipicku_dating_app/presentation/ui_utils/constants.dart';
+import 'package:ipicku_dating_app/presentation/ui_utils/dialog_manager.dart';
 
 class DeleteAccountWidget extends StatelessWidget {
   final UserRepository userRepository;
@@ -18,26 +20,23 @@ class DeleteAccountWidget extends StatelessWidget {
     return BlocListener<AuthenticationBloc, AuthenticationState>(
       listener: (context, state) {
         if (state is AccountDeletingState) {
-          ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-              duration: Duration(seconds: 3),
-              content: Text("Deleting your data")));
+          ScaffoldMessenger.of(context)
+              .showSnackBar(SnackBarManager.deleteLoadingSnackbar);
         }
         if (state is AccountDeletingFailed) {
-          ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-              duration: Duration(seconds: 3),
-              content: Text("Deleting your data failed")));
+          ScaffoldMessenger.of(context)
+              .showSnackBar(SnackBarManager.deletefailedSnackbar);
         }
         if (state is AccountDeletedState) {
           BlocProvider.of<AuthenticationBloc>(context).add(LoggedOut());
-          ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-              duration: Duration(seconds: 3),
-              content: Text("Deleted your data")));
           Navigator.of(context).pushAndRemoveUntil(
               MaterialPageRoute(
                 builder: (context) =>
                     SignInPage(userRepository: userRepository),
               ),
               (route) => false);
+          ScaffoldMessenger.of(context)
+              .showSnackBar(SnackBarManager.deleteDoneSnackbar);
         }
       },
       child: BlocBuilder<AuthenticationBloc, AuthenticationState>(
