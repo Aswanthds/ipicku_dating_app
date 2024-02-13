@@ -84,7 +84,8 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
                           onPressed: () {
                             Navigator.of(context).push(
                               MaterialPageRoute(
-                                builder: (context) =>  NotificationsPage(data: userdata),
+                                builder: (context) =>
+                                    NotificationsPage(data: userdata),
                               ),
                             );
                           },
@@ -122,9 +123,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
                 }
                 if (state is GetNotificationsError) {
                   return IconButton(
-                    onPressed: () {
-                      
-                    },
+                    onPressed: () {},
                     icon: Stack(
                       children: [
                         const Icon(

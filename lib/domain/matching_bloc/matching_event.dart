@@ -14,4 +14,3 @@ class GetRegionUsers extends MatchingEvent {
 
   const GetRegionUsers({required this.radius});
 }
-

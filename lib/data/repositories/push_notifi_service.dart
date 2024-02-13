@@ -23,26 +23,11 @@ class PushNotificationService {
   void handleMessage(RemoteMessage? message) {
     if (message == null) return;
     final data = message.data;
-    String? notificationType = data['notificationType'];
     String? notificationContent = data['notificationContent'];
 
     // Use the extracted information to navigate to the appropriate page
-    switch (notificationType) {
-      case 'messages':
-        navigatorKey.currentState
-            ?.pushNamed(ChatPage.route, arguments: notificationContent);
-        break;
-      case 'picks':
-        navigatorKey.currentState
-            ?.pushNamed(MyPicksPage.route, arguments: notificationContent);
-        break;
-      // Add more cases as needed for different notification types and corresponding pages
-      default:
-        // Navigate to a default page or handle it as needed
-        navigatorKey.currentState?.pushNamed(NotificationsPage.route,
-            arguments: notificationContent);
-        break;
-    }
+     navigatorKey.currentState
+        ?.pushNamed(NotificationsPage.route, arguments: notificationContent);
   }
 
   Future initPushNotification() async {

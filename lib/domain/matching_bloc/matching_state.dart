@@ -26,7 +26,8 @@ class RandomProfileLoading extends MatchingState {}
 class Regionprofiles extends MatchingState {
   final List<Map<String, dynamic>> locationUsers;
   final List<Map<String, dynamic>> interest;
-  const Regionprofiles({required this.locationUsers, required this.interest});
+  final List<Map<String, dynamic>> ageUsers;
+  const Regionprofiles(this.ageUsers, {required this.locationUsers, required this.interest});
 }
 
 class RegionprofilesError extends MatchingState {
@@ -34,4 +35,5 @@ class RegionprofilesError extends MatchingState {
 
   const RegionprofilesError(this.errorMessage);
 }
-class RegionprofilesLoading extends MatchingState{}
+
+class RegionprofilesLoading extends MatchingState {}

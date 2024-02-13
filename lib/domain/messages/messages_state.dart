@@ -22,4 +22,3 @@ class GetChatsLoading extends MessagesState {}
 class GetChatsError extends MessagesState {}
 
 //
-

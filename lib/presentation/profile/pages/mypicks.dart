@@ -31,64 +31,69 @@ class MyPicksPage extends StatelessWidget {
             }
             if (state is MatchesListLoaded) {
               final data = state.userProfile;
-              return ListView.builder(
-                  itemCount: data.length,
-                  itemBuilder: (context, index) {
-                    if (data.isNotEmpty) {
-                      return Card(
-                        shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(20)),
-                        margin: const EdgeInsets.all(10),
-                        elevation: 5.0,
-                        child: ListTile(
-                          onTap: () async {
-                            final id = await UserRepository().getUser();
-                            Navigator.of(context).push(MaterialPageRoute(
-                              builder: (context) => UserProfileBottomSheet(
-                                data: data[index],
-                                userid: id,
-                                isMyPick: true,
-                              ),
-                            ));
-                          },
+              if (data.isNotEmpty) {
+                return ListView.builder(
+                    itemCount: data.length,
+                    itemBuilder: (context, index) {
+                      if (data.isNotEmpty) {
+                        return Card(
                           shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(20)),
-                          tileColor: AppTheme.green,
-                          title: Text("${data[index]['name']}",
-                              style: const TextStyle(
-                                  color: AppTheme.black26,
-                                  letterSpacing: 2.0,
-                                  fontWeight: FontWeight.bold)),
-                          subtitle: Text(
-                              DateFormat('dd MMM yy').format(
-                                (data[index]['timestamp'] as Timestamp)
-                                    .toDate(),
-                              ),
-                              style: const TextStyle(
-                                  color: Colors.white,
-                                  letterSpacing: 1.5,
-                                  fontSize: 12,
-                                  fontWeight: FontWeight.bold)),
-                          leading: CircleAvatar(
-                            backgroundImage:
-                                NetworkImage(data[index]['photoUrl']),
-                          ),
-                          trailing: IconButton(
-                            onPressed: () {
-                              DialogManager.showdeletePickDialog(
-                                  context: context, data: data[index]);
+                          margin: const EdgeInsets.all(10),
+                          elevation: 5.0,
+                          child: ListTile(
+                            onTap: () async {
+                              final id = await UserRepository().getUser();
+                              Navigator.of(context).push(MaterialPageRoute(
+                                builder: (context) => UserProfileBottomSheet(
+                                  data: data[index],
+                                  userid: id,
+                                  isMyPick: true,
+                                ),
+                              ));
                             },
-                            icon: const Icon(
-                              Icons.close,
-                              color: AppTheme.white,
+                            shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(20)),
+                            tileColor: AppTheme.green,
+                            title: Text("${data[index]['name']}",
+                                style: const TextStyle(
+                                    color: AppTheme.black26,
+                                    letterSpacing: 2.0,
+                                    fontWeight: FontWeight.bold)),
+                            subtitle: Text(
+                                DateFormat('dd MMM yy').format(
+                                  (data[index]['timestamp'] as Timestamp)
+                                      .toDate(),
+                                ),
+                                style: const TextStyle(
+                                    color: Colors.white,
+                                    letterSpacing: 1.5,
+                                    fontSize: 12,
+                                    fontWeight: FontWeight.bold)),
+                            leading: CircleAvatar(
+                              backgroundImage:
+                                  NetworkImage(data[index]['photoUrl']),
+                            ),
+                            trailing: IconButton(
+                              onPressed: () {
+                                DialogManager.showdeletePickDialog(
+                                    context: context, data: data[index]);
+                              },
+                              icon: const Icon(
+                                Icons.close,
+                                color: AppTheme.white,
+                              ),
                             ),
                           ),
-                        ),
-                      );
-                    }
+                        );
+                      }
 
-                    return const Center(child: Text("No picks by others"));
-                  });
+                      return const Center(child: Text("No picks by others"));
+                    });
+              }
+              return const EmptyListPage(
+                text: 'No picks from you',
+              );
             }
             if (state is MatchesListLoadError) {
               return const EmptyListPage(

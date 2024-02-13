@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:ipicku_dating_app/data/repositories/theme.dart';
+import 'package:ipicku_dating_app/domain/notifications/notifications_bloc.dart';
 import 'package:ipicku_dating_app/presentation/ui_utils/colors.dart';
 import 'package:ipicku_dating_app/domain/firebase_data/firebase_data_bloc.dart';
 import 'package:ipicku_dating_app/domain/theme/theme_bloc.dart';
@@ -15,15 +15,12 @@ class SettingsPage extends StatefulWidget {
 }
 
 class _SettingsPageState extends State<SettingsPage> {
-  bool hideFromDiscovery = true;
-  bool enableLikesNotification = true;
-  bool enablePicksNotification = true;
-  bool enableMessagesNotification = true;
-  bool enableRecommendationsNotification = true;
   bool darkThemeEnabled = false;
 
   @override
   void initState() {
+    BlocProvider.of<NotificationsBloc>(context)
+        .add(GetNotificationPreferences());
     super.initState();
   }
 
@@ -52,56 +49,63 @@ class _SettingsPageState extends State<SettingsPage> {
     );
   }
 
-  Column _pushNotifications() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Padding(
-          padding: const EdgeInsets.only(
-            left: 15.0,
-            top: 10,
-          ),
-          child: Text(
-            "Notifications",
-            style: Theme.of(context).textTheme.displayLarge,
-          ),
-        ),
-        _notificationListTile("Likes", enableLikesNotification, (value) {
-          setState(() {
-            enableLikesNotification = value;
-          });
-          setLikesOn(value);
-          BlocProvider.of<FirebaseDataBloc>(context)
-              .add(UpdateUserFieldEvent('notifications_likes', value));
-        }),
-        _notificationListTile("Picks", enablePicksNotification, (value) async {
-          setState(() {
-            enablePicksNotification = value;
-          });
-          setPicksOn(value);
-          BlocProvider.of<FirebaseDataBloc>(context).add(
-              UpdateUserFieldEvent('notifications_picks', await isPicksOn()));
-        }), //notifications_picks
-        _notificationListTile("Messages", enableMessagesNotification,
-            (value) async {
-          setState(() {
-            enableMessagesNotification = value;
-          });
-          setMessages(value);
-          BlocProvider.of<FirebaseDataBloc>(context).add(UpdateUserFieldEvent(
-              'notifications_messages', await isMessagesOn()));
-        }),
-        _notificationListTile(
-            "Recommendations", enableRecommendationsNotification,
-            (value) async {
-          setState(() {
-            enableRecommendationsNotification = value;
-          });
-          setRecommendations(value);
-          BlocProvider.of<FirebaseDataBloc>(context).add(UpdateUserFieldEvent(
-              'notifications_recomendations', await isRecomendations()));
-        }),
-      ],
+  Widget _pushNotifications() {
+    return BlocBuilder<NotificationsBloc, NotificationsState>(
+      builder: (context, state) {
+        if (state is GetNotificationPrefsState) {
+          final data = state.data;
+          print(data);
+          return Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Padding(
+                padding: const EdgeInsets.only(
+                  left: 15.0,
+                  top: 10,
+                ),
+                child: Text(
+                  "Notifications",
+                  style: Theme.of(context).textTheme.displayLarge,
+                ),
+              ),
+              _notificationListTile(
+                "Picks",
+                data['picks'],
+                (value) async {
+                  BlocProvider.of<NotificationsBloc>(context).add(
+                    UpdateNotificationPreferences(
+                        fieldName: 'picks', newValue: value),
+                  );
+                },
+              ),
+              _notificationListTile(
+                "Messages",
+                data['messages'],
+                (value) async {
+                  BlocProvider.of<NotificationsBloc>(context).add(
+                    UpdateNotificationPreferences(
+                        fieldName: 'messages', newValue: value),
+                  );
+                },
+              ),
+              _notificationListTile(
+                "Recommendations",
+                data['recomendations'],
+                (value) async {
+                  BlocProvider.of<NotificationsBloc>(context).add(
+                    UpdateNotificationPreferences(
+                        fieldName: 'recomendations', newValue: value),
+                  );
+                },
+              ),
+            ],
+          );
+        }
+        if (state is GetNotificationPrefsStateLoading) {
+          return const Center(child: CircularProgressIndicator());
+        }
+        return const SizedBox();
+      },
     );
   }
 
@@ -222,24 +226,3 @@ class _SettingsPageState extends State<SettingsPage> {
     );
   }
 }
-
-
-
-/*
- const Padding(
-            padding: EdgeInsets.only(
-              left: 15.0,
-              top: 10,
-            ),
-            child: Text(
-              "Push Notifications",
-              style: TextStyle(
-                color: Colors.black54,
-                fontSize: 21,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-          ),
-
-
-*/

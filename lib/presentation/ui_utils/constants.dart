@@ -127,4 +127,144 @@ class SnackBarManager {
       ],
     ),
   );
+
+  static SnackBar userBlockedSnackbar(BuildContext context) {
+    return SnackBar(
+      content: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          const Icon(EvaIcons.alertCircleOutline),
+          Padding(
+            padding: const EdgeInsets.only(left: 10),
+            child: Text(
+              "User Blocked",
+              style: Theme.of(context)
+                  .textTheme
+                  .bodyMedium
+                  ?.copyWith(color: AppTheme.black),
+            ),
+          ),
+        ],
+      ),
+      duration: Durations.long2,
+      backgroundColor: AppTheme.red,
+      margin: const EdgeInsets.all(10),
+      behavior: SnackBarBehavior.floating,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(100),
+      ),
+    );
+  }
+
+  static SnackBar userUnblocked(BuildContext context) {
+    return SnackBar(
+      content: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          const Icon(EvaIcons.alertCircleOutline),
+          Padding(
+            padding: const EdgeInsets.only(left: 10),
+            child: Text(
+              "User UnBlocked",
+              style: Theme.of(context)
+                  .textTheme
+                  .bodyMedium
+                  ?.copyWith(color: AppTheme.black),
+            ),
+          ),
+        ],
+      ),
+      duration: Durations.long2,
+      backgroundColor: AppTheme.green,
+      margin: const EdgeInsets.all(10),
+      behavior: SnackBarBehavior.floating,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(100),
+      ),
+    );
+  }
+
+  static SnackBar userMuted(BuildContext context) {
+    return SnackBar(
+      content: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          const Icon(EvaIcons.alertCircleOutline),
+          Padding(
+            padding: const EdgeInsets.only(left: 10),
+            child: Text(
+              "Chat Notification Muted",
+              style: Theme.of(context)
+                  .textTheme
+                  .bodyMedium
+                  ?.copyWith(color: AppTheme.black),
+            ),
+          ),
+        ],
+      ),
+      duration: Durations.long2,
+      backgroundColor: AppTheme.red,
+      margin: const EdgeInsets.all(10),
+      behavior: SnackBarBehavior.floating,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(100),
+      ),
+    );
+  }
+
+  static SnackBar userUnMuted(BuildContext context) {
+    return SnackBar(
+      content: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          const Icon(EvaIcons.alertCircleOutline),
+          Padding(
+            padding: const EdgeInsets.only(left: 10),
+            child: Text(
+              "Chat Notification Unmuted",
+              style: Theme.of(context)
+                  .textTheme
+                  .bodyMedium
+                  ?.copyWith(color: AppTheme.black),
+            ),
+          ),
+        ],
+      ),
+      duration: Durations.long2,
+      backgroundColor: AppTheme.green,
+      margin: const EdgeInsets.all(10),
+      behavior: SnackBarBehavior.floating,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(100),
+      ),
+    );
+  }
+
+  static SnackBar chatHistorydeleted(BuildContext context) {
+    return SnackBar(
+      content: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          const Icon(EvaIcons.alertCircleOutline),
+          Padding(
+            padding: const EdgeInsets.only(left: 10),
+            child: Text(
+              "Chat History Unmuted",
+              style: Theme.of(context)
+                  .textTheme
+                  .bodyMedium
+                  ?.copyWith(color: AppTheme.black),
+            ),
+          ),
+        ],
+      ),
+      duration: Durations.long2,
+      backgroundColor: AppTheme.secondaryColor,
+      margin: const EdgeInsets.all(10),
+      behavior: SnackBarBehavior.floating,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(100),
+      ),
+    );
+  }
 }

@@ -10,7 +10,6 @@ part 'matching_state.dart';
 class MatchingBloc extends Bloc<MatchingEvent, MatchingState> {
   final MatchesRepository _matcheRepo;
   MatchingBloc(this._matcheRepo) : super(MatchesIntialState()) {
-   
     on<GetRandomUsers>(
       (event, emit) async {
         emit(RandomProfileLoading());
@@ -33,16 +32,18 @@ class MatchingBloc extends Bloc<MatchingEvent, MatchingState> {
         emit(RegionprofilesLoading());
         try {
           final location = await _matcheRepo.getRecommendedProfiles();
-            final interest =
+          final interest =
               await _matcheRepo.getProfilesWithCommonInterestsAndGender(
                   await UserRepository().getUser());
-          emit(Regionprofiles(locationUsers: location,interest: interest));
+          final ageUSers =
+              await _matcheRepo.getProfilesWithCommonInterestsAndAge(
+                  await UserRepository().getUser());
+          emit(Regionprofiles(ageUSers,locationUsers: location, interest: interest));
         } catch (e) {
           debugPrint(e.toString());
           emit(RegionprofilesError(e.toString()));
         }
       },
     );
-   
   }
 }

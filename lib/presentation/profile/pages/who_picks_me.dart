@@ -33,10 +33,10 @@ class WhoPicksMePag extends StatelessWidget {
             }
             if (state is SelectedListLoaded) {
               final data = state.userProfile;
-              return ListView.builder(
-                  itemCount: data.length,
-                  itemBuilder: (context, index) {
-                    if (data.isNotEmpty) {
+              if (data.isNotEmpty) {
+                return ListView.builder(
+                    itemCount: data.length,
+                    itemBuilder: (context, index) {
                       return Card(
                         shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(20)),
@@ -77,9 +77,11 @@ class WhoPicksMePag extends StatelessWidget {
                           ),
                         ),
                       );
-                    }
-                    return const Center(child: Text("No picks by others"));
-                  });
+                    });
+              }
+              return const EmptyListPage(
+                text: 'No one picks you',
+              );
             }
             if (state is SelectedListLoadError) {
               return const EmptyListPage(

@@ -17,14 +17,29 @@ class NotificationReceivedEvent extends NotificationsEvent {
 
 class GetNotifications extends NotificationsEvent {}
 
-class MuteUser extends NotificationsEvent {
-  final String userId;
+// class MuteUser extends NotificationsEvent {
+//   final String userId;
+//   final bool value;
+//   const MuteUser({
+//     required this.userId,
+//     required this.value,
+//   });
+// }
 
-  const MuteUser({required this.userId});
-}
+// class BlocUser extends NotificationsEvent {
+//   final String userId;
+//   final bool value;
+//   const BlocUser({
+//     required this.userId,
+//     required this.value,
+//   });
+// }
 
-class BlocUser extends NotificationsEvent {
-  final String userId;
+class GetNotificationPreferences extends NotificationsEvent {}
 
-  const BlocUser({required this.userId});
+class UpdateNotificationPreferences extends NotificationsEvent {
+  final String fieldName;
+  final bool newValue;
+
+ const UpdateNotificationPreferences({required this.fieldName, required this.newValue});
 }

@@ -222,7 +222,8 @@ class _MessageWidgetState extends State<MessageWidget> {
         ),
         child: ListTile(
           onTap: () {
-            if (!calledOnce) {
+            if (!calledOnce && (widget.selectedUSer['blocked'] &&
+                    widget.selectedUSer['done_by'] == widget.currentUSer['uid'])) {
               Navigator.of(context).push(MaterialPageRoute(
                 builder: (context) => PrebuiltCallPage(
                   userID: widget.selectedUSer['uid'],

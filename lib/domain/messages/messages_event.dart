@@ -15,4 +15,24 @@ class DeleteUserChat extends MessagesEvent {
   const DeleteUserChat({required this.recieverId});
 }
 
+//mute && block
+
+class MuteUser extends MessagesEvent {
+  final String userId;
+  final bool value;
+  const MuteUser({
+    required this.userId,
+    required this.value,
+  });
+}
+
+class BlocUser extends MessagesEvent {
+  final String userId;
+  final bool value;
+  const BlocUser({
+    required this.userId,
+    required this.value,
+  });
+}
+
 

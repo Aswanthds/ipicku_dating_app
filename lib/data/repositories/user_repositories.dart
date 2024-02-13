@@ -12,6 +12,7 @@ import 'package:google_sign_in/google_sign_in.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:ipicku_dating_app/data/model/user.dart';
 import 'package:ipicku_dating_app/data/repositories/matches_repo.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class UserRepository {
   final FirebaseAuth _firebaseAuth;
@@ -223,6 +224,40 @@ class UserRepository {
       final data = await users.get();
 
       return data.data();
+    } catch (e) {
+      debugPrint("$e");
+      return null;
+    }
+  }
+
+  Future<Map<String, dynamic>?> getUserMapAlongwithBloc(
+      String selectedUserId) async {
+    try {
+      final userId = await getUser();
+      final users = FirebaseFirestore.instance.collection('users').doc(userId);
+
+      final data = await users.get();
+      var finaldata = {...data.data() ?? {}};
+
+      // Fetch blocked_by data for the selected user
+      final blockedData = await users.collection("blocked_by").get();
+      final data2 = blockedData.docs
+          .where((element) => element.id == selectedUserId)
+          .map((e) => e.data())
+          .first;
+
+      // Check if blocked data for the selected user exists
+      if (data2.containsValue(selectedUserId)) {
+        return {...finaldata, ...data2};
+      } else {
+        // If blocked data doesn't exist, return dummy data
+        return {
+          ...finaldata,
+          'blocked': false,
+          'done_by':
+              selectedUserId, // Use the ID of the selected user as done_by
+        };
+      }
     } catch (e) {
       debugPrint("$e");
       return null;
@@ -442,6 +477,26 @@ class UserRepository {
     await usersCollection
         .doc(userId)
         .update({'status': status, 'lastActive': Timestamp.now()});
+  }
+
+  Future<Map<String, dynamic>> getNotificationsValue() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    final picks = prefs.getBool("picks") ?? false;
+    final messages = prefs.getBool("messages") ?? false;
+    final recommendations = prefs.getBool("recomendations") ?? false;
+
+    return {
+      'picks': picks,
+      'messages': messages,
+      'recomendations': recommendations,
+    };
+  }
+
+  Future<void> updateNotificationPreferences(String key, bool value) async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+
+    usersCollection.doc(await getUser()).update({'notifications_$key':value});
+    await prefs.setBool(key, value);
   }
 }
 /*

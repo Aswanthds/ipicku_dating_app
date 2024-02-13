@@ -23,7 +23,7 @@ class InAppNotificatioons {
 
   Future<Stream<QuerySnapshot<Map<String, dynamic>>>> getNotifications() async {
     final id = await UserRepository().getUser();
-     return firebase.collection("users").doc(id).collection("notify").snapshots(includeMetadataChanges: true);
+     return firebase.collection("users").doc(id).collection("notify").orderBy('time',descending: true).snapshots(includeMetadataChanges: true);
 
   }
 }

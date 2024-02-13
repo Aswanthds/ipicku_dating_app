@@ -67,7 +67,7 @@ class AppTheme {
       bodySmall: TextStyle(color: white),
       titleLarge: TextStyle(color: white),
       titleMedium: TextStyle(color: white),
-      titleSmall: TextStyle(color: black26),
+      titleSmall: TextStyle(color: white),
       displayLarge: TextStyle(
         fontSize: 24,
         fontWeight: FontWeight.bold,

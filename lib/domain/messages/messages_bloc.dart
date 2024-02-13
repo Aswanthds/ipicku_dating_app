@@ -34,6 +34,35 @@ class MessagesBloc extends Bloc<MessagesEvent, MessagesState> {
         }
       },
     );
-    
+    on<MuteUser>(
+      (event, emit) async {
+        emit(GetChatsLoading());
+        try {
+          await MessagingRepository().addToMutedList(event.userId, event.value);
+           final data = await MessagingRepository.getUserChatList();
+
+          emit(GetChatsLoaded(userData: data));
+          //emit(MuteMessagesDone(value: value));
+        } catch (e) {
+          debugPrint(e.toString());
+          emit(GetChatsError());
+        }
+      },
+    );
+    on<BlocUser>(
+      (event, emit) async {
+        emit(GetChatsLoading());
+        try {
+          await MessagingRepository()
+              .addToBlockedList(event.userId, event.value);
+         final data = await MessagingRepository.getUserChatList();
+
+          emit(GetChatsLoaded(userData: data));
+        } catch (e) {
+          debugPrint(e.toString());
+          emit(GetChatsError());
+        }
+      },
+    );
   }
 }

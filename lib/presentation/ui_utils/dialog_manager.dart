@@ -8,6 +8,9 @@ import 'package:ipicku_dating_app/domain/firebase_data/firebase_data_bloc.dart';
 import 'package:ipicku_dating_app/domain/messages/messages_bloc.dart';
 import 'package:ipicku_dating_app/presentation/log_in/login.dart';
 import 'package:ipicku_dating_app/presentation/ui_utils/colors.dart';
+// ignore: unused_import
+import 'package:ipicku_dating_app/domain/notifications/notifications_bloc.dart';
+import 'package:ipicku_dating_app/presentation/ui_utils/constants.dart';
 
 class DialogManager {
   static Future<void> showLogoutDialog(
@@ -121,6 +124,8 @@ class DialogManager {
               onPressed: () {
                 BlocProvider.of<MatchesDataBloc>(context)
                     .add(RemoveUserFromPick(selectedUserId: data['uid']));
+                BlocProvider.of<MessagesBloc>(context)
+                    .add(DeleteUserChat(recieverId: data['uid']));
                 Navigator.of(context).pop();
               },
               child: Text(
@@ -270,8 +275,11 @@ class DialogManager {
   }
 
   static void showChatOptionsPopup(
-      BuildContext context, Map<String, dynamic> data) {
-    
+      BuildContext context,
+      Map<String, dynamic> data,
+      Map<String, dynamic> currentData,
+      bool isMuted,
+      bool isBlocked) {
     showMenu(
       context: context,
       position: const RelativeRect.fromLTRB(100, 120, 0, 10),
@@ -282,6 +290,9 @@ class DialogManager {
             onTap: () {
               BlocProvider.of<MessagesBloc>(context)
                   .add(DeleteUserChat(recieverId: data['uid']));
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBarManager.chatHistorydeleted(context),
+              );
               Navigator.pop(context); // Close the popup
               // Implement your delete chat logic here
             },
@@ -289,17 +300,51 @@ class DialogManager {
         ),
         PopupMenuItem(
           child: ListTile(
-            title: const Text('Block Chat'),
+            title: !isBlocked
+                ? const Text('Block User')
+                : const Text('Unblock User'),
             onTap: () {
+              if (isBlocked) {
+                BlocProvider.of<MessagesBloc>(context)
+                    .add(BlocUser(value: false, userId: data['uid']));
+                //SnackBarManager
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBarManager.userUnblocked(context),
+                );
+              } else {
+                BlocProvider.of<MessagesBloc>(context).add(BlocUser(
+                  userId: data['uid'],
+                  value: true,
+                ));
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBarManager.userBlockedSnackbar(context),
+                );
+              }
+
               Navigator.pop(context); // Close the popup
-              // Implement your block chat logic here
+              // Implement your mute chat logic here
             },
           ),
         ),
         PopupMenuItem(
           child: ListTile(
-            title: const Text('Mute Chat'),
+            title:
+                !isMuted ? const Text('Mute Chat') : const Text('Unmute Chat'),
             onTap: () {
+              if (isMuted) {
+                BlocProvider.of<MessagesBloc>(context)
+                    .add(MuteUser(value: false, userId: data['uid']));
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBarManager.userUnMuted(context),
+                );
+              } else {
+                BlocProvider.of<MessagesBloc>(context)
+                    .add(MuteUser(value: true, userId: data['uid']));
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBarManager.userMuted(context),
+                );
+              }
+
               Navigator.pop(context); // Close the popup
               // Implement your mute chat logic here
             },

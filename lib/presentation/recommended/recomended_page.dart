@@ -41,6 +41,11 @@ class _RecommendedPageState extends State<RecommendedPage> {
                     state: state.interest,
                     title: "Interest",
                     id: widget.repository,
+                  ),
+                   SectionRecommendedPage(
+                    state: state.ageUsers,
+                    title: "Age ",
+                    id: widget.repository,
                   )
                 ],
               ),

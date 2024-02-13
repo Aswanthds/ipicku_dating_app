@@ -19,9 +19,11 @@ import 'package:ipicku_dating_app/domain/signup_bloc/sign_up_bloc.dart';
 import 'package:ipicku_dating_app/domain/theme/theme_bloc.dart';
 import 'package:ipicku_dating_app/domain/theme/theme_event.dart';
 import 'package:ipicku_dating_app/domain/video_chat/videochat_bloc.dart';
+import 'package:ipicku_dating_app/presentation/chatpage/chatpage.dart';
 import 'package:ipicku_dating_app/presentation/homepage/notifications_page.dart';
 import 'package:ipicku_dating_app/presentation/log_in/login.dart';
 import 'package:ipicku_dating_app/presentation/main_page.dart';
+import 'package:ipicku_dating_app/presentation/profile/pages/mypicks.dart';
 import 'package:ipicku_dating_app/presentation/sign_up/profile_signup.dart';
 import 'package:ipicku_dating_app/presentation/splash_screen/splash_screen.dart';
 
@@ -88,7 +90,9 @@ class MyApp extends StatelessWidget {
             routes: {
               NotificationsPage.route: (context) => const NotificationsPage(
                     data: [],
-                  )
+                  ),
+              ChatPage.route: (context) => const ChatPage(userid: ''),
+              MyPicksPage.route: (context) => MyPicksPage()
             },
             home: BlocBuilder<AuthenticationBloc, AuthenticationState>(
               builder: (context, state) {

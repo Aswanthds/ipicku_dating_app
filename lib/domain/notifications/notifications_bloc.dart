@@ -1,10 +1,9 @@
-
 import 'package:bloc/bloc.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
 import 'package:ipicku_dating_app/data/repositories/local.dart';
-import 'package:ipicku_dating_app/data/repositories/messaging_repository.dart';
+import 'package:ipicku_dating_app/data/repositories/user_repositories.dart';
 
 part 'notifications_event.dart';
 part 'notifications_state.dart';
@@ -31,28 +30,21 @@ class NotificationsBloc extends Bloc<NotificationsEvent, NotificationsState> {
         }
       },
     );
-    on<MuteUser>(
+    
+    on<UpdateNotificationPreferences>(
       (event, emit) async {
-        emit(MuteMessagesIntiated());
-        try {
-          await MessagingRepository().addToMutedList(event.userId);
-          emit(MuteMessagesDone());
-        } catch (e) {
-          debugPrint(e.toString());
-          emit(MuteMessagesError());
-        }
+        emit(GetNotificationPrefsStateLoading());
+        await UserRepository()
+            .updateNotificationPreferences(event.fieldName, event.newValue);
+        final data = await UserRepository().getNotificationsValue();
+        emit(GetNotificationPrefsState(data: data));
       },
     );
-    on<BlocUser>(
-      (event, emit) async{
-         emit(BlocUserReq());
-        try {
-          await MessagingRepository().addToBlockedList(event.userId);
-          emit(BlocUserDone());
-        } catch (e) {
-          debugPrint(e.toString());
-          emit(BlocUserErro());
-        }
+    on<GetNotificationPreferences>(
+      (event, emit) async {
+        emit(GetNotificationPrefsStateLoading());
+        final data = await UserRepository().getNotificationsValue();
+        emit(GetNotificationPrefsState(data: data));
       },
     );
   }

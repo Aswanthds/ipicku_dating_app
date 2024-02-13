@@ -21,14 +21,30 @@ class GetNotificationsLoading extends NotificationsState {}
 
 //
 
-class MuteMessagesIntiated extends NotificationsState {}
+// class MuteMessagesLoading extends NotificationsState {}
 
-class MuteMessagesDone extends NotificationsState {}
+// class MuteMessagesDone extends NotificationsState {
+//   final bool value;
 
-class MuteMessagesError extends NotificationsState {}
+//   const MuteMessagesDone({required this.value});
+// }
 
-class BlocUserReq extends NotificationsState {}
+// class MuteMessagesError extends NotificationsState {}
 
-class BlocUserDone extends NotificationsState {}
+// class BlocUserReq extends NotificationsState {}
 
-class BlocUserErro extends NotificationsState {}
+// class BlocUserDone extends NotificationsState {
+//   final Map<String, dynamic> value;
+
+//   const BlocUserDone({required this.value});
+// }
+
+// class BlocUserErro extends NotificationsState {}
+
+class GetNotificationPrefsState extends NotificationsState {
+  final Map<String, dynamic> data;
+
+  const GetNotificationPrefsState({required this.data});
+}
+
+class GetNotificationPrefsStateLoading extends NotificationsState {}

@@ -86,14 +86,15 @@ class SwipeCardWidget extends StatelessWidget {
                   controller.swipeLeft();
                 }
                 await userRepository.storeDeviceToken();
-                BlocProvider.of<NotificationsBloc>(context).add(
-                    NotificationReceivedEvent(
-                        'New Pick',
-                        "${userProfile[index]['name']} picked you",
-                        userProfile[index]['uid'],
-                        NotificationType.picks));
+
                 if (userProfile[index]['deviceToken'] != null &&
-                    (userProfile[index]['notifications_picks'] as bool)) {
+                    (userProfile[index]['notifications_picks'])) {
+                  BlocProvider.of<NotificationsBloc>(context).add(
+                      NotificationReceivedEvent(
+                          'New Pick',
+                          "${userProfile[index]['name']} picked you",
+                          userProfile[index]['uid'],
+                          NotificationType.picks));
                   PushNotificationService().sendPushMessage(
                       title: "New Notification",
                       type: 'picks',

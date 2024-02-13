@@ -201,6 +201,58 @@ class MatchesRepository {
     }
   }
 
+  Future<List<Map<String, dynamic>>> getProfilesWithCommonInterestsAndAge(
+      String userId) async {
+    try {
+      // Fetch the user's interests, gender, minAge, and maxAge from Firestore
+      DocumentSnapshot<Map<String, dynamic>> userSnapshot =
+          await usersCollection.doc(userId).get();
+
+      if (!userSnapshot.exists) {
+        debugPrint('User not found');
+        return [];
+      }
+
+      List<dynamic> userInterests = userSnapshot.data()?['Interests'] ?? [];
+      String? userGender = userSnapshot.data()?['gender'];
+      int? minAge = userSnapshot.data()?['minAge'];
+      int? maxAge = userSnapshot.data()?['maxAge'];
+
+      if (userInterests.isEmpty ||
+          userGender == null ||
+          minAge == null ||
+          maxAge == null) {
+        debugPrint('User has missing information');
+        return [];
+      }
+
+      // Query profiles with common interests, opposite gender, and within age range
+      QuerySnapshot<Map<String, dynamic>> querySnapshot =
+          await FirebaseFirestore.instance
+              .collection('users')
+              .where('gender',
+                  isEqualTo: userGender == 'Male' ? 'Female' : 'Male')
+              .where('age',
+                  isGreaterThanOrEqualTo: minAge, isLessThanOrEqualTo: maxAge)
+              .orderBy('age')
+              .limitToLast(5)
+              .get();
+
+      if (querySnapshot.docs.isEmpty) {
+        debugPrint('No matching profiles found.');
+        return [];
+      }
+
+      List<Map<String, dynamic>> profiles =
+          querySnapshot.docs.map((doc) => doc.data()).toList();
+
+      return profiles;
+    } catch (e) {
+      debugPrint("Error fetching profiles: $e");
+      return [];
+    }
+  }
+
   Future<List<Map<String, dynamic>>> getSelectedList(
       String currentUserId) async {
     try {
@@ -270,9 +322,31 @@ class MatchesRepository {
     for (String documentId in commonDocumentIds) {
       DocumentSnapshot<Map<String, dynamic>> userSnapshot =
           await usersCollection.doc(documentId).get();
-      final data = userSnapshot.data();
-      if (data != null) {
-        userDataList.add(data);
+      final userData = userSnapshot.data();
+      if (userData != null) {
+        Map<String, dynamic> combinedData = {...userData};
+
+        // Fetch blocked_by data for the current user from the other user's perspective
+        final blockedSnapshot = await usersCollection
+            .doc(documentId)
+            .collection('blocked_by')
+            .get();
+        final blockedDataForCurrentUser = blockedSnapshot.docs
+            .where((blockedDoc) => blockedDoc.id == userId)
+            .map((blockedDoc) => blockedDoc.data());
+        // Check if blockedSnapshot exists
+        if (blockedSnapshot.docs.isNotEmpty) {
+          combinedData.addAll(blockedDataForCurrentUser.first);
+        } else {
+          // If blockedSnapshot does not exist, add the dummy data
+          combinedData.addAll({
+            'blocked': false,
+            'done_by': userId,
+          });
+        }
+
+        userDataList.add(combinedData);
+        debugPrint(combinedData['blocked'].toString());
       }
     }
 
