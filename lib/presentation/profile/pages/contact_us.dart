@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:ipicku_dating_app/domain/theme/theme_bloc.dart';
 import 'package:ipicku_dating_app/presentation/ui_utils/colors.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class ContactUsPage extends StatelessWidget {
   const ContactUsPage({super.key});
@@ -15,6 +16,10 @@ class ContactUsPage extends StatelessWidget {
       ),
       body: ListView(children: [
         ListTile(
+          onTap: () {
+            _launchUrl(Uri.parse(
+                'https://docs.google.com/forms/d/12arB_dVPz9HNVg0aGVOs4yUkU_8tPZybM-_3QLyByWs/edit'));
+          },
           leading: Icon(
             Icons.report_gmailerrorred_sharp,
             color: Theme.of(context).textTheme.bodyLarge?.color,
@@ -24,7 +29,8 @@ class ContactUsPage extends StatelessWidget {
         ),
         ListTile(
           onTap: () {
-// Navigator.of(context).push(MaterialPageRoute(builder: (context) => ,))
+            _launchUrl(Uri.parse(
+                'https://docs.google.com/forms/d/1KT9TQ1i9MmRgi7Wdvxs2TK5s2wJDSIokT6BhFWQbHYU/edit'));
           },
           leading: Icon(
             Icons.feedback_outlined,
@@ -62,6 +68,12 @@ class ContactUsPage extends StatelessWidget {
         ),
       ]),
     );
+  }
+
+  Future<void> _launchUrl(Uri url) async {
+    if (!await launchUrl(url)) {
+      throw Exception('Could not launch $url');
+    }
   }
 }
 

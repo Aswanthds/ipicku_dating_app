@@ -57,6 +57,7 @@ dependencies:
   permission_handler: ^11.2.0
   shared_preferences: ^2.2.2
   timeago: ^3.6.1
+  url_launcher: ^6.2.4
   zego_uikit_prebuilt_call: ^4.2.1
   zego_uikit_signaling_plugin: ^2.7.4
 

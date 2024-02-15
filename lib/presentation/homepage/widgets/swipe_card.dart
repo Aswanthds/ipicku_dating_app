@@ -10,6 +10,7 @@ import 'package:ipicku_dating_app/data/repositories/user_repositories.dart';
 import 'package:ipicku_dating_app/presentation/homepage/progfilepage.dart';
 import 'package:ipicku_dating_app/presentation/homepage/widgets/actions_button.dart';
 import 'package:ipicku_dating_app/presentation/homepage/widgets/date_details_section.dart';
+import 'package:ipicku_dating_app/presentation/widgets/empty_list.dart';
 
 class SwipeCardWidget extends StatelessWidget {
   const SwipeCardWidget({
@@ -28,7 +29,7 @@ class SwipeCardWidget extends StatelessWidget {
     final AppinioSwiperController controller = AppinioSwiperController();
     if (userProfile.isEmpty) {
       // Handle the case when userProfile is empty (zero length)
-      return const Center(child: Text("No profiles available"));
+      return const EmptyListPage(text: "No profiles available");
     }
 
     return AppinioSwiper(

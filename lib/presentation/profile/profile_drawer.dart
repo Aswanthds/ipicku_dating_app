@@ -42,7 +42,7 @@ class _ProfileDrawerState extends State<ProfileDrawer> {
           builder: (context, state) {
             if (state is FirebaseDataFailure) {
               return Center(
-                child: Text(state.messge),
+                child: Text("Wait Getting data......"),
               );
             }
             if (!dataLoaded && state is FirebaseDataLoading) {

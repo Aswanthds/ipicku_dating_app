@@ -173,10 +173,15 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
               );
             }
             if (state is RandomProfileLoaded) {
-              return DateProfileContainer(
-                size: size,
-                userProfile: state.userProfile,
-                userRepository: widget.userRepository,
+              if (state.userProfile.isNotEmpty) {
+                return DateProfileContainer(
+                  size: size,
+                  userProfile: state.userProfile,
+                  userRepository: widget.userRepository,
+                );
+              }
+              return  EmptyListPage(text: "Please refresh the page !!!",
+                
               );
             }
             if (state is RandomProfileError) {
