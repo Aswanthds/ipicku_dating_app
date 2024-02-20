@@ -25,11 +25,13 @@ class UserMessageBox extends StatefulWidget {
 
 class _UserMessageBoxState extends State<UserMessageBox> {
   final TextEditingController _msgController = TextEditingController();
-  XFile? imageChat;
+  File? imageChat;
+  FocusNode node = FocusNode();
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
+    return Container(
       height: 50,
+      decoration: const BoxDecoration(color: Colors.transparent),
       child: Row(
         children: [
           IconButton(
@@ -46,10 +48,11 @@ class _UserMessageBoxState extends State<UserMessageBox> {
 
                   if (croppedImage != null) {
                     setState(() {
-                      imageChat = XFile(croppedImage.path);
+                      imageChat = File(croppedImage.path);
                     });
+                     _onFormSubmitted();
                   }
-                  //_onFormSubmitted();
+                 
                   if (widget.selectedUser?['deviceToken'] != null &&
                       widget.selectedUser?['notifications_messages'] == true) {
                     PushNotificationService().sendPushMessage(
@@ -69,6 +72,7 @@ class _UserMessageBoxState extends State<UserMessageBox> {
           Expanded(
             child: TextFormField(
               controller: _msgController,
+              focusNode: node,
               textAlign: TextAlign.start,
               decoration: InputDecoration(
                   border: OutlineInputBorder(
@@ -88,22 +92,30 @@ class _UserMessageBoxState extends State<UserMessageBox> {
                 if (!widget.currentUser?['blocked'] ||
                     !widget.selectedUser?['blocked']) {
                   _onFormSubmitted();
-                  if (widget.selectedUser?['deviceToken'] != null &&
-                      widget.selectedUser?['notifications_messages'] == true) {
-                    PushNotificationService().sendPushMessage(
+                  FocusScope.of(context).unfocus();
+
+                  if (widget.selectedUser?['deviceToken'] != null) {
+                    bool shouldSendNotification =
+                        widget.selectedUser?['notifications_messages'] ?? false;
+                    bool isMuted = (widget.selectedUser?['muted'] ?? false);
+                    print('$shouldSendNotification  => $isMuted');
+                    if ((shouldSendNotification == false && isMuted == false) || !shouldSendNotification  && !isMuted ) {
+                      PushNotificationService().sendPushMessage(
                         token: widget.selectedUser?['deviceToken'],
                         type: 'messages',
                         title: 'A new message',
                         body:
-                            '${widget.currentUser?['name']} just messaged you');
+                            '${widget.currentUser?['name']} just messaged you',
+                      );
+                    }
                   }
-                }
-              } else {
-                if (widget.selectedUser?['blocked'] &&
-                    widget.selectedUser?['done_by'] ==
-                        widget.currentUser?['uid']) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBarManager.userBlockedSnackbar(context));
+                } else {
+                  if (widget.selectedUser?['blocked'] &&
+                      widget.selectedUser?['done_by'] ==
+                          widget.currentUser?['uid']) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBarManager.userBlockedSnackbar(context));
+                  }
                 }
               }
             },

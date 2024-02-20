@@ -240,24 +240,31 @@ class UserRepository {
       var finaldata = {...data.data() ?? {}};
 
       // Fetch blocked_by data for the selected user
-      final blockedData = await users.collection("blocked_by").get();
-      final data2 = blockedData.docs
-          .where((element) => element.id == selectedUserId)
-          .map((e) => e.data())
-          .first;
+      final blockedData =
+          await users.collection("blocked_by").doc(selectedUserId).get();
+      // final data2 = blockedData.docs
+      //     .where((element) => element.id == selectedUserId)
+      //     .map((e) => e.data())
+      //     .first;
 
       // Check if blocked data for the selected user exists
-      if (data2.containsValue(selectedUserId)) {
-        return {...finaldata, ...data2};
+      if (blockedData.exists) {
+        final blockedDataExists = blockedData.data();
+
+        finaldata.addAll({
+          'blocked': blockedDataExists?['blocked'] ?? false,
+          'done_by': blockedDataExists?['done_by'] ?? selectedUserId,
+          'muted': blockedDataExists?['muted'] ?? false,
+        });
       } else {
         // If blocked data doesn't exist, return dummy data
-        return {
-          ...finaldata,
+        finaldata.addAll({
+          'muted': false,
           'blocked': false,
-          'done_by':
-              selectedUserId, // Use the ID of the selected user as done_by
-        };
+          'done_by': selectedUserId,
+        });
       }
+      return finaldata;
     } catch (e) {
       debugPrint("$e");
       return null;
@@ -495,7 +502,7 @@ class UserRepository {
   Future<void> updateNotificationPreferences(String key, bool value) async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
 
-    usersCollection.doc(await getUser()).update({'notifications_$key':value});
+    usersCollection.doc(await getUser()).update({'notifications_$key': value});
     await prefs.setBool(key, value);
   }
 }

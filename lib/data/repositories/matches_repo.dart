@@ -201,8 +201,59 @@ class MatchesRepository {
     }
   }
 
-  Future<List<Map<String, dynamic>>> getProfilesWithCommonInterestsAndAge(
-      String userId) async {
+  // Future<List<Map<String, dynamic>>> getProfilesWithCommonInterestsAndAge(
+  //     String userId) async {
+  //   try {
+  //     // Fetch the user's interests, gender, minAge, and maxAge from Firestore
+  //     DocumentSnapshot<Map<String, dynamic>> userSnapshot =
+  //         await usersCollection.doc(userId).get();
+
+  //     if (!userSnapshot.exists) {
+  //       debugPrint('User not found');
+  //       return [];
+  //     }
+
+  //     List<dynamic> userInterests = userSnapshot.data()?['Interests'] ?? [];
+  //     String? userGender = userSnapshot.data()?['gender'];
+  //     int? minAge = userSnapshot.data()?['minAge'];
+  //     int? maxAge = userSnapshot.data()?['maxAge'];
+
+  //     if (userInterests.isEmpty ||
+  //         userGender == null ||
+  //         minAge == null ||
+  //         maxAge == null) {
+  //       debugPrint('User has missing information');
+  //       return [];
+  //     }
+
+  //     // Query profiles with common interests, opposite gender, and within age range
+  //     QuerySnapshot<Map<String, dynamic>> querySnapshot =
+  //         await FirebaseFirestore.instance
+  //             .collection('users')
+  //             .where('gender',
+  //                 isEqualTo: userGender == 'Male' ? 'Female' : 'Male')
+  //             .where('age',
+  //                 isGreaterThanOrEqualTo: minAge, isLessThanOrEqualTo: maxAge)
+  //             .orderBy('age')
+  //             .limitToLast(5)
+  //             .get();
+
+  //     if (querySnapshot.docs.isEmpty) {
+  //       debugPrint('No matching profiles found.');
+  //       return [];
+  //     }
+
+  //     List<Map<String, dynamic>> profiles =
+  //         querySnapshot.docs.map((doc) => doc.data()).toList();
+
+  //     return profiles;
+  //   } catch (e) {
+  //     debugPrint("Error fetching profiles: $e");
+  //     return [];
+  //   }
+  // }
+  Future<Map<String, List<Map<String, dynamic>>>>
+      getProfilesWithCommonInterestsAndAge(String userId) async {
     try {
       // Fetch the user's interests, gender, minAge, and maxAge from Firestore
       DocumentSnapshot<Map<String, dynamic>> userSnapshot =
@@ -210,46 +261,38 @@ class MatchesRepository {
 
       if (!userSnapshot.exists) {
         debugPrint('User not found');
-        return [];
+        return {};
       }
 
       List<dynamic> userInterests = userSnapshot.data()?['Interests'] ?? [];
       String? userGender = userSnapshot.data()?['gender'];
-      int? minAge = userSnapshot.data()?['minAge'];
-      int? maxAge = userSnapshot.data()?['maxAge'];
 
-      if (userInterests.isEmpty ||
-          userGender == null ||
-          minAge == null ||
-          maxAge == null) {
+      if (userInterests.isEmpty || userGender == null) {
         debugPrint('User has missing information');
-        return [];
+        return {};
       }
 
-      // Query profiles with common interests, opposite gender, and within age range
-      QuerySnapshot<Map<String, dynamic>> querySnapshot =
-          await FirebaseFirestore.instance
-              .collection('users')
-              .where('gender',
-                  isEqualTo: userGender == 'Male' ? 'Female' : 'Male')
-              .where('age',
-                  isGreaterThanOrEqualTo: minAge, isLessThanOrEqualTo: maxAge)
-              .orderBy('age')
-              .limitToLast(5)
-              .get();
+      Map<String, List<Map<String, dynamic>>> interestProfiles = {};
 
-      if (querySnapshot.docs.isEmpty) {
-        debugPrint('No matching profiles found.');
-        return [];
+      for (var interest in userInterests) {
+        QuerySnapshot<Map<String, dynamic>> querySnapshot =
+            await FirebaseFirestore.instance
+                .collection('users')
+                .where('gender',
+                    isEqualTo: userGender == 'Male' ? 'Female' : 'Male')
+                .where('Interests', arrayContains: interest)
+                .get();
+
+        if (querySnapshot.docs.isNotEmpty) {
+          interestProfiles[interest] =
+              querySnapshot.docs.map((doc) => doc.data()).toList();
+        }
       }
 
-      List<Map<String, dynamic>> profiles =
-          querySnapshot.docs.map((doc) => doc.data()).toList();
-
-      return profiles;
+      return interestProfiles;
     } catch (e) {
       debugPrint("Error fetching profiles: $e");
-      return [];
+      return {};
     }
   }
 
@@ -324,29 +367,8 @@ class MatchesRepository {
           await usersCollection.doc(documentId).get();
       final userData = userSnapshot.data();
       if (userData != null) {
-        Map<String, dynamic> combinedData = {...userData};
-
-        // Fetch blocked_by data for the current user from the other user's perspective
-        final blockedSnapshot = await usersCollection
-            .doc(documentId)
-            .collection('blocked_by')
-            .get();
-        final blockedDataForCurrentUser = blockedSnapshot.docs
-            .where((blockedDoc) => blockedDoc.id == userId)
-            .map((blockedDoc) => blockedDoc.data());
-        // Check if blockedSnapshot exists
-        if (blockedSnapshot.docs.isNotEmpty) {
-          combinedData.addAll(blockedDataForCurrentUser.first);
-        } else {
-          // If blockedSnapshot does not exist, add the dummy data
-          combinedData.addAll({
-            'blocked': false,
-            'done_by': userId,
-          });
-        }
-
-        userDataList.add(combinedData);
-        debugPrint(combinedData['blocked'].toString());
+        userDataList.add(userData);
+        // debugPrint(combinedData['blocked'].toString());
       }
     }
 

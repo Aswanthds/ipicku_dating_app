@@ -275,14 +275,20 @@ class DialogManager {
   }
 
   static void showChatOptionsPopup(
-      BuildContext context,
-      Map<String, dynamic> data,
-      Map<String, dynamic> currentData,
-      bool isMuted,
-      bool isBlocked) {
+     { required BuildContext context,
+      required Map<String, dynamic> data,
+      required Map<String, dynamic> currentData,
+      required bool isMuted,
+       required Offset tapPosition,
+      required bool isBlocked}) {
     showMenu(
       context: context,
-      position: const RelativeRect.fromLTRB(100, 120, 0, 10),
+       position: RelativeRect.fromLTRB(
+        tapPosition.dy,
+        tapPosition.dy + 10,
+        tapPosition.dx - 10,
+        0.0,
+      ),
       items: [
         PopupMenuItem(
           child: ListTile(

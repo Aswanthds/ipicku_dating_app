@@ -32,13 +32,13 @@ class MatchingBloc extends Bloc<MatchingEvent, MatchingState> {
         emit(RegionprofilesLoading());
         try {
           final location = await _matcheRepo.getRecommendedProfiles();
-          final interest =
-              await _matcheRepo.getProfilesWithCommonInterestsAndGender(
-                  await UserRepository().getUser());
-          final ageUSers =
+          // final interest =
+          //     await _matcheRepo.getProfilesWithCommonInterestsAndGender(
+          //         await UserRepository().getUser());
+          final interestSeparately =
               await _matcheRepo.getProfilesWithCommonInterestsAndAge(
                   await UserRepository().getUser());
-          emit(Regionprofiles(ageUSers,locationUsers: location, interest: interest));
+          emit(Regionprofiles(locationUsers: location, interestSeparately: interestSeparately ));
         } catch (e) {
           debugPrint(e.toString());
           emit(RegionprofilesError(e.toString()));

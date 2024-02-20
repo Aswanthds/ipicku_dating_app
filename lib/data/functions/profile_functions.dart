@@ -78,7 +78,6 @@ class ProfileFunctions {
         compressQuality: 100,
         maxHeight: 1000,
         maxWidth: 1000,
-        cropStyle: CropStyle.circle,
         compressFormat: ImageCompressFormat.jpg,
         aspectRatioPresets: [
           CropAspectRatioPreset.square,

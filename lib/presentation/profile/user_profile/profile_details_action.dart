@@ -15,37 +15,28 @@ class ProfileDetailsAction extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.all(8.0),
-      child: SizedBox(
-        width: double.infinity,
-        child: ElevatedButton.icon(
-          onPressed: () async {
-             final userData = await UserRepository().getUserMap();
-            final users =await
-                FirebaseFirestore.instance.collection('users').doc(selected).get();
-            Navigator.of(context).push(MaterialPageRoute(
-              builder: (context) =>
-                  ChatPagePerson(currentUser: userData, selectedUser: users.data()),
-            ));
-          },
-          style: ElevatedButton.styleFrom(
-              backgroundColor: AppTheme.green,
-              shape: const RoundedRectangleBorder(
-                  borderRadius: BorderRadius.all(Radius.circular(10)))),
-          // child: const Text('Cancel', style: TextStyle(color: Colors.black)),
-          label: const Text(
-            'Message',
-            style: TextStyle(
-              color: AppTheme.black,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-          icon: const Icon(
-            EvaIcons.messageSquare,
-            color: AppTheme.black,
-          ),
-        ),
+    return IconButton.filled(
+      onPressed: () async {
+        final userData = await UserRepository().getUserMapAlongwithBloc(selected);
+        final users = await FirebaseFirestore.instance
+            .collection('users')
+            .doc(selected)
+            .get();
+        // Navigator.of(context).push(MaterialPageRoute(
+        //   builder: (context) => ChatPagePerson(
+        //       currentUser: userData, selectedUser: users.data()),
+        // ));
+      },
+      style: IconButton.styleFrom(
+        backgroundColor: AppTheme.green,
+        
+      ),
+      // child: const Text('Cancel', style: TextStyle(color: Colors.black)),
+    
+      icon: const Icon(
+        EvaIcons.messageSquare,
+        color: AppTheme.black,
+         size: 45,
       ),
     );
   }

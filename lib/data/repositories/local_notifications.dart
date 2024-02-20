@@ -21,8 +21,8 @@ class NotificationService {
       android: AndroidNotificationDetails('channelId', 'channelName',
           importance: Importance.max));
   Future showNotification(
-      {int id = 0, required Map<String,dynamic> notification}) async {
-    await _notificationService.show(
-        id, notification['title'] ?? '', notification['body'] ?? '', await notificationDetails());
+      {int id = 0, required Map<String, dynamic> notification}) async {
+    await _notificationService.show(id, notification['title'] ?? '',
+        notification['body'] ?? '', await notificationDetails());
   }
 }

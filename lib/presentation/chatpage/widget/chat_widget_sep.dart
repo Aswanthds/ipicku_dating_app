@@ -19,140 +19,161 @@ class ChatWidgetInd extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ListTile(
-        onLongPress: () async {
-          final userData = await UserRepository().getUserMap();
-          DialogManager.showChatOptionsPopup(
-              context,
-              selectedUserData,
-              userData ?? {},
-              selectedUserData['muted'] ?? false,
-              selectedUserData['blocked'] ?? false);
-        },
-        onTap: () async {
-          final userData = await UserRepository()
-              .getUserMapAlongwithBloc(selectedUserData['uid']);
-          Navigator.of(context).push(
-            MaterialPageRoute(
-              builder: (context) => ChatPagePerson(
-                  currentUser: userData, selectedUser: selectedUserData),
-            ),
-          );
-        },
-        leading: Stack(
-          children: [
-            (!selectedUserData['blocked'] &&
-                    selectedUserData['done_by'] == userId)
-                ? CircleAvatar(
-                    radius: 30,
-                    backgroundImage: NetworkImage(selectedUserData['photoUrl']),
-                  )
-                : CircleAvatar(
-                    radius: 30,
-                    backgroundColor: Colors.orange,
-                    child: Center(
-                        child: Text(
-                      selectedUserData['name'].toString()[0],
-                      style: Theme.of(context)
-                          .textTheme
-                          .titleLarge
-                          ?.copyWith(fontWeight: FontWeight.bold),
-                    )),
-                  ),
-            (selectedUserData['status'] && !selectedUserData['blocked'])
-                ? const Positioned(
-                    bottom: 0,
-                    right: 10,
-                    child: CircleAvatar(
-                      backgroundColor: AppTheme.green,
-                      radius: 5,
-                    ),
-                  )
-                : const SizedBox()
-          ],
-        ),
-        title: Text(
-          selectedUserData['name'],
-          style: Theme.of(context).textTheme.displayMedium,
-        ),
-        subtitle: (selectedUserData['blocked'] &&
-                    selectedUserData['done_by'] == userId ||
-                selectedUserData['blocked'])
-            ? const SizedBox()
-            : FutureBuilder(
-                future:
-                    MessagingRepository.getLastMessage(selectedUserData['uid']),
-                builder: (context, snapshot) {
-                  //print(isBlocked['done_by'] == selectedUserData['uid']);
-                  if (snapshot.hasData) {
-                    final lastMessage = snapshot.data!.data();
-                    if (lastMessage.containsKey('text') &&
-                        lastMessage['text'] != null) {
-                      // Display text message
-
-                      return Row(
-                        children: [
-                          SizedBox(
-                            width: 90,
-                            child: Text(
-                              '${lastMessage['text']}  ● ',
-                              maxLines: 1,
-                              overflow: TextOverflow.ellipsis,
-                              style: Theme.of(context).textTheme.bodySmall,
-                            ),
-                          ),
-                          Text(
-                            '  ${timeago.format(
-                              (lastMessage['sentTime'] as Timestamp).toDate(),
-                              clock: DateTime.now(),
-                              locale: 'en',
-                              allowFromNow: true,
-                            )} ',
-                            style: Theme.of(context)
-                                .textTheme
-                                .bodySmall
-                                ?.copyWith(fontSize: 10),
-                          )
-                        ],
-                      );
-                    } else if (lastMessage.containsKey('photoUrl') &&
-                        lastMessage['photoUrl'] != null) {
-                      // Display image message
-                      return Row(
-                        children: [
-                          const Icon(EvaIcons.image),
-                          const SizedBox(width: 8), // Add some spacing
-                          const Text("Photo"),
-                          Text(timeago.format(
-                              (lastMessage['sentTime'] as Timestamp).toDate(),
-                              locale: 'en_short')),
-                        ],
-                      );
-                    }
-                  }
-                  return const SizedBox();
-                },
+    return Card(
+      color: AppTheme.blue,
+      margin: EdgeInsets.all(5),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+      child: ListTile(
+          onTap: () async {
+            final userData = await UserRepository()
+                .getUserMapAlongwithBloc(selectedUserData['uid']);
+            Navigator.of(context).push(
+              MaterialPageRoute(
+                builder: (context) => ChatPagePerson(
+                    currentUser: userData, selectedUser: selectedUserData),
               ),
-        trailing: Wrap(
-          direction: Axis.vertical,
-          children: [
-            (selectedUserData['muted'] ?? false)
-                ? const Icon(EvaIcons.volumeOffOutline)
-                : const SizedBox(),
-            (selectedUserData['blocked'] &&
-                        selectedUserData['done_by'] == userId ||
-                    selectedUserData['blocked'])
-                ? Text("Blocked",
-                    style: Theme.of(context)
-                        .textTheme
-                        .displaySmall
-                        ?.copyWith(color: AppTheme.red))
-                : const SizedBox()
-          ],
-        ));
+            );
+          },
+          leading: Stack(
+            children: [
+              (!selectedUserData['blocked'])
+                  ? CircleAvatar(
+                      radius: 30,
+                      backgroundImage:
+                          NetworkImage(selectedUserData['photoUrl']),
+                    )
+                  : CircleAvatar(
+                      radius: 30,
+                      backgroundColor: Colors.orange,
+                      child: Center(
+                          child: Text(
+                        selectedUserData['name'].toString()[0],
+                        style: Theme.of(context)
+                            .textTheme
+                            .titleLarge
+                            ?.copyWith(fontWeight: FontWeight.bold),
+                      )),
+                    ),
+              (selectedUserData['status'] && !selectedUserData['blocked'])
+                  ? const Positioned(
+                      bottom: 0,
+                      right: 10,
+                      child: CircleAvatar(
+                        backgroundColor: AppTheme.green,
+                        radius: 5,
+                      ),
+                    )
+                  : const SizedBox()
+            ],
+          ),
+          title: Row(
+            children: [
+              Text(
+                selectedUserData['name'],
+                style: Theme.of(context).textTheme.displayMedium,
+              ),
+              SizedBox(
+                width: 5,
+              ),
+              Wrap(
+                direction: Axis.horizontal,
+                children: [
+                  (selectedUserData['muted'])
+                      ? const Icon(EvaIcons.volumeOffOutline)
+                      : const SizedBox(),
+                ],
+              )
+            ],
+          ),
+          subtitle: (selectedUserData['blocked'] &&
+                  selectedUserData['done_by'] != userId)
+              ? const SizedBox()
+              : FutureBuilder(
+                  future: MessagingRepository.getLastMessage(
+                      selectedUserData['uid']),
+                  builder: (context, snapshot) {
+                    //print(isBlocked['done_by'] == selectedUserData['uid']);
+                    if (snapshot.hasData) {
+                      final lastMessage = snapshot.data!.data();
+                      if (lastMessage.containsKey('text') &&
+                          lastMessage['text'] != null) {
+                        // Display text message
+
+                        return Row(
+                          children: [
+                            SizedBox(
+                              width: 90,
+                              child: Text(
+                                '${lastMessage['text']}  ● ',
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                                style: Theme.of(context).textTheme.bodySmall,
+                              ),
+                            ),
+                            Text(
+                              '  ${timeago.format(
+                                (lastMessage['sentTime'] as Timestamp).toDate(),
+                                clock: DateTime.now(),
+                                locale: 'en',
+                                allowFromNow: true,
+                              )} ',
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .bodySmall
+                                  ?.copyWith(fontSize: 10),
+                            )
+                          ],
+                        );
+                      } else if (lastMessage.containsKey('photoUrl') &&
+                          lastMessage['photoUrl'] != null) {
+                        // Display image message
+                        return Row(
+                          children: [
+                            const Icon(EvaIcons.image),
+                            const SizedBox(width: 8), // Add some spacing
+                            const Text("Photo"),
+                            const SizedBox(width: 10),
+                            Text(timeago.format(
+                                (lastMessage['sentTime'] as Timestamp).toDate(),
+                                locale: 'en_short')),
+                          ],
+                        );
+                      }
+                    }
+                    return const SizedBox();
+                  },
+                ),
+          trailing: IconButton(
+              onPressed: () async {
+                final userData = await UserRepository().getUserMap();
+                final RenderBox renderBox =
+                    context.findRenderObject() as RenderBox;
+                final tapPosition = renderBox.localToGlobal(Offset.zero);
+                DialogManager.showChatOptionsPopup(
+                    context: context,
+                    data: selectedUserData,
+                    currentData: userData ?? {},
+                    isMuted: selectedUserData['muted'] ?? false,
+                    tapPosition: tapPosition,
+                    isBlocked: selectedUserData['blocked'] ?? false);
+              },
+              icon: Icon(EvaIcons.moreHorizontalOutline))),
+    );
   }
 }
 /*
  : (isBlocked != null && isBlocked == true)
                 ? Text("Blcoked")
+
+                   TextButton(
+                onPressed: () async {
+                  final userData = await UserRepository().getUserMap();
+                  DialogManager.showChatOptionsPopup(
+                      context,
+                      selectedUserData,
+                      userData ?? {},
+                      selectedUserData['muted'] ?? false,
+                      selectedUserData['blocked'] ?? false);
+                },
+                child: Text(' '))
 */

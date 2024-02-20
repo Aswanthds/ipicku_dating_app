@@ -10,7 +10,7 @@ sealed class MessagingEvent extends Equatable {
 class SendMessageEvent extends MessagingEvent {
   final String? contnet;
   final String recieverId;
-  final XFile? imagel;
+  final File? imagel;
 
   const SendMessageEvent({
     required this.recieverId,

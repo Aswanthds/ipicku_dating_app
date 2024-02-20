@@ -18,8 +18,6 @@ class PrebuiltCallPage extends StatefulWidget {
 class PrebuiltCallPageState extends State<PrebuiltCallPage> {
   @override
   Widget build(BuildContext context) {
-    final uid = FirebaseAuth.instance.currentUser!.uid;
-    final name = FirebaseAuth.instance.currentUser!.displayName ?? "NAME";
     BlocProvider.of<VideochatBloc>(context)
         .add(SendVideoChatData(token: 'call_id', selectedUser: widget.userID));
     return SafeArea(
@@ -27,8 +25,8 @@ class PrebuiltCallPageState extends State<PrebuiltCallPage> {
         appID: 501520519,
         appSign:
             "0c21665018bcedca21ce6078c992156918b5618611eb63ef025930e1e7faa34d",
-        userID: uid,
-        userName: name,
+        userID: widget.userID,
+        userName: widget.userID.substring(1, 10).toUpperCase(),
         callID: 'call_id',
         plugins: [ZegoUIKitSignalingPlugin()],
         config: ZegoUIKitPrebuiltCallConfig.oneOnOneVideoCall()
@@ -37,13 +35,6 @@ class PrebuiltCallPageState extends State<PrebuiltCallPage> {
               isSmallViewDraggable: true, isSmallViewsScrollable: true)
           ..duration = ZegoCallDurationConfig(
             isVisible: true,
-            onDurationUpdate: (p0) {
-              if (p0.inSeconds == 300) {
-                ZegoCallEndEvent(
-                    reason: ZegoCallEndReason.localHangUp,
-                    isFromMinimizing: false);
-              }
-            },
           ),
       ),
     );

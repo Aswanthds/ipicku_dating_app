@@ -22,25 +22,24 @@ class RecommendedCard extends StatelessWidget {
         ));
         //debugPrint(data['location']);
       },
-      child: Card(
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(50),
-        ),
+      child: SizedBox(
         child: Stack(
           children: [
-            Container(
-              height: 250,
-              width: 150,
-              foregroundDecoration: BoxDecoration(
-                gradient: AppTheme.blackFade,
+            Card(
+              child: Container(
+                height: 280,
+                width: 160,
+                foregroundDecoration: BoxDecoration(
+                  gradient: AppTheme.blackFade,
+                ),
+                decoration: BoxDecoration(
+                    color: AppTheme.black26,
+                    image: DecorationImage(
+                      image: NetworkImage(data['photoUrl']),
+                      fit: BoxFit.cover,
+                    ),
+                    borderRadius: BorderRadius.circular(30)),
               ),
-              decoration: BoxDecoration(
-                  color: AppTheme.black26,
-                  image: DecorationImage(
-                    image: NetworkImage(data['photoUrl']),
-                    fit: BoxFit.cover,
-                  ),
-                  borderRadius: const BorderRadius.all(Radius.circular(20))),
             ),
             Positioned(
               bottom: 20,

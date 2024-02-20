@@ -4,10 +4,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:ipicku_dating_app/domain/messaging/messaging_bloc.dart';
 import 'package:ipicku_dating_app/presentation/chatpage/widget/chat_person_appbar_title.dart';
+import 'package:ipicku_dating_app/presentation/chatpage/widget/date_separator.dart';
 import 'package:ipicku_dating_app/presentation/chatpage/widget/message_box.dart';
 import 'package:ipicku_dating_app/presentation/chatpage/widget/message_bubble.dart';
 import 'package:ipicku_dating_app/presentation/chatpage/widget/video_call_page.dart';
 import 'package:ipicku_dating_app/presentation/ui_utils/constants.dart';
+import 'package:ipicku_dating_app/presentation/widgets/empty_list.dart';
 
 class ChatPagePerson extends StatefulWidget {
   final Map<String, dynamic>? selectedUser, currentUser;
@@ -19,6 +21,7 @@ class ChatPagePerson extends StatefulWidget {
 
 class _ChatPagePersonState extends State<ChatPagePerson> {
   final ScrollController _scrollController = ScrollController();
+
   @override
   Widget build(BuildContext context) {
     BlocProvider.of<MessagingBloc>(context).add(
@@ -26,6 +29,7 @@ class _ChatPagePersonState extends State<ChatPagePerson> {
           userId: widget.currentUser?['uid'],
           recieverId: widget.selectedUser?['uid']),
     );
+    
     final lastActive =
         (widget.selectedUser?['lastActive'] as Timestamp).toDate();
 
@@ -63,6 +67,8 @@ class _ChatPagePersonState extends State<ChatPagePerson> {
               builder: (context, state) {
                 if (state is MessageStreamLoaded) {
                   final stream = state.messages;
+                  DateTime? lastDate; // Keep track of the last date
+
                   return StreamBuilder(
                     stream: stream,
                     builder: (context, snapshot) {
@@ -72,15 +78,56 @@ class _ChatPagePersonState extends State<ChatPagePerson> {
                       if (snapshot.connectionState == ConnectionState.waiting) {
                         return const Center(child: CircularProgressIndicator());
                       }
-                      return ListView(
+
+                      final messages = snapshot.data!.docs;
+
+                      if (messages.isEmpty) {
+                        return EmptyListPage(text: "No Chats , Say HII");
+                      }
+                       WidgetsBinding.instance.addPostFrameCallback((_) {
+                        // Scroll to the end after inserting a new message
+                        _scrollController.animateTo(
+                          _scrollController.position.maxScrollExtent,
+                          duration: const Duration(milliseconds: 300),
+                          curve: Curves.easeInOut,
+                        );
+                      });
+                      return ListView.builder(
                         controller: _scrollController,
-                        children: snapshot.data!.docs
-                            .map((e) => MessageWidget(
-                                  data: e,
-                                  currentUSer: widget.currentUser ?? {},
-                                  selectedUSer: widget.selectedUser ?? {},
-                                ))
-                            .toList(),
+                        itemCount: messages.length,
+                        itemBuilder: (context, index) {
+                          final message = messages[index];
+                          final sentTime =
+                              (message['sentTime'] as Timestamp).toDate();
+                          final currentDate = DateTime(
+                              sentTime.year, sentTime.month, sentTime.day);
+
+                          Widget messageWidget = MessageWidget(
+                            data: message,
+                            currentUSer: widget.currentUser ?? {},
+                            selectedUSer: widget.selectedUser ?? {},
+                          );
+
+                          // Check if the date has changed since the last message
+                          if (lastDate == null || lastDate != currentDate) {
+                            messageWidget = Column(
+                              crossAxisAlignment: (message['senderId'] ==
+                                      widget.currentUser?['uid'])
+                                  ? CrossAxisAlignment.end
+                                  : CrossAxisAlignment.start,
+                              children: [
+                                // Insert date separator here
+                                DateSeparatorWidget(date: currentDate),
+                                // Add the message widget
+                                messageWidget,
+                              ],
+                            );
+                          }
+
+                          lastDate = currentDate; // Update the last date
+                         
+                          return messageWidget;
+                        },
                       );
                     },
                   );

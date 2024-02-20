@@ -3,11 +3,7 @@ import 'dart:convert';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:ipicku_dating_app/data/repositories/local_notifications.dart';
-import 'package:ipicku_dating_app/main.dart';
 import 'package:http/http.dart' as http;
-import 'package:ipicku_dating_app/presentation/chatpage/chatpage.dart';
-import 'package:ipicku_dating_app/presentation/homepage/notifications_page.dart';
-import 'package:ipicku_dating_app/presentation/profile/pages/mypicks.dart';
 
 @pragma('vm:entry-point')
 Future<void> handleBackground(RemoteMessage message) async {
@@ -23,11 +19,11 @@ class PushNotificationService {
   void handleMessage(RemoteMessage? message) {
     if (message == null) return;
     final data = message.data;
-    String? notificationContent = data['notificationContent'];
+    //String? notificationContent = data['notificationContent'];
 
     // Use the extracted information to navigate to the appropriate page
-     navigatorKey.currentState
-        ?.pushNamed(NotificationsPage.route, arguments: notificationContent);
+    //  navigatorKey.currentState
+    //     ?.pushNamed(NotificationsPage.route, arguments: notificationContent);
   }
 
   Future initPushNotification() async {

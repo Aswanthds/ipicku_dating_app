@@ -24,6 +24,7 @@ class _ChatPageState extends State<ChatPage> {
   @override
   Widget build(BuildContext context) {
     BlocProvider.of<MessagesBloc>(context).add(GetChatList());
+    
     return RefreshIndicator(
       displacement: 60,
       backgroundColor: AppTheme.white,

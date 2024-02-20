@@ -24,7 +24,11 @@ def flutterVersionName = localProperties.getProperty('flutter.versionName')
 if (flutterVersionName == null) {
     flutterVersionName = '1.0'
 }
-
+ def keystoreProperties = new Properties()
+   def keystorePropertiesFile = rootProject.file('key.properties')
+   if (keystorePropertiesFile.exists()) {
+       keystoreProperties.load(new FileInputStream(keystorePropertiesFile))
+   }
 android {
     namespace "com.aswanth.ipicku"
     compileSdkVersion 33
@@ -54,12 +58,20 @@ android {
         versionName flutterVersionName
         multiDexEnabled true
     }
-
+    signingConfigs {
+       release {
+           keyAlias keystoreProperties['RELEASE_KEY_ALIAS']
+           keyPassword keystoreProperties['RELEASE_KEY_PASSWORD']
+           storeFile keystoreProperties['RELEASE_STORE_FILE'] ? file(keystoreProperties['RELEASE_STORE_FILE']) : null
+           storePassword keystoreProperties['RELEASE_STORE_PASSWORD']
+       }
+   }
+   
     buildTypes {
         release {
             // TODO: Add your own signing config for the release build.
             // Signing with the debug keys for now, so `flutter run --release` works.
-            signingConfig signingConfigs.debug
+            signingConfig signingConfigs.release
 
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
@@ -76,7 +88,9 @@ dependencies {
     implementation(platform("com.google.firebase:firebase-bom:32.6.0"))
     implementation("com.google.firebase:firebase-analytics") 
     implementation 'com.google.firebase:firebase-messaging:21.1.0'
-    
+    implementation 'com.google.android.material:material:1.9.0'
 
      
 }
+
+//E:\Aswanth\Apps\jdk-18_windows-x64_bin\bin

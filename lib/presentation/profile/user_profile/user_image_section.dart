@@ -38,7 +38,7 @@ class UserImageSection extends StatelessWidget {
                   child: Center(
                     child: Text(
                       'No user images available.',
-                      style: Theme.of(context).textTheme.bodyMedium,
+                      style: Theme.of(context).textTheme.displaySmall,
                     ),
                   ),
                 ),

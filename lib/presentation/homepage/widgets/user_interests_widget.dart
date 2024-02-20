@@ -38,7 +38,7 @@ class UserInterestWidget extends StatelessWidget {
                     height: 160,
                     child: Text(
                       'No user images available.',
-                      style: Theme.of(context).textTheme.bodyMedium,
+                      style: Theme.of(context).textTheme.displaySmall,
                     ),
                   ),
                 ),

@@ -4,7 +4,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:ipicku_dating_app/data/repositories/local.dart';
 import 'package:ipicku_dating_app/data/repositories/push_notifi_service.dart';
 import 'package:ipicku_dating_app/domain/notifications/notifications_bloc.dart';
-
 import 'package:ipicku_dating_app/presentation/ui_utils/colors.dart';
 import 'package:ipicku_dating_app/data/repositories/user_repositories.dart';
 import 'package:ipicku_dating_app/presentation/homepage/progfilepage.dart';
@@ -86,20 +85,21 @@ class SwipeCardWidget extends StatelessWidget {
                 if (userProfile.isNotEmpty) {
                   controller.swipeLeft();
                 }
+                print(userProfile[index]);
                 await userRepository.storeDeviceToken();
-
+                final currentUserData = await userRepository.getUserData();
                 if (userProfile[index]['deviceToken'] != null &&
-                    (userProfile[index]['notifications_picks'])) {
+                    (userProfile[index]['notifications_picks'] ?? false)) {
                   BlocProvider.of<NotificationsBloc>(context).add(
                       NotificationReceivedEvent(
                           'New Pick',
-                          "${userProfile[index]['name']} picked you",
+                          "${currentUserData?.name} picked you , Check My Picks list....",
                           userProfile[index]['uid'],
                           NotificationType.picks));
                   PushNotificationService().sendPushMessage(
                       title: "New Notification",
                       type: 'picks',
-                      body: "A User Picked You",
+                      body: "${currentUserData?.name} Picked You , Check on My Picks list....",
                       token: userProfile[index]['deviceToken']);
                 }
               },

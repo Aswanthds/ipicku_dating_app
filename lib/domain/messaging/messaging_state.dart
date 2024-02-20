@@ -26,7 +26,7 @@ class MessageStreamLaoding extends MessagingState {
 
 }
 class GetLastMessageLoaded extends MessagingState {
-  final QueryDocumentSnapshot<Map<String, dynamic>> message;
+  final QueryDocumentSnapshot<Map<String, dynamic>>? message;
 
   const GetLastMessageLoaded({required this.message});
 }

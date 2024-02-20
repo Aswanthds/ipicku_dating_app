@@ -28,34 +28,33 @@ class _RecommendedPageState extends State<RecommendedPage> {
       body: BlocBuilder<MatchingBloc, MatchingState>(
         builder: (context, state) {
           if (state is Regionprofiles) {
-            return SingleChildScrollView(
-              scrollDirection: Axis.vertical,
-              child: Column(
-                children: [
-                  SectionRecommendedPage(
+            return ListView.builder(
+              itemCount: state.interestSeparately.keys.length + 1,
+              itemBuilder: (context, index) {
+                if (index == 0) {
+                  return SectionRecommendedPage(
                     state: state.locationUsers,
                     title: "Location",
                     id: widget.repository,
-                  ),
-                  SectionRecommendedPage(
-                    state: state.interest,
-                    title: "Interest",
+                  );
+                } else {
+                  final interestIndex = index - 1;
+                  return SectionRecommendedInterestsPage(
+                    state: state.interestSeparately,
+                    title:
+                        state.interestSeparately.keys.toList()[interestIndex],
                     id: widget.repository,
-                  ),
-                   SectionRecommendedPage(
-                    state: state.ageUsers,
-                    title: "Age ",
-                    id: widget.repository,
-                  )
-                ],
-              ),
+                  );
+                }
+              },
             );
           }
           if (state is RegionprofilesLoading) {
             return const Center(
-                child: CircularProgressIndicator(
-              strokeWidth: 5.0,
-            ));
+              child: CircularProgressIndicator(
+                strokeWidth: 5.0,
+              ),
+            );
           }
           if (state is RegionprofilesError) {
             return const SizedBox();
@@ -66,3 +65,24 @@ class _RecommendedPageState extends State<RecommendedPage> {
     );
   }
 }
+/*
+Expanded(
+                  child: ListView.builder(
+                    itemCount: state.interestSeparately.keys.length,
+                    itemBuilder: (context, index) =>
+                        SectionRecommendedInterestsPage(
+                      state: state.interestSeparately,
+                      title:
+                          state.interestSeparately.keys.toList()[index],
+                      id: widget.repository,
+                    ),
+                  ),
+                ),
+
+                   SectionRecommendedPage(
+                  state: state.locationUsers,
+                  title: "Location",
+                  id: widget.repository,
+                ),
+
+*/

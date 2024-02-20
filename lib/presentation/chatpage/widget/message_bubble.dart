@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
 import 'package:ipicku_dating_app/domain/messaging/messaging_bloc.dart';
+import 'package:ipicku_dating_app/presentation/profile/user_profile/image_preview.dart';
 
 import 'package:ipicku_dating_app/presentation/ui_utils/colors.dart';
 import 'package:ipicku_dating_app/presentation/chatpage/widget/video_call_page.dart';
@@ -54,7 +55,7 @@ class _MessageWidgetState extends State<MessageWidget> {
                         const SizedBox(height: 16),
                         Text(
                           'Are you sure you want to delete this message?',
-                          style: Theme.of(context).textTheme.bodyMedium,
+                          style: Theme.of(context).textTheme.displaySmall,
                         ),
                       ],
                     ),
@@ -197,7 +198,12 @@ class _MessageWidgetState extends State<MessageWidget> {
             child: ClipRRect(
               borderRadius: BorderRadius.circular(
                   MediaQuery.of(context).size.height * 0.02),
-              child: Image.network(data['photoUrl']),
+              child: GestureDetector(
+                  onTap: () => Navigator.of(context).push(MaterialPageRoute(
+                        builder: (context) =>
+                            ImagePreviewPage(imageUrl: data['photoUrl']),
+                      )),
+                  child: Image.network(data['photoUrl'])),
             ),
           ),
           Padding(
@@ -222,8 +228,10 @@ class _MessageWidgetState extends State<MessageWidget> {
         ),
         child: ListTile(
           onTap: () {
-            if (!calledOnce && (widget.selectedUSer['blocked'] &&
-                    widget.selectedUSer['done_by'] == widget.currentUSer['uid'])) {
+            if (!calledOnce ||
+                (widget.selectedUSer['blocked'] &&
+                    widget.selectedUSer['done_by'] ==
+                        widget.currentUSer['uid'])) {
               Navigator.of(context).push(MaterialPageRoute(
                 builder: (context) => PrebuiltCallPage(
                   userID: widget.selectedUSer['uid'],
@@ -249,6 +257,19 @@ class _MessageWidgetState extends State<MessageWidget> {
                       ? Colors.white
                       : Colors.black,
                 ),
+          ),
+          trailing: Padding(
+            padding: EdgeInsets.only(left: size.height * 0.01),
+            child: Text(
+              DateFormat.jm().format((data['sentTime'] as Timestamp).toDate()),
+              style: Theme.of(context).textTheme.bodySmall!.copyWith(
+                    fontSize: 8,
+                    color: (data['senderId'] ==
+                            FirebaseAuth.instance.currentUser?.uid)
+                        ? Colors.white
+                        : Colors.black,
+                  ),
+            ),
           ),
         ),
       );

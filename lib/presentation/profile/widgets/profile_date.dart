@@ -50,7 +50,7 @@ class ProfileDateWidget extends StatelessWidget {
               onPressed: () async {
                 final pickedDate =
                     await ProfileFunctions.pickDateofBirth(context);
-              if(pickedDate != null){
+                if (pickedDate != null) {
                   BlocProvider.of<FirebaseDataBloc>(context).add(
                     UpdateUserFieldEvent(
                       'dob',
@@ -63,7 +63,7 @@ class ProfileDateWidget extends StatelessWidget {
                       ProfileFunctions.calculateAge(pickedDate),
                     ),
                   );
-              }
+                }
               },
               icon: const Icon(
                 EvaIcons.edit2,
