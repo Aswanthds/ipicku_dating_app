@@ -4,7 +4,6 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
-import 'package:image_picker/image_picker.dart';
 import 'package:ipicku_dating_app/data/model/message.dart';
 import 'package:ipicku_dating_app/data/repositories/matches_repo.dart';
 import 'package:ipicku_dating_app/data/repositories/user_repositories.dart';
@@ -54,7 +53,7 @@ class MessagingRepository {
       await storageRef.putFile(image);
 
       final url = await storageRef.getDownloadURL();
-      print(url);
+      debugPrint(url);
        final message = {
         'recieverId': recieverId,
         'senderId': userId,
@@ -243,7 +242,7 @@ class MessagingRepository {
 
       final isBlocked = data?['blocked'] as bool;
       final blockedBy = data?['done_by'] as String;
-      print("$isBlocked -> $blockedBy");
+      debugPrint("$isBlocked -> $blockedBy");
       return {
         'blocked': isBlocked,
         'done_by': blockedBy,

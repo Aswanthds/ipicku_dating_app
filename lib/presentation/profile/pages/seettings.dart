@@ -54,7 +54,7 @@ class _SettingsPageState extends State<SettingsPage> {
       builder: (context, state) {
         if (state is GetNotificationPrefsState) {
           final data = state.data;
-          print(data);
+          debugPrint(data.toString());
           return Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [

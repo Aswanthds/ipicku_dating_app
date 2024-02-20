@@ -85,7 +85,7 @@ class SwipeCardWidget extends StatelessWidget {
                 if (userProfile.isNotEmpty) {
                   controller.swipeLeft();
                 }
-                print(userProfile[index]);
+                debugPrint(userProfile[index].toString());
                 await userRepository.storeDeviceToken();
                 final currentUserData = await userRepository.getUserData();
                 if (userProfile[index]['deviceToken'] != null &&

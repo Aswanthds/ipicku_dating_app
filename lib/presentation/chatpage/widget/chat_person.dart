@@ -82,7 +82,7 @@ class _ChatPagePersonState extends State<ChatPagePerson> {
                       final messages = snapshot.data!.docs;
 
                       if (messages.isEmpty) {
-                        return EmptyListPage(text: "No Chats , Say HII");
+                        return const EmptyListPage(text: "No Chats , Say HII");
                       }
                        WidgetsBinding.instance.addPostFrameCallback((_) {
                         // Scroll to the end after inserting a new message

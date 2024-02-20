@@ -21,7 +21,7 @@ class ChatWidgetInd extends StatelessWidget {
   Widget build(BuildContext context) {
     return Card(
       color: AppTheme.blue,
-      margin: EdgeInsets.all(5),
+      margin: const EdgeInsets.all(5),
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
       child: ListTile(
           onTap: () async {
@@ -72,7 +72,7 @@ class ChatWidgetInd extends StatelessWidget {
                 selectedUserData['name'],
                 style: Theme.of(context).textTheme.displayMedium,
               ),
-              SizedBox(
+              const SizedBox(
                 width: 5,
               ),
               Wrap(
@@ -157,7 +157,7 @@ class ChatWidgetInd extends StatelessWidget {
                     tapPosition: tapPosition,
                     isBlocked: selectedUserData['blocked'] ?? false);
               },
-              icon: Icon(EvaIcons.moreHorizontalOutline))),
+              icon: const Icon(EvaIcons.moreHorizontalOutline))),
     );
   }
 }

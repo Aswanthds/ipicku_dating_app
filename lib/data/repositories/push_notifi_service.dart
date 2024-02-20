@@ -18,7 +18,6 @@ class PushNotificationService {
 
   void handleMessage(RemoteMessage? message) {
     if (message == null) return;
-    final data = message.data;
     //String? notificationContent = data['notificationContent'];
 
     // Use the extracted information to navigate to the appropriate page

@@ -92,7 +92,7 @@ class MyApp extends StatelessWidget {
                     data: [],
                   ),
               ChatPage.route: (context) => const ChatPage(userid: ''),
-              MyPicksPage.route: (context) => MyPicksPage()
+              MyPicksPage.route: (context) => const MyPicksPage()
             },
             home: BlocBuilder<AuthenticationBloc, AuthenticationState>(
               builder: (context, state) {

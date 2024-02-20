@@ -5,7 +5,6 @@ import 'package:ipicku_dating_app/data/functions/login_functions.dart';
 import 'package:ipicku_dating_app/domain/matches_data_bloc/matches_data_bloc.dart';
 import 'package:ipicku_dating_app/presentation/homepage/widgets/user_interests_widget.dart';
 import 'package:ipicku_dating_app/presentation/profile/user_profile/details_section.dart';
-import 'package:ipicku_dating_app/presentation/profile/user_profile/profile_details_action.dart';
 import 'package:ipicku_dating_app/presentation/profile/user_profile/user_image_section.dart';
 
 class UserProfileBottomSheet extends StatelessWidget {

@@ -1,8 +1,5 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:eva_icons_flutter/eva_icons_flutter.dart';
 import 'package:flutter/material.dart';
-import 'package:ipicku_dating_app/data/repositories/user_repositories.dart';
-import 'package:ipicku_dating_app/presentation/chatpage/widget/chat_person.dart';
 import 'package:ipicku_dating_app/presentation/ui_utils/colors.dart';
 
 class ProfileDetailsAction extends StatelessWidget {
@@ -17,11 +14,11 @@ class ProfileDetailsAction extends StatelessWidget {
   Widget build(BuildContext context) {
     return IconButton.filled(
       onPressed: () async {
-        final userData = await UserRepository().getUserMapAlongwithBloc(selected);
-        final users = await FirebaseFirestore.instance
-            .collection('users')
-            .doc(selected)
-            .get();
+        // final userData = await UserRepository().getUserMapAlongwithBloc(selected);
+        // final users = await FirebaseFirestore.instance
+        //     .collection('users')
+        //     .doc(selected)
+        //     .get();
         // Navigator.of(context).push(MaterialPageRoute(
         //   builder: (context) => ChatPagePerson(
         //       currentUser: userData, selectedUser: users.data()),

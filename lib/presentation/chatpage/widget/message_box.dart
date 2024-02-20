@@ -3,7 +3,6 @@ import 'dart:io';
 import 'package:eva_icons_flutter/eva_icons_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:image_picker/image_picker.dart';
 import 'package:ipicku_dating_app/data/functions/profile_functions.dart';
 import 'package:ipicku_dating_app/data/repositories/push_notifi_service.dart';
 import 'package:ipicku_dating_app/domain/messaging/messaging_bloc.dart';
@@ -98,7 +97,7 @@ class _UserMessageBoxState extends State<UserMessageBox> {
                     bool shouldSendNotification =
                         widget.selectedUser?['notifications_messages'] ?? false;
                     bool isMuted = (widget.selectedUser?['muted'] ?? false);
-                    print('$shouldSendNotification  => $isMuted');
+                    debugPrint('$shouldSendNotification  => $isMuted');
                     if ((shouldSendNotification == false && isMuted == false) || !shouldSendNotification  && !isMuted ) {
                       PushNotificationService().sendPushMessage(
                         token: widget.selectedUser?['deviceToken'],

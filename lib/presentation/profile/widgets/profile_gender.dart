@@ -102,7 +102,7 @@ class ProfileGenderWidget extends StatelessWidget {
                       },
                     ),
                   ),
-                  Text('Please refresh home after updating to get latest data')
+                  const Text('Please refresh home after updating to get latest data')
                 ],
               );
             },
@@ -112,7 +112,7 @@ class ProfileGenderWidget extends StatelessWidget {
               onPressed: () {
                 Navigator.of(context).pop(); // Close the dialog
               },
-              child: Text('Cancel'),
+              child: const Text('Cancel'),
             ),
             TextButton(
               onPressed: () {
@@ -124,7 +124,7 @@ class ProfileGenderWidget extends StatelessWidget {
                 );
                 Navigator.of(context).pop(); // Close the dialog
               },
-              child: Text('Submit'),
+              child: const Text('Submit'),
             ),
           ],
         );

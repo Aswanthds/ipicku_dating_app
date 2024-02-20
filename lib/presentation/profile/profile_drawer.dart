@@ -41,7 +41,7 @@ class _ProfileDrawerState extends State<ProfileDrawer> {
         child: BlocBuilder<FirebaseDataBloc, FirebaseDataState>(
           builder: (context, state) {
             if (state is FirebaseDataFailure) {
-              return Center(
+              return const Center(
                 child: Text("Wait Getting data......"),
               );
             }

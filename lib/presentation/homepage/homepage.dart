@@ -180,7 +180,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
                   userRepository: widget.userRepository,
                 );
               }
-              return  EmptyListPage(text: "Please refresh the page !!!",
+              return  const EmptyListPage(text: "Please refresh the page !!!",
                 
               );
             }
