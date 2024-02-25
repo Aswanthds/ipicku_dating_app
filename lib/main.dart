@@ -91,7 +91,7 @@ class MyApp extends StatelessWidget {
               NotificationsPage.route: (context) => const NotificationsPage(
                     data: [],
                   ),
-              ChatPage.route: (context) => const ChatPage(userid: ''),
+              ChatPage.route: (context) => const ChatPage(),
               MyPicksPage.route: (context) => const MyPicksPage()
             },
             home: BlocBuilder<AuthenticationBloc, AuthenticationState>(

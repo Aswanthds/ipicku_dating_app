@@ -90,16 +90,7 @@ class UserProfileBottomSheet extends StatelessWidget {
               return Wrap(
                 direction: Axis.vertical,
                 children: [
-                  // Visibility(
-                  //   visible: value.data ?? true && !isMyPick,
-                  //   child: ProfileDetailsAction(
-                  //     selected: data['uid'],
-                  //     userid: userid,
-                  //   ),
-                  // ),
-                  // const SizedBox(
-                  //   height: 20,
-                  // ),
+             
                   Visibility(
                     visible: !isMyPick,
                     child: IconButton.filled(

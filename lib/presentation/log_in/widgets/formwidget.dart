@@ -29,30 +29,20 @@ class _LoginFormState extends State<LoginForm> {
   final TextEditingController _emailController = TextEditingController();
 
   final TextEditingController _passwordController = TextEditingController();
-  late LoginBloc _loginBloc;
   final GlobalKey<FormState> _formkey = GlobalKey<FormState>();
-  @override
-  void initState() {
-    _loginBloc = BlocProvider.of<LoginBloc>(context);
-    super.initState();
-  }
+
 
   bool get isPopulated =>
       _emailController.text.isNotEmpty && _passwordController.text.isNotEmpty;
 
   void _onFormSubmitted(BuildContext ctx) {
-      BlocProvider.of<FirebaseDataBloc>(context)
-        .add(const UpdateUserFieldEvent('notifications_picks', true));
-    BlocProvider.of<FirebaseDataBloc>(context)
-        .add(const UpdateUserFieldEvent('notifications_messages', true));
-    BlocProvider.of<FirebaseDataBloc>(context)
-        .add(const UpdateUserFieldEvent('notifications_recomendations', true));
-    _loginBloc.add(
+    BlocProvider.of<LoginBloc>(context).add(
       LoginPressed(
           email: _emailController.text.trim(),
           password: _passwordController.text.trim()),
     );
   }
+
 
   @override
   void dispose() {
@@ -154,8 +144,15 @@ class _LoginFormState extends State<LoginForm> {
                       children: <Widget>[
                         LoginButton(
                           onPressed: () {
-                            if (_formkey.currentState!.validate()) {
-                              return _onFormSubmitted(context);
+                            if (isPopulated) {
+                              _formkey.currentState!.validate()
+                                  ? _onFormSubmitted(context)
+                                  : null;
+                            } else {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                  const SnackBar(
+                                      content: Text(
+                                          "Enter your email and Password")));
                             }
                           },
                         ),

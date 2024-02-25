@@ -8,11 +8,10 @@ import 'package:ipicku_dating_app/presentation/ui_utils/colors.dart';
 import 'package:ipicku_dating_app/presentation/widgets/empty_list.dart';
 
 class ChatPage extends StatefulWidget {
-  final String userid;
+
 
   const ChatPage({
     super.key,
-    required this.userid,
   });
 
   @override
@@ -61,7 +60,7 @@ class _ChatPageState extends State<ChatPage> {
                     separatorBuilder: (context, index) => const Divider(),
                     itemBuilder: (context, index) {
                       return ChatWidgetInd(
-                          userId: widget.userid, selectedUserData: data[index]);
+                         selectedUserData: data[index]);
                     });
               }
               return const EmptyListPage(text: "No Chats here");

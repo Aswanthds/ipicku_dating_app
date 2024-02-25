@@ -83,8 +83,11 @@ class DetailsSection extends StatelessWidget {
   userDataListTile(IconData person, String s, BuildContext context) {
     return Container(
       decoration: BoxDecoration(
-          border: const Border.symmetric(
-              horizontal: BorderSide(width: 2.0, style: BorderStyle.solid)),
+          border: Border.symmetric(
+              horizontal: BorderSide(
+                  width: 2.0,
+                  style: BorderStyle.solid,
+                  color: Theme.of(context).textTheme.displayLarge!.color!)),
           borderRadius: BorderRadius.circular(20)),
       margin: const EdgeInsets.only(top: 10),
       child: ListTile(
@@ -92,6 +95,7 @@ class DetailsSection extends StatelessWidget {
         leading: Icon(
           person,
           size: 18,
+          color: Theme.of(context).textTheme.displayLarge!.color!,
         ),
         title: Text(s, style: Theme.of(context).textTheme.bodyLarge),
       ),

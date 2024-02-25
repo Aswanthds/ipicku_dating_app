@@ -31,17 +31,13 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
     // Dispatch the event only if random users data is not already loaded
 
     BlocProvider.of<MatchingBloc>(context).add(GetRandomUsers());
-    BlocProvider.of<FirebaseDataBloc>(context).add(FirebaseDataLoadedEvent());
     WidgetsBinding.instance.addObserver(this);
-    BlocProvider.of<NotificationsBloc>(context).add(GetNotifications());
     UserRepository().setStatus(true);
   }
 
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
-    if (state == AppLifecycleState.resumed) {
-      UserRepository().setStatus(true);
-    } else {
+    if (state != AppLifecycleState.resumed) {
       UserRepository().setStatus(false);
     }
   }
@@ -49,7 +45,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
-
+    BlocProvider.of<NotificationsBloc>(context).add(GetNotifications());
     return BlocListener<MatchesDataBloc, MatchesDataState>(
       listener: (context, state) {
         if (state is DatePickedState) {
@@ -180,8 +176,8 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
                   userRepository: widget.userRepository,
                 );
               }
-              return  const EmptyListPage(text: "Please refresh the page !!!",
-                
+              return const EmptyListPage(
+                text: "Please refresh the page !!!",
               );
             }
             if (state is RandomProfileError) {

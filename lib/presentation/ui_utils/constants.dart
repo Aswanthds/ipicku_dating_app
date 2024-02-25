@@ -64,6 +64,7 @@ class SnackBarManager {
   static const SnackBar profileLoading = SnackBar(
     backgroundColor: Colors.grey,
     duration: Durations.long2,
+    
     content: Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [

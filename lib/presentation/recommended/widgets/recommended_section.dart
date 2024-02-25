@@ -4,12 +4,12 @@ import 'package:ipicku_dating_app/presentation/recommended/widgets/recomended_ca
 
 class SectionRecommendedPage extends StatelessWidget {
   final List<Map<String, dynamic>> state;
-  final String title, id;
+  final String title;
   const SectionRecommendedPage({
     Key? key,
     required this.state,
     required this.title,
-    required this.id,
+    //required this.id,
   }) : super(key: key);
 
   @override
@@ -34,7 +34,7 @@ class SectionRecommendedPage extends StatelessWidget {
                         final data = state[index];
                         return RecommendedCard(
                           data: data,
-                          id: id,
+                          id: data['uid'],
                         );
                       },
                     ),
@@ -49,12 +49,12 @@ class SectionRecommendedPage extends StatelessWidget {
 
 class SectionRecommendedInterestsPage extends StatelessWidget {
   final Map<String, List<Map<String, dynamic>>> state;
-  final String title, id;
+  final String title;
   const SectionRecommendedInterestsPage({
     Key? key,
     required this.state,
     required this.title,
-    required this.id,
+   // required this.id,
   }) : super(key: key);
 
   @override
@@ -79,7 +79,7 @@ class SectionRecommendedInterestsPage extends StatelessWidget {
                         List<Map<String, dynamic>> data = state[title] ?? [];
                         return RecommendedCard(
                           data: data[index],
-                          id: id,
+                          id: data[index]['uid'],
                         );
                       },
                     ),

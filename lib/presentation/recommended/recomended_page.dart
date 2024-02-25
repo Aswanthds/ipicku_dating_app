@@ -4,10 +4,9 @@ import 'package:ipicku_dating_app/domain/matching_bloc/matching_bloc.dart';
 import 'package:ipicku_dating_app/presentation/recommended/widgets/recommended_section.dart';
 
 class RecommendedPage extends StatefulWidget {
-  final String repository;
   const RecommendedPage({
     super.key,
-    required this.repository,
+
   });
 
   @override
@@ -35,7 +34,7 @@ class _RecommendedPageState extends State<RecommendedPage> {
                   return SectionRecommendedPage(
                     state: state.locationUsers,
                     title: "Location",
-                    id: widget.repository,
+                    //id: widget.repository,
                   );
                 } else {
                   final interestIndex = index - 1;
@@ -43,7 +42,7 @@ class _RecommendedPageState extends State<RecommendedPage> {
                     state: state.interestSeparately,
                     title:
                         state.interestSeparately.keys.toList()[interestIndex],
-                    id: widget.repository,
+                    //id: widget.repository,
                   );
                 }
               },
@@ -65,24 +64,3 @@ class _RecommendedPageState extends State<RecommendedPage> {
     );
   }
 }
-/*
-Expanded(
-                  child: ListView.builder(
-                    itemCount: state.interestSeparately.keys.length,
-                    itemBuilder: (context, index) =>
-                        SectionRecommendedInterestsPage(
-                      state: state.interestSeparately,
-                      title:
-                          state.interestSeparately.keys.toList()[index],
-                      id: widget.repository,
-                    ),
-                  ),
-                ),
-
-                   SectionRecommendedPage(
-                  state: state.locationUsers,
-                  title: "Location",
-                  id: widget.repository,
-                ),
-
-*/

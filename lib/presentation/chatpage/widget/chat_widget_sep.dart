@@ -12,9 +12,9 @@ class ChatWidgetInd extends StatelessWidget {
   const ChatWidgetInd({
     super.key,
     required this.selectedUserData,
-    required this.userId,
+
   });
-  final String userId;
+
   final Map<String, dynamic> selectedUserData;
 
   @override
@@ -85,10 +85,7 @@ class ChatWidgetInd extends StatelessWidget {
               )
             ],
           ),
-          subtitle: (selectedUserData['blocked'] &&
-                  selectedUserData['done_by'] != userId)
-              ? const SizedBox()
-              : FutureBuilder(
+          subtitle: FutureBuilder(
                   future: MessagingRepository.getLastMessage(
                       selectedUserData['uid']),
                   builder: (context, snapshot) {

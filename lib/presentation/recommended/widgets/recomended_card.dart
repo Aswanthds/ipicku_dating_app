@@ -38,7 +38,7 @@ class RecommendedCard extends StatelessWidget {
                       image: NetworkImage(data['photoUrl']),
                       fit: BoxFit.cover,
                     ),
-                    borderRadius: BorderRadius.circular(30)),
+                    borderRadius: BorderRadius.circular(15)),
               ),
             ),
             Positioned(

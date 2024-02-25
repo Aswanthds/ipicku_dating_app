@@ -23,11 +23,12 @@ class UserRepository {
         _googleSignIn = googleSignin ?? GoogleSignIn();
 
   Future<void> signInWithCredentials(String email, String password) async {
-    _firebaseAuth.signInWithEmailAndPassword(
+    final user = await _firebaseAuth.signInWithEmailAndPassword(
       email: email,
       password: password,
     );
-    await storeDeviceToken();
+    print(await user.user!.getIdToken());
+    // await storeDeviceToken();
   }
 
   Future<UserCredential?> signInwithGoogle() async {

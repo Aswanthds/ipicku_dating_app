@@ -14,16 +14,10 @@ class MainPageNav extends StatefulWidget {
 }
 
 class _MainPageNavState extends State<MainPageNav> {
-  String userId = '';
-  getUserId() async {
-    await widget.repository.storeDeviceToken();
-    return userId = await widget.repository.getUser();
-    
-  }
+  
 
   @override
   void initState() {
-    getUserId();
     super.initState();
   }
 
@@ -31,9 +25,9 @@ class _MainPageNavState extends State<MainPageNav> {
   Widget build(BuildContext context) {
     var pages = [
       HomePage(userRepository: widget.repository),
-      RecommendedPage(repository: userId),
-      ChatPage(
-        userid: userId,
+      const RecommendedPage(),
+      const ChatPage(
+        
       ),
     ];
     return Scaffold(

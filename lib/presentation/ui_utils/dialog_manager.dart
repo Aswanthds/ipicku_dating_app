@@ -77,9 +77,9 @@ class DialogManager {
                         style: Theme.of(context).textTheme.displaySmall,
                       ),
                       onPressed: () {
+                        Navigator.of(context).pop();
                         BlocProvider.of<AuthenticationBloc>(context)
                             .add(LoggedOut());
-
                         Navigator.of(context).pushAndRemoveUntil(
                             MaterialPageRoute(
                               builder: (context) =>
@@ -275,15 +275,15 @@ class DialogManager {
   }
 
   static void showChatOptionsPopup(
-     { required BuildContext context,
+      {required BuildContext context,
       required Map<String, dynamic> data,
       required Map<String, dynamic> currentData,
       required bool isMuted,
-       required Offset tapPosition,
+      required Offset tapPosition,
       required bool isBlocked}) {
     showMenu(
       context: context,
-       position: RelativeRect.fromLTRB(
+      position: RelativeRect.fromLTRB(
         tapPosition.dy,
         tapPosition.dy + 10,
         tapPosition.dx - 10,

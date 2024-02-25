@@ -14,7 +14,6 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
   LoginBloc({required UserRepository userRepository})
       : _userRepository = userRepository,
         super(LoginIntial()) {
-
     on<LoginPressed>(_mapLoginButtonPressed);
     on<GoogleSignUp>(_mapGoogleSignIn);
   }
@@ -26,7 +25,9 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
       await _userRepository.signInWithCredentials(event.email, event.password);
       final id = await _userRepository.getUser();
       final isFirst = await _userRepository.isFirstTime(id);
-      if (!isFirst) {
+      final isProfileSet = await _userRepository.isProfileSet(id);
+      await _userRepository.storeDeviceToken();
+      if (!isFirst || !isProfileSet) {
         emit(LoginProfileNotSet());
       } else {
         emit(LoginSucess());
@@ -62,8 +63,4 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
       emit(LoginFailed(message: e.toString()));
     }
   }
-
 }
-
-  
-

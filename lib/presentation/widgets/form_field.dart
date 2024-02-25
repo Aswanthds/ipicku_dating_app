@@ -28,12 +28,12 @@ class _FormFieldWidgetState extends State<FormFieldWidget> {
   Widget build(BuildContext context) {
     return TextFormField(
       controller: widget._controller,
-      obscureText: _obscureText,
+      obscureText: widget.isPassword && !_obscureText,
       decoration: InputDecoration(
-        suffixIcon: widget.isPassword
+        suffixIcon: widget.isPassword 
             ? IconButton(
                 icon: Icon(
-                    _obscureText ? Icons.visibility : Icons.visibility_off),
+                    !_obscureText ? Icons.visibility : Icons.visibility_off),
                 onPressed: () {
                   setState(() {
                     _obscureText = !_obscureText;

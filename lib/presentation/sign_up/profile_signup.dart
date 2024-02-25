@@ -1,6 +1,7 @@
 // ignore_for_file: use_build_context_synchronously
 
 import 'dart:io';
+import 'package:ipicku_dating_app/presentation/homepage/welcome_page,.dart';
 import 'package:ipicku_dating_app/presentation/ui_utils/colors.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:eva_icons_flutter/eva_icons_flutter.dart';
@@ -16,7 +17,9 @@ import 'package:ipicku_dating_app/domain/profile_bloc/profile_state.dart';
 import 'package:ipicku_dating_app/presentation/main_page.dart';
 import 'package:ipicku_dating_app/presentation/sign_up/widgets/profile_form.dart';
 import 'package:ipicku_dating_app/presentation/ui_utils/constants.dart';
+import 'package:ipicku_dating_app/presentation/ui_utils/dialog_manager.dart';
 import 'package:ipicku_dating_app/presentation/ui_utils/input_decoration.dart';
+import 'package:ipicku_dating_app/presentation/widgets/logo_widget.dart';
 
 class SignupProfilePage extends StatefulWidget {
   final UserRepository userRepository;
@@ -35,13 +38,11 @@ class _SignupProfilePageState extends State<SignupProfilePage> {
   XFile? _pickedImage;
   String? _gender;
   DateTime? _selectedDate;
-  final List<File?> _selectedImages = List.filled(3, null, growable: false);
 
   bool isPopulated() =>
       _nameController.text.isNotEmpty &&
       _gender != null &&
       _pickedImage != null &&
-      _selectedImages.isNotEmpty &&
       _selectedDate != null;
   @override
   Widget build(BuildContext context) {
@@ -69,7 +70,7 @@ class _SignupProfilePageState extends State<SignupProfilePage> {
           Navigator.of(context).pushAndRemoveUntil(
               MaterialPageRoute(
                 builder: (context) =>
-                    MainPageNav(repository: widget.userRepository),
+                    WelcomePage(repository: widget.userRepository),
               ),
               (route) => false);
         }
@@ -152,7 +153,7 @@ class _SignupProfilePageState extends State<SignupProfilePage> {
                                   onPressed: () {
                                     _onSubmitted();
                                   },
-                                  child: const Text('Submit'),
+                                  child: const Text('Register'),
                                 ),
                               )
                             : SizedBox(
@@ -169,6 +170,39 @@ class _SignupProfilePageState extends State<SignupProfilePage> {
                                   child: const Text("Register"),
                                 ),
                               ),
+                        FutureBuilder(
+                            future: widget.userRepository.getUserEmail(),
+                            builder: (context, snapshot) {
+                              return Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Text(
+                                    snapshot.data ?? '',
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .bodySmall
+                                        ?.copyWith(color: AppTheme.white),
+                                  ),
+                                  TextButton(
+                                    onPressed: () {
+                                      DialogManager.showLogoutDialog(
+                                          context, widget.userRepository);
+                                    },
+                                    child: Text(
+                                      "Logout ? ",
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .labelLarge
+                                          ?.copyWith(
+                                              color: AppTheme.red,
+                                              fontWeight: FontWeight.bold),
+                                    ),
+                                  )
+                                ],
+                              );
+                            }),
+                        
                       ],
                     ),
                   ),
@@ -185,17 +219,14 @@ class _SignupProfilePageState extends State<SignupProfilePage> {
     var location = await ProfileFunctions.getLocation();
     ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
         backgroundColor: Colors.green, content: Text("Submitting your data")));
-
-    Future.delayed(const Duration(seconds: 5)).then((value) {
-      BlocProvider.of<ProfileBloc>(context).add(Submitted(
-          age: ProfileFunctions.calculateAge(_selectedDate),
-          dob: _selectedDate,
-          createdNow: Timestamp.now(),
-          name: _nameController.text.trim(),
-          gender: _gender,
-          location: location,
-          photo: File(_pickedImage?.path ?? '')));
-    });
+    BlocProvider.of<ProfileBloc>(context).add(Submitted(
+        age: ProfileFunctions.calculateAge(_selectedDate),
+        dob: _selectedDate,
+        createdNow: Timestamp.now(),
+        name: _nameController.text.trim(),
+        gender: _gender,
+        location: location,
+        photo: File(_pickedImage?.path ?? '')));
   }
 }
 
