@@ -1,7 +1,7 @@
 // ignore_for_file: use_build_context_synchronously
 
 import 'dart:io';
-import 'package:ipicku_dating_app/presentation/homepage/welcome_page,.dart';
+import 'package:ipicku_dating_app/presentation/homepage/welcome_page.dart';
 import 'package:ipicku_dating_app/presentation/ui_utils/colors.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:eva_icons_flutter/eva_icons_flutter.dart';
@@ -14,12 +14,10 @@ import 'package:ipicku_dating_app/data/repositories/user_repositories.dart';
 import 'package:ipicku_dating_app/domain/auth_bloc/authentication_bloc.dart';
 import 'package:ipicku_dating_app/domain/profile_bloc/profile_bloc.dart';
 import 'package:ipicku_dating_app/domain/profile_bloc/profile_state.dart';
-import 'package:ipicku_dating_app/presentation/main_page.dart';
 import 'package:ipicku_dating_app/presentation/sign_up/widgets/profile_form.dart';
 import 'package:ipicku_dating_app/presentation/ui_utils/constants.dart';
 import 'package:ipicku_dating_app/presentation/ui_utils/dialog_manager.dart';
 import 'package:ipicku_dating_app/presentation/ui_utils/input_decoration.dart';
-import 'package:ipicku_dating_app/presentation/widgets/logo_widget.dart';
 
 class SignupProfilePage extends StatefulWidget {
   final UserRepository userRepository;
@@ -105,6 +103,7 @@ class _SignupProfilePageState extends State<SignupProfilePage> {
                           },
                           pickedImage: _pickedImage,
                         ),
+                      
                         ProfileSignUpFormField(
                           controller: _nameController,
                           icon: Icons.person_4,
@@ -141,35 +140,19 @@ class _SignupProfilePageState extends State<SignupProfilePage> {
                         const SizedBox(
                           height: 20,
                         ),
-                        isPopulated()
-                            ? SizedBox(
-                                width: size.width - 60,
-                                height: 50,
-                                child: ElevatedButton(
-                                  style: ElevatedButton.styleFrom(
-                                      shape: RoundedRectangleBorder(
-                                          borderRadius:
-                                              BorderRadius.circular(15))),
-                                  onPressed: () {
-                                    _onSubmitted();
-                                  },
-                                  child: const Text('Register'),
-                                ),
-                              )
-                            : SizedBox(
-                                width: size.width - 60,
-                                height: 50,
-                                child: ElevatedButton(
-                                  onPressed: () {},
-                                  style: ElevatedButton.styleFrom(
-                                    backgroundColor: AppTheme.grey,
-                                    shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(12.0),
-                                    ),
-                                  ),
-                                  child: const Text("Register"),
-                                ),
-                              ),
+                        SizedBox(
+                          width: size.width - 60,
+                          height: 50,
+                          child: ElevatedButton(
+                            style: ElevatedButton.styleFrom(
+                                shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(15))),
+                            onPressed: () {
+                              _onSubmitted();
+                            },
+                            child: const Text('Complete Profile'),
+                          ),
+                        ),
                         FutureBuilder(
                             future: widget.userRepository.getUserEmail(),
                             builder: (context, snapshot) {
@@ -202,7 +185,6 @@ class _SignupProfilePageState extends State<SignupProfilePage> {
                                 ],
                               );
                             }),
-                        
                       ],
                     ),
                   ),
@@ -216,17 +198,38 @@ class _SignupProfilePageState extends State<SignupProfilePage> {
   }
 
   _onSubmitted() async {
-    var location = await ProfileFunctions.getLocation();
-    ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-        backgroundColor: Colors.green, content: Text("Submitting your data")));
-    BlocProvider.of<ProfileBloc>(context).add(Submitted(
-        age: ProfileFunctions.calculateAge(_selectedDate),
-        dob: _selectedDate,
-        createdNow: Timestamp.now(),
-        name: _nameController.text.trim(),
-        gender: _gender,
-        location: location,
-        photo: File(_pickedImage?.path ?? '')));
+    if (_formKey.currentState!.validate() && isPopulated()) {
+      var location = await ProfileFunctions.getLocation();
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+          backgroundColor: Colors.green,
+          content: Text("Submitting your data")));
+      BlocProvider.of<ProfileBloc>(context).add(Submitted(
+          age: ProfileFunctions.calculateAge(_selectedDate),
+          dob: _selectedDate,
+          createdNow: Timestamp.now(),
+          name: _nameController.text.trim(),
+          gender: _gender,
+          location: location,
+          photo: File(_pickedImage?.path ?? '')));
+    } else{
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+          backgroundColor: Colors.red,
+          behavior: SnackBarBehavior.floating,
+          margin: EdgeInsets.all(10),
+          shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.all(Radius.circular(20.0))),
+          content: Text("Complete the details ")));
+    }
+    if(_pickedImage == null){
+       ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+          backgroundColor: Colors.red,
+            behavior: SnackBarBehavior.floating,
+          margin: EdgeInsets.all(10),
+          shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.all(Radius.circular(20.0))),
+          content: Text("Profile picture is required")));
+    }
+    
   }
 }
 
@@ -327,7 +330,7 @@ class _ProfileDatePickerState extends State<ProfileDatePicker> {
         child: Text(
           widget.selectedDate != null
               ? DateFormat('dd-MM-yyyy').format(widget.selectedDate!)
-              : '<Not Set>',
+              : 'D.O.B',
           style: const TextStyle(
             color: AppTheme.white,
           ),

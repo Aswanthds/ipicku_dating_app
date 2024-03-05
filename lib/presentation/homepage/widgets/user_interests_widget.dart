@@ -25,19 +25,22 @@ class UserInterestWidget extends StatelessWidget {
         Padding(
           padding: const EdgeInsets.only(top: 10),
           child: (interests != null && interests!.isNotEmpty)
-              ? Row(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: List<Widget>.generate(
-                    interests!.length,
-                    (index) => _buildUserPhoto(context, interests![index]),
+              ? SingleChildScrollView(
+                scrollDirection: Axis.horizontal,
+                child: Row(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: List<Widget>.generate(
+                      interests!.length,
+                      (index) => _buildUserPhoto(context, interests![index]),
+                    ),
                   ),
-                )
+              )
               : Center(
                   child: SizedBox(
                     height: 160,
                     child: Text(
-                      'No user images available.',
+                      'No user interests available.',
                       style: Theme.of(context).textTheme.displaySmall,
                     ),
                   ),

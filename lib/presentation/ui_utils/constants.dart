@@ -34,6 +34,10 @@ class SnackBarManager {
   static const SnackBar failedSignUp = SnackBar(
     backgroundColor: Colors.red,
     duration: Duration(seconds: 3),
+    behavior: SnackBarBehavior.floating,
+    margin: EdgeInsets.all(10),
+    shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.all(Radius.circular(20.0))),
     content: Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: <Widget>[
@@ -64,7 +68,6 @@ class SnackBarManager {
   static const SnackBar profileLoading = SnackBar(
     backgroundColor: Colors.grey,
     duration: Durations.long2,
-    
     content: Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [

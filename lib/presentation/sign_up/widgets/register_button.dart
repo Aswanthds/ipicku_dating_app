@@ -19,7 +19,7 @@ class RegisterButton extends StatelessWidget {
       ),
       onPressed: _onPressed,
       child: const Text(
-        'Continue',
+        'Register',
         style: TextStyle(
           color: AppTheme.black,
         ),

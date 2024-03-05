@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:ipicku_dating_app/domain/messages/messages_bloc.dart';
 import 'package:ipicku_dating_app/domain/video_chat/videochat_bloc.dart';
+import 'package:ipicku_dating_app/presentation/widgets/empty_page.dart';
 import 'package:timeago/timeago.dart';
 
 class CallHistoryPage extends StatelessWidget {
@@ -16,13 +17,15 @@ class CallHistoryPage extends StatelessWidget {
       GetVideoChatsList(),
     );
     return Scaffold(
-      
       appBar: AppBar(
         title: const Text("Call History"),
       ),
       body: BlocBuilder<VideochatBloc, VideochatState>(
         builder: (context, state) {
           if (state is GetVideoChatsLoaded) {
+            if (state.userData.isEmpty) {
+              return const EmptyPageGif(text: "No Calls history");
+            }
             return ListView.builder(
               itemCount: state.userData.length,
               itemBuilder: (context, index) =>

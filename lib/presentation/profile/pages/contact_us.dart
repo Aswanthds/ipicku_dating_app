@@ -42,6 +42,9 @@ class ContactUsPage extends StatelessWidget {
           ),
         ),
         ListTile(
+          onTap : (){
+            _launchUrl(Uri.parse('https://play.google.com/store/apps/details?id=com.aswanth.ipicku'));
+          },
           leading: Icon(
             EvaIcons.shareOutline,
             color: Theme.of(context).textTheme.bodyLarge?.color,

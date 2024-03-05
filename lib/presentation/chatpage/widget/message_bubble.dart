@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
 import 'package:ipicku_dating_app/domain/messaging/messaging_bloc.dart';
+import 'package:ipicku_dating_app/domain/video_chat/videochat_bloc.dart';
 import 'package:ipicku_dating_app/presentation/profile/user_profile/image_preview.dart';
 
 import 'package:ipicku_dating_app/presentation/ui_utils/colors.dart';
@@ -232,11 +233,19 @@ class _MessageWidgetState extends State<MessageWidget> {
                 (widget.selectedUSer['blocked'] &&
                     widget.selectedUSer['done_by'] ==
                         widget.currentUSer['uid'])) {
+              if (widget.selectedUSer['uid'] !=
+                  FirebaseAuth.instance.currentUser!.uid) {
+                BlocProvider.of<VideochatBloc>(context).add(SendVideoChatData(
+                  token: 'call_id',
+                  selectedUser: widget.selectedUSer['uid'],
+                ));
+              }
               Navigator.of(context).push(MaterialPageRoute(
                 builder: (context) => PrebuiltCallPage(
                   userID: widget.selectedUSer['uid'],
                 ),
               ));
+
               setState(() {
                 calledOnce = true;
               });

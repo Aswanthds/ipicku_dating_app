@@ -25,24 +25,22 @@ class DetailsSection extends StatelessWidget {
             child: Text(
               "User Details",
               style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                    fontWeight: FontWeight.w300,
+                    fontWeight: FontWeight.bold,
                   ),
             ),
           ),
-          userDataListTile(EvaIcons.person, "${data['gender']}", context),
-          data['bio'] == "null"
-              ? userDataListTile(
-                  EvaIcons.bookmark,
-                  data['bio'] == "null" ? " " : "${data['bio']}",
-                  context,
-                )
-              : const SizedBox(),
           userDataListTile(
               EvaIcons.calendarOutline,
               DateFormat('dd - MMM - yyy')
                   .format((data['dob'] as Timestamp).toDate()),
               context),
-          (data['location'] == 'null') ? _locationDataTile() : const SizedBox()
+          userDataListTile(EvaIcons.person, "${data['gender']}", context),
+          // userDataListTile(
+          //   EvaIcons.activityOutline,
+          //   data['bio'] == "null" ? " " : "${data['bio']}",
+          //   context,
+          // ),
+          (data['location'] != null) ? _locationDataTile() : const SizedBox()
         ],
       ),
     );
@@ -62,17 +60,28 @@ class DetailsSection extends StatelessWidget {
           return Text("Error: ${snapshot.error}");
         } else {
           // If the data retrieval is successful, display it in a ListTile.
-          return ListTile(
-            contentPadding: EdgeInsets.zero,
-            minLeadingWidth: 2,
-            leading: const Icon(
-              Icons.location_on,
-              size: 18,
-              color: AppTheme.grey,
-            ),
-            title: Text(
-              snapshot.data ?? "No address available",
-              style: Theme.of(context).textTheme.bodyLarge,
+          return Container(
+              decoration: BoxDecoration(
+                border: Border.symmetric(
+                    horizontal: BorderSide(
+                        width: 2.0,
+                        style: BorderStyle.solid,
+                        color:
+                            Theme.of(context).textTheme.displayLarge!.color!)),
+                borderRadius: BorderRadius.circular(20)),
+            margin: const EdgeInsets.only(top: 10),
+            child: ListTile(
+             
+              minLeadingWidth: 2,
+              leading: const Icon(
+                Icons.location_on,
+                size: 18,
+                color: AppTheme.grey,
+              ),
+              title: Text(
+                snapshot.data ?? "No address available",
+                style: Theme.of(context).textTheme.bodyLarge,
+              ),
             ),
           );
         }

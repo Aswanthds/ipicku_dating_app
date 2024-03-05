@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:ipicku_dating_app/data/functions/validators.dart';
 import 'package:ipicku_dating_app/data/repositories/user_repositories.dart';
-import 'package:ipicku_dating_app/domain/firebase_data/firebase_data_bloc.dart';
 import 'package:ipicku_dating_app/domain/login_bloc/login_bloc.dart';
 import 'package:ipicku_dating_app/presentation/log_in/widgets/create_account.dart';
 import 'package:ipicku_dating_app/presentation/log_in/widgets/forget_password.dart';
@@ -13,6 +12,7 @@ import 'package:ipicku_dating_app/presentation/main_page.dart';
 import 'package:ipicku_dating_app/presentation/sign_up/profile_signup.dart';
 import 'package:ipicku_dating_app/presentation/ui_utils/constants.dart';
 import 'package:ipicku_dating_app/presentation/widgets/form_field.dart';
+import 'package:ipicku_dating_app/presentation/widgets/logo_widget.dart';
 
 class LoginForm extends StatefulWidget {
   final UserRepository _userRepository;
@@ -31,7 +31,6 @@ class _LoginFormState extends State<LoginForm> {
   final TextEditingController _passwordController = TextEditingController();
   final GlobalKey<FormState> _formkey = GlobalKey<FormState>();
 
-
   bool get isPopulated =>
       _emailController.text.isNotEmpty && _passwordController.text.isNotEmpty;
 
@@ -43,14 +42,12 @@ class _LoginFormState extends State<LoginForm> {
     );
   }
 
-
   @override
   void dispose() {
     _passwordController.clear();
     _emailController.clear();
     _passwordController.dispose();
     _emailController.dispose();
-
     super.dispose();
   }
 
@@ -99,11 +96,7 @@ class _LoginFormState extends State<LoginForm> {
               key: _formkey,
               child: ListView(
                 children: <Widget>[
-                  Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 20),
-                    child: Image.asset('assets/images/logo_light.png',
-                        height: 200),
-                  ),
+                  const LogoWidget(),
                   FormFieldWidget(
                     controller: _emailController,
                     validator: (value) {

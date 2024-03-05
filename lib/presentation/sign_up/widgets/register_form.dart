@@ -26,10 +26,13 @@ class _RegisterFormState extends State<RegisterForm> {
   final TextEditingController _emailController = TextEditingController();
 
   final TextEditingController _passwordController = TextEditingController();
+  final TextEditingController _rePasswordController = TextEditingController();
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
   bool get isPopulated =>
-      _emailController.text.isNotEmpty && _passwordController.text.isNotEmpty;
+      _emailController.text.isNotEmpty &&
+      _passwordController.text.isNotEmpty &&
+      _rePasswordController.text.isNotEmpty;
 
   @override
   void initState() {
@@ -37,11 +40,13 @@ class _RegisterFormState extends State<RegisterForm> {
   }
 
   void _onFormSubmitted() {
-    BlocProvider.of<SignUpBloc>(context).add(
-      SignUpPressed(
-          email: _emailController.text.trim(),
-          password: _passwordController.text.trim()),
-    );
+    if (_formKey.currentState!.validate()) {
+      BlocProvider.of<SignUpBloc>(context).add(
+        SignUpPressed(
+            email: _emailController.text.trim(),
+            password: _passwordController.text.trim()),
+      );
+    }
   }
 
   @override
@@ -77,7 +82,10 @@ class _RegisterFormState extends State<RegisterForm> {
               key: _formKey,
               child: ListView(
                 children: <Widget>[
-                  const LogoWidget(),
+                  const SizedBox(
+                    height: 120,
+                    child: LogoWidget(),
+                  ),
                   const RegisterTitle(),
                   FormFieldWidget(
                     controller: _emailController,
@@ -102,13 +110,29 @@ class _RegisterFormState extends State<RegisterForm> {
                     validator: (value) {
                       if (value!.isEmpty) {
                         return "Enter your password ";
-                      } else if (!Validators.isValidPassword(value.trim())) {
-                        return "Enter your password correctly";
                       }
 
                       return null;
                     },
                     labelText: "Password",
+                    icon: EvaIcons.lock,
+                    isPassword: true,
+                  ),
+                  const SizedBox(
+                    height: 15,
+                  ),
+                  FormFieldWidget(
+                    controller: _rePasswordController,
+                    validator: (value) {
+                      if (value!.isEmpty) {
+                        return "Re-enter your password ";
+                      } else if (_passwordController.text.trim() != value) {
+                        return "Password doesnt math";
+                      }
+
+                      return null;
+                    },
+                    labelText: "Re-enter your password",
                     icon: EvaIcons.lock,
                     isPassword: true,
                   ),

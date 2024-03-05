@@ -1,5 +1,5 @@
 // ignore_for_file: unnecessary_null_comparison
-
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:ipicku_dating_app/domain/video_chat/videochat_bloc.dart';
@@ -17,8 +17,7 @@ class PrebuiltCallPage extends StatefulWidget {
 class PrebuiltCallPageState extends State<PrebuiltCallPage> {
   @override
   Widget build(BuildContext context) {
-    BlocProvider.of<VideochatBloc>(context)
-        .add(SendVideoChatData(token: 'call_id', selectedUser: widget.userID));
+   
     return SafeArea(
       child: ZegoUIKitPrebuiltCall(
         appID: 501520519,

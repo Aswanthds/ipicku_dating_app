@@ -3,8 +3,9 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:ipicku_dating_app/data/repositories/user_repositories.dart';
 import 'package:ipicku_dating_app/domain/firebase_data/firebase_data_bloc.dart';
 import 'package:ipicku_dating_app/domain/matching_bloc/matching_bloc.dart';
+import 'package:ipicku_dating_app/domain/theme/theme_bloc.dart';
 import 'package:ipicku_dating_app/presentation/main_page.dart';
-import 'package:ipicku_dating_app/presentation/widgets/logo_widget.dart';
+import 'package:ipicku_dating_app/presentation/ui_utils/colors.dart';
 
 class WelcomePage extends StatelessWidget {
   final UserRepository repository;
@@ -37,14 +38,26 @@ class WelcomePage extends StatelessWidget {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-               LogoWidget(),
-                const Text(
-                  "Find your dates.",
-                  style: TextStyle(
-                    fontSize: 32.0,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.white,
+                Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 20),
+                  child: BlocBuilder<ThemeBloc, ThemeData>(
+                    builder: (context, state) {
+                      if(state == AppTheme.lightTheme ) {
+                        return Image.asset('assets/images/logo_dark.png',
+                          height: 200);
+                      }else{
+                         return Image.asset('assets/images/logo_light.png',
+                            height: 200);
+                      }
+                    },
                   ),
+                ),
+                Text(
+                  "Find your dates.",
+                  style: Theme.of(context).textTheme.displayLarge?.copyWith(
+                        fontSize: 32.0,
+                        fontWeight: FontWeight.bold,
+                      ),
                 ),
                 const SizedBox(height: 20.0),
 
@@ -63,10 +76,8 @@ class WelcomePage extends StatelessWidget {
                     BlocProvider.of<FirebaseDataBloc>(context)
                         .add(FirebaseDataLoadedEvent());
                   }, // Replace with your navigation route
-                  child: const Text(
-                    "Continue",
-                    style: TextStyle(fontSize: 18.0, color: Colors.white),
-                  ),
+                  child: Text("Continue",
+                      style: Theme.of(context).textTheme.displayLarge),
                   style: ElevatedButton.styleFrom(
                     shape: const StadiumBorder(),
                     minimumSize:

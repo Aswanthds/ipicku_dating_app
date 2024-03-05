@@ -106,10 +106,13 @@ class DrawerListView extends StatelessWidget {
                     ImagePreviewPage(imageUrl: user?.photoPath ?? ''),
               ));
             },
-            child: CircleAvatar(
+            child: user?.photoPath != null ? CircleAvatar(
               backgroundImage: NetworkImage(user?.photoPath ?? ''),
               radius: 15,
-            ),
+            ): const CircleAvatar(
+                    backgroundImage: AssetImage('assets/images/image_place.png'),
+                    radius: 15,
+                  ),
           ),
         ),
         ProfileListTile(

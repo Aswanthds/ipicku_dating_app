@@ -2,10 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:ipicku_dating_app/domain/notifications/notifications_bloc.dart';
 import 'package:ipicku_dating_app/presentation/ui_utils/colors.dart';
-import 'package:ipicku_dating_app/domain/firebase_data/firebase_data_bloc.dart';
 import 'package:ipicku_dating_app/domain/theme/theme_bloc.dart';
 import 'package:ipicku_dating_app/domain/theme/theme_event.dart';
-import 'package:ipicku_dating_app/presentation/profile/widgets/age_pref_selector.dart';
 
 class SettingsPage extends StatefulWidget {
   const SettingsPage({Key? key}) : super(key: key);
@@ -36,7 +34,7 @@ class _SettingsPageState extends State<SettingsPage> {
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          _ageListTile(context),
+         // _ageListTile(context),
           _pushNotifications(),
           _themeListTile("Dark Theme", darkThemeEnabled, (value) {
             setState(() {
@@ -109,50 +107,50 @@ class _SettingsPageState extends State<SettingsPage> {
     );
   }
 
-  Widget _ageListTile(BuildContext context) {
-    return BlocBuilder<FirebaseDataBloc, FirebaseDataState>(
-      builder: (context, state) {
-        if (state is FirebaseDataLoaded) {
-          final minAge = state.data?.minAge;
-          final maxAge = state.data?.maxAge;
+  // Widget _ageListTile(BuildContext context) {
+  //   return BlocBuilder<FirebaseDataBloc, FirebaseDataState>(
+  //     builder: (context, state) {
+  //       if (state is FirebaseDataLoaded) {
+  //         final minAge = state.data?.minAge;
+  //         final maxAge = state.data?.maxAge;
 
-          return ListTile(
-            onTap: () {
-              showDialog(
-                context: context,
-                builder: (ctx) => const AgeSelectionWidget(),
-              );
-            },
-            title: Text(
-              "Age Preference",
-              style: Theme.of(context).textTheme.displaySmall,
-            ),
-            trailing: SizedBox(
-              width: 150,
-              child: Wrap(
-                direction: Axis.horizontal,
-                children: [
-                  ageTextbox(minAge.toString()),
-                  const SizedBox(
-                    width: 10,
-                  ),
-                  ageTextbox(maxAge.toString()),
-                ],
-              ),
-            ),
-          );
-        }
+  //         return ListTile(
+  //           onTap: () {
+  //             showDialog(
+  //               context: context,
+  //               builder: (ctx) => const AgeSelectionWidget(),
+  //             );
+  //           },
+  //           title: Text(
+  //             "Age Preference",
+  //             style: Theme.of(context).textTheme.displaySmall,
+  //           ),
+  //           trailing: SizedBox(
+  //             width: 150,
+  //             child: Wrap(
+  //               direction: Axis.horizontal,
+  //               children: [
+  //                 ageTextbox(minAge.toString()),
+  //                 const SizedBox(
+  //                   width: 10,
+  //                 ),
+  //                 ageTextbox(maxAge.toString()),
+  //               ],
+  //             ),
+  //           ),
+  //         );
+  //       }
 
-        if (state is FirebaseDataLoading) {
-          return const SizedBox(
-            child: Center(child: CircularProgressIndicator(strokeWidth: 2.0)),
-          );
-        }
+  //       if (state is FirebaseDataLoading) {
+  //         return const SizedBox(
+  //           child: Center(child: CircularProgressIndicator(strokeWidth: 2.0)),
+  //         );
+  //       }
 
-        return const SizedBox();
-      },
-    );
-  }
+  //       return const SizedBox();
+  //     },
+  //   );
+  // }
 
   Container ageTextbox(String text) {
     return Container(

@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:eva_icons_flutter/eva_icons_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:ipicku_dating_app/presentation/ui_utils/colors.dart';
+import 'package:ipicku_dating_app/presentation/widgets/empty_page.dart';
 import 'package:timeago/timeago.dart';
 
 class NotificationsPage extends StatelessWidget {
@@ -15,16 +16,18 @@ class NotificationsPage extends StatelessWidget {
         appBar: AppBar(
           title: const Text('Notification'),
         ),
-        body: ListView.separated(
-            itemBuilder: (context, index) => NotificationItem(
-                  time: format((data[index]['time'] as Timestamp).toDate(),
-                      allowFromNow: true, clock: DateTime.now(), locale: 'en'),
-                  subtitle: '${data[index]['body']}',
-                  title: data[index]['title'],
-                  type: data[index]['type'],
-                ),
-            separatorBuilder: (context, index) => const Divider(),
-            itemCount: data.length));
+        body: data.isEmpty ? const EmptyPageGif(text: 'No Notifications'): ListView.separated(
+                itemBuilder: (context, index) => NotificationItem(
+                      time: format((data[index]['time'] as Timestamp).toDate(),
+                          allowFromNow: true,
+                          clock: DateTime.now(),
+                          locale: 'en'),
+                      subtitle: '${data[index]['body']}',
+                      title: data[index]['title'],
+                      type: data[index]['type'],
+                    ),
+                separatorBuilder: (context, index) => const Divider(),
+                itemCount: data.length));
   }
 }
 

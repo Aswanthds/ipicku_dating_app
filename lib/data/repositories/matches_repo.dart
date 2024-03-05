@@ -323,7 +323,7 @@ class MatchesRepository {
                     ),
               )) {
             NotificationService().showNotification(notification: {
-              "title": "New USer Picked you",
+              "title": "New User Picked you",
               "body": "A USer ${userData['name']}"
             });
           }

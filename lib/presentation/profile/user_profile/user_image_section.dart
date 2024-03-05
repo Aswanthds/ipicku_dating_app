@@ -19,7 +19,8 @@ class UserImageSection extends StatelessWidget {
           child: Text(
             "User Photos",
             style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                  fontWeight: FontWeight.w300,
+                  fontWeight: FontWeight.bold,
+                  
                 ),
           ),
         ),
