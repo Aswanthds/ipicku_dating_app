@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:ipicku_dating_app/domain/theme/theme_bloc.dart';
 import 'package:ipicku_dating_app/presentation/ui_utils/colors.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:flutter_share/flutter_share.dart';
 
 class ContactUsPage extends StatelessWidget {
   const ContactUsPage({super.key});
@@ -42,8 +43,13 @@ class ContactUsPage extends StatelessWidget {
           ),
         ),
         ListTile(
-          onTap : (){
-            _launchUrl(Uri.parse('https://play.google.com/store/apps/details?id=com.aswanth.ipicku'));
+          onTap: () async {
+            await FlutterShare.share(
+                title: 'Share App',
+                text: "IPick U Dating App - Where Connections Blossoms",
+                linkUrl:
+                    'https://play.google.com/store/apps/details?id=com.aswanth.ipicku');
+            //_launchUrl(Uri.parse('https://play.google.com/store/apps/details?id=com.aswanth.ipicku'));
           },
           leading: Icon(
             EvaIcons.shareOutline,

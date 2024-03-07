@@ -233,13 +233,10 @@ class _MessageWidgetState extends State<MessageWidget> {
                 (widget.selectedUSer['blocked'] &&
                     widget.selectedUSer['done_by'] ==
                         widget.currentUSer['uid'])) {
-              if (widget.selectedUSer['uid'] !=
-                  FirebaseAuth.instance.currentUser!.uid) {
-                BlocProvider.of<VideochatBloc>(context).add(SendVideoChatData(
-                  token: 'call_id',
-                  selectedUser: widget.selectedUSer['uid'],
-                ));
-              }
+              BlocProvider.of<VideochatBloc>(context).add(SendVideoChatData(
+                token: 'call_id',
+                selectedUser: widget.selectedUSer['uid'],
+              ));
               Navigator.of(context).push(MaterialPageRoute(
                 builder: (context) => PrebuiltCallPage(
                   userID: widget.selectedUSer['uid'],

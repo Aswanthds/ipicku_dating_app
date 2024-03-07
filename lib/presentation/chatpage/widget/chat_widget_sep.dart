@@ -12,7 +12,6 @@ class ChatWidgetInd extends StatelessWidget {
   const ChatWidgetInd({
     super.key,
     required this.selectedUserData,
-
   });
 
   final Map<String, dynamic> selectedUserData;
@@ -86,60 +85,80 @@ class ChatWidgetInd extends StatelessWidget {
             ],
           ),
           subtitle: FutureBuilder(
-                  future: MessagingRepository.getLastMessage(
-                      selectedUserData['uid']),
-                  builder: (context, snapshot) {
-                    //print(isBlocked['done_by'] == selectedUserData['uid']);
-                    if (snapshot.hasData) {
-                      final lastMessage = snapshot.data!.data();
-                      if (lastMessage.containsKey('text') &&
-                          lastMessage['text'] != null) {
-                        // Display text message
+            future: MessagingRepository.getLastMessage(selectedUserData['uid']),
+            builder: (context, snapshot) {
+              //print(isBlocked['done_by'] == selectedUserData['uid']);
+              if (snapshot.hasData) {
+                final lastMessage = snapshot.data!.data();
+                if (lastMessage.containsKey('text') &&
+                    lastMessage['text'] != null) {
+                  // Display text message
 
-                        return Row(
-                          children: [
-                            SizedBox(
-                              width: 90,
-                              child: Text(
-                                '${lastMessage['text']}  ● ',
-                                maxLines: 1,
-                                overflow: TextOverflow.ellipsis,
-                                style: Theme.of(context).textTheme.bodySmall,
-                              ),
-                            ),
-                            Text(
-                              '  ${timeago.format(
-                                (lastMessage['sentTime'] as Timestamp).toDate(),
-                                clock: DateTime.now(),
-                                locale: 'en',
-                                allowFromNow: true,
-                              )} ',
+                  return Row(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      (lastMessage['senderId'] == selectedUserData['uid'])
+                          ? Text(
+                              '${selectedUserData['name'] 
+                                  .toString()
+                                  .substring(0, 3)} ● ',
                               style: Theme.of(context)
                                   .textTheme
                                   .bodySmall
-                                  ?.copyWith(fontSize: 10),
+                                  ?.copyWith(fontSize: 20),
                             )
-                          ],
-                        );
-                      } else if (lastMessage.containsKey('photoUrl') &&
-                          lastMessage['photoUrl'] != null) {
-                        // Display image message
-                        return Row(
-                          children: [
-                            const Icon(EvaIcons.image),
-                            const SizedBox(width: 8), // Add some spacing
-                            const Text("Photo"),
-                            const SizedBox(width: 10),
-                            Text(timeago.format(
-                                (lastMessage['sentTime'] as Timestamp).toDate(),
-                                locale: 'en_short')),
-                          ],
-                        );
-                      }
-                    }
-                    return const SizedBox();
-                  },
-                ),
+                          : Text(
+                              'You ● ',
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .bodySmall
+                                  ?.copyWith(
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.bold),
+                            ),
+                      SizedBox(
+                        width: 50,
+                        child: Text(
+                          '${lastMessage['text']} ',
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: Theme.of(context).textTheme.bodySmall,
+                        ),
+                      ),
+                      Text(
+                        '  ${timeago.format(
+                          (lastMessage['sentTime'] as Timestamp).toDate(),
+                          clock: DateTime.now(),
+                          locale: 'en',
+                          allowFromNow: true,
+                        )} ',
+                        style: Theme.of(context)
+                            .textTheme
+                            .bodySmall
+                            ?.copyWith(fontSize: 10),
+                      )
+                    ],
+                  );
+                } else if (lastMessage.containsKey('photoUrl') &&
+                    lastMessage['photoUrl'] != null) {
+                  // Display image message
+                  return Row(
+                    children: [
+                      const Icon(EvaIcons.image),
+                      const SizedBox(width: 8), // Add some spacing
+                      const Text("Photo"),
+                      const SizedBox(width: 10),
+                      Text(timeago.format(
+                          (lastMessage['sentTime'] as Timestamp).toDate(),
+                          locale: 'en_short')),
+                    ],
+                  );
+                }
+              }
+              return const SizedBox();
+            },
+          ),
           trailing: IconButton(
               onPressed: () async {
                 final userData = await UserRepository().getUserMap();
