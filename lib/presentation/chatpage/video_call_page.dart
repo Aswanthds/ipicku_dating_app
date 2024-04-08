@@ -5,7 +5,9 @@ import 'package:zego_uikit_signaling_plugin/zego_uikit_signaling_plugin.dart';
 
 class PrebuiltCallPage extends StatefulWidget {
   final String userID;
-  const PrebuiltCallPage({Key? key, required this.userID}) : super(key: key);
+  final String name;
+  const PrebuiltCallPage({Key? key, required this.userID, required this.name})
+      : super(key: key);
 
   @override
   State<StatefulWidget> createState() => PrebuiltCallPageState();
@@ -14,14 +16,13 @@ class PrebuiltCallPage extends StatefulWidget {
 class PrebuiltCallPageState extends State<PrebuiltCallPage> {
   @override
   Widget build(BuildContext context) {
-   
     return SafeArea(
       child: ZegoUIKitPrebuiltCall(
-        appID: 501520519,
+        appID: 617321584,
         appSign:
-            "0c21665018bcedca21ce6078c992156918b5618611eb63ef025930e1e7faa34d",
+            "94c69c006b9c0e778a52102e1feb816de29685b3bcb8594f54e8835814ff9200",
         userID: widget.userID,
-        userName: widget.userID.substring(1, 10).toUpperCase(),
+        userName: widget.name,
         callID: 'call_id',
         plugins: [ZegoUIKitSignalingPlugin()],
         config: ZegoUIKitPrebuiltCallConfig.oneOnOneVideoCall()
@@ -35,3 +36,11 @@ class PrebuiltCallPageState extends State<PrebuiltCallPage> {
     );
   }
 }
+/*
+      old app ( 08/4/2024)
+        appID: 1085180797,
+        appSign:
+            "237bd91d9359c4084866e3881d5e6b656912bedd09c4e287bd63baa28b182c95",
+
+
+*/

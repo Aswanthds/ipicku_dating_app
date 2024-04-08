@@ -23,7 +23,7 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
   bool isRandomUsersLoaded = false;
-
+bool showBanner = false; // Add this variable
   @override
   void initState() {
     super.initState();
@@ -46,7 +46,6 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
-
     return Scaffold(
       appBar: AppBar(
         title: const Text("I Pick U"),
@@ -59,28 +58,36 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
                     .add(FirebaseDataLoadedEvent());
               },
               icon: const Icon(EvaIcons.refresh)),
-          BlocBuilder<NotificationsBloc, NotificationsState>(
+           BlocBuilder<NotificationsBloc, NotificationsState>(
             builder: (context, state) {
               if (state is GetNotificationsLoaded) {
                 final data = state.data;
                 return StreamBuilder<QuerySnapshot<Map<String, dynamic>>>(
-                    stream: data,
-                    builder: (context, snapshot) {
-                      final userdata = snapshot.data?.docs ?? [];
-                      return IconButton(
-                        onPressed: () {
-                          Navigator.of(context).push(
-                            MaterialPageRoute(
-                              builder: (context) =>
-                                  NotificationsPage(data: userdata),
-                            ),
-                          );
-                        },
-                        icon: Stack(
-                          children: [
-                            const Icon(
-                              EvaIcons.bellOutline,
-                            ),
+                  stream: data,
+                  builder: (context, snapshot) {
+                    final userdata = snapshot.data?.docs ?? [];
+                    return IconButton(
+                      onPressed: () {
+                        Navigator.of(context)
+                            .push(
+                          MaterialPageRoute(
+                            builder: (context) =>
+                                NotificationsPage(data: userdata),
+                          ),
+                        )
+                            .then((_) {
+                          // Set showBanner to true when coming back from the notification page
+                          setState(() {
+                            showBanner = true;
+                          });
+                        });
+                      },
+                      icon: Stack(
+                        children: [
+                          const Icon(EvaIcons.bellOutline),
+                          if (showBanner &&
+                              userdata
+                                  .isNotEmpty) // Show banner based on showBanner variable
                             Positioned(
                               right: 0,
                               child: Container(
@@ -102,20 +109,19 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
                                   textAlign: TextAlign.center,
                                 ),
                               ),
-                            )
-                          ],
-                        ),
-                      );
-                    });
+                            ),
+                        ],
+                      ),
+                    );
+                  },
+                );
               }
               if (state is GetNotificationsError) {
                 return IconButton(
                   onPressed: () {},
-                  icon: Stack(
+                  icon:  Stack(
                     children: [
-                      const Icon(
-                        EvaIcons.bellOutline,
-                      ),
+                     const Icon(EvaIcons.bellOutline),
                       Positioned(
                         right: 0,
                         child: Container(
@@ -137,7 +143,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
                             textAlign: TextAlign.center,
                           ),
                         ),
-                      )
+                      ),
                     ],
                   ),
                 );

@@ -20,6 +20,7 @@ class _RecommendedPageState extends State<RecommendedPage> {
         .add(const GetRegionUsers(radius: 1.0));
 
     return Scaffold(
+      backgroundColor: Theme.of(context).appBarTheme.backgroundColor,
       appBar: AppBar(
         title: const Text('Recommended Profiles'),
         surfaceTintColor: Colors.transparent,

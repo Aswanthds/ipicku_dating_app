@@ -8,12 +8,18 @@ import 'package:ipicku_dating_app/presentation/ui_utils/colors.dart';
 import 'package:ipicku_dating_app/data/repositories/user_repositories.dart';
 import 'package:ipicku_dating_app/domain/login_bloc/login_bloc.dart';
 
-class GoogleLoginButton extends StatelessWidget {
+class GoogleLoginButton extends StatefulWidget {
   final UserRepository userRepository;
   const GoogleLoginButton({super.key, required this.userRepository});
 
   @override
+  State<GoogleLoginButton> createState() => _GoogleLoginButtonState();
+}
+
+class _GoogleLoginButtonState extends State<GoogleLoginButton> {
+  @override
   Widget build(BuildContext context) {
+    int count = 0;
     return ElevatedButton.icon(
       style: ElevatedButton.styleFrom(
         backgroundColor: Colors.redAccent,
@@ -23,13 +29,18 @@ class GoogleLoginButton extends StatelessWidget {
       ),
       icon: const Icon(EvaIcons.google, color: AppTheme.white),
       onPressed: () async {
-        BlocProvider.of<LoginBloc>(context).add(GoogleSignUp());
-        BlocProvider.of<FirebaseDataBloc>(context)
-            .add(const UpdateUserFieldEvent('notifications_picks', true));
-        BlocProvider.of<FirebaseDataBloc>(context)
-            .add(const UpdateUserFieldEvent('notifications_messages', true));
-        BlocProvider.of<FirebaseDataBloc>(context).add(
-            const UpdateUserFieldEvent('notifications_recomendations', true));
+        if (count == 0) {
+          BlocProvider.of<LoginBloc>(context).add(GoogleSignUp());
+          BlocProvider.of<FirebaseDataBloc>(context)
+              .add(const UpdateUserFieldEvent('notifications_picks', true));
+          BlocProvider.of<FirebaseDataBloc>(context)
+              .add(const UpdateUserFieldEvent('notifications_messages', true));
+          BlocProvider.of<FirebaseDataBloc>(context).add(
+              const UpdateUserFieldEvent('notifications_recomendations', true));
+          setState(() {
+            count++;
+          });
+        }
       },
       label: const Text('Sign in with Google',
           style: TextStyle(color: AppTheme.white)),

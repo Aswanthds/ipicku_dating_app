@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:animated_text_kit/animated_text_kit.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -12,6 +13,29 @@ import 'package:ipicku_dating_app/domain/firebase_data/firebase_data_bloc.dart';
 import 'package:ipicku_dating_app/presentation/profile/widgets/image_cropping.dart';
 
 class ProfileFunctions {
+  static Future<List<String>> showImages(String user1, String user2) async {
+    List<String> data = [];
+    try {
+      List<String> ids = [user1, user2];
+      ids.sort();
+      String chatRoom = ids.join('_');
+      final storageRef = await FirebaseStorage.instance
+          .ref()
+          .child('chat_rooms_photos')
+          .child(chatRoom)
+          .listAll();
+      final urllist = storageRef.items;
+      for (var dat in urllist) {
+        data.add(await dat.getDownloadURL());
+      }
+      debugPrint(data.toString());
+      return data;
+    } catch (e) {
+      debugPrint(e.toString());
+      return [];
+    }
+  }
+
   static int calculateAge(DateTime? selectedDate) {
     if (selectedDate != null) {
       final today = DateTime.now();

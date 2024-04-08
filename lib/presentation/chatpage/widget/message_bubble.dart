@@ -5,11 +5,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
 import 'package:ipicku_dating_app/domain/messaging/messaging_bloc.dart';
-import 'package:ipicku_dating_app/domain/video_chat/videochat_bloc.dart';
 import 'package:ipicku_dating_app/presentation/profile/user_profile/image_preview.dart';
 
 import 'package:ipicku_dating_app/presentation/ui_utils/colors.dart';
-import 'package:ipicku_dating_app/presentation/chatpage/widget/video_call_page.dart';
+import 'package:ipicku_dating_app/presentation/chatpage/video_call_page.dart';
 
 class MessageWidget extends StatefulWidget {
   final DocumentSnapshot data;
@@ -185,6 +184,11 @@ class _MessageWidgetState extends State<MessageWidget> {
                   ),
             ),
           ),
+          Icon(
+            data['delivered'] ? EvaIcons.doneAll : Icons.check,
+            size: 16,
+            color: data['delivered'] ? Colors.blue : Colors.grey,
+          ),
         ],
       );
     } else if (data['type'] == 'image') {
@@ -209,14 +213,24 @@ class _MessageWidgetState extends State<MessageWidget> {
           ),
           Padding(
             padding: EdgeInsets.all(size.height * 0.01),
-            child: Text(
-              DateFormat.jm().format((data['sentTime'] as Timestamp).toDate()),
-              style: Theme.of(context).textTheme.bodySmall!.copyWith(
-                    color: (data['senderId'] ==
-                            FirebaseAuth.instance.currentUser?.uid)
-                        ? Colors.white
-                        : Colors.black,
-                  ),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(
+                  DateFormat.jm().format((data['sentTime'] as Timestamp).toDate()),
+                  style: Theme.of(context).textTheme.bodySmall!.copyWith(
+                        color: (data['senderId'] ==
+                                FirebaseAuth.instance.currentUser?.uid)
+                            ? Colors.white
+                            : Colors.black,
+                      ),
+                ),
+                Icon(
+                  data['delivered'] ? EvaIcons.doneAll : Icons.check,
+                  size: 16,
+                  color: data['delivered'] ? Colors.blue : Colors.grey,
+                ),
+              ],
             ),
           ),
         ],
@@ -233,13 +247,10 @@ class _MessageWidgetState extends State<MessageWidget> {
                 (widget.selectedUSer['blocked'] &&
                     widget.selectedUSer['done_by'] ==
                         widget.currentUSer['uid'])) {
-              BlocProvider.of<VideochatBloc>(context).add(SendVideoChatData(
-                token: 'call_id',
-                selectedUser: widget.selectedUSer['uid'],
-              ));
               Navigator.of(context).push(MaterialPageRoute(
                 builder: (context) => PrebuiltCallPage(
                   userID: widget.selectedUSer['uid'],
+                  name: widget.currentUSer['name'],
                 ),
               ));
 
@@ -256,7 +267,7 @@ class _MessageWidgetState extends State<MessageWidget> {
             size: 15,
           ),
           title: Text(
-            "Video Chat",
+            "Video call started",
             style: Theme.of(context).textTheme.bodySmall?.copyWith(
                   color: (data['senderId'] ==
                           FirebaseAuth.instance.currentUser?.uid)
@@ -266,15 +277,25 @@ class _MessageWidgetState extends State<MessageWidget> {
           ),
           trailing: Padding(
             padding: EdgeInsets.only(left: size.height * 0.01),
-            child: Text(
-              DateFormat.jm().format((data['sentTime'] as Timestamp).toDate()),
-              style: Theme.of(context).textTheme.bodySmall!.copyWith(
-                    fontSize: 8,
-                    color: (data['senderId'] ==
-                            FirebaseAuth.instance.currentUser?.uid)
-                        ? Colors.white
-                        : Colors.black,
-                  ),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(
+                  DateFormat.jm().format((data['sentTime'] as Timestamp).toDate()),
+                  style: Theme.of(context).textTheme.bodySmall!.copyWith(
+                        fontSize: 8,
+                        color: (data['senderId'] ==
+                                FirebaseAuth.instance.currentUser?.uid)
+                            ? Colors.white
+                            : Colors.black,
+                      ),
+                ),
+                Icon(
+                  data['delivered'] ? EvaIcons.doneAll : Icons.check,
+                  size: 16,
+                  color: data['delivered'] ? Colors.blue : Colors.grey,
+                ),
+              ],
             ),
           ),
         ),

@@ -26,7 +26,7 @@ class SectionRecommendedPage extends StatelessWidget {
                         style: Theme.of(context).textTheme.displayMedium),
                   ),
                   SizedBox(
-                    height: 280,
+                    height: MediaQuery.of(context).size.width,
                     child: ListView.builder(
                       itemCount: state.length,
                       scrollDirection: Axis.horizontal,

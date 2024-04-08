@@ -2,12 +2,16 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:eva_icons_flutter/eva_icons_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:ipicku_dating_app/data/repositories/messaging_repository.dart';
 import 'package:ipicku_dating_app/domain/messaging/messaging_bloc.dart';
+import 'package:ipicku_dating_app/domain/video_chat/videochat_bloc.dart';
 import 'package:ipicku_dating_app/presentation/chatpage/widget/chat_person_appbar_title.dart';
 import 'package:ipicku_dating_app/presentation/chatpage/widget/date_separator.dart';
 import 'package:ipicku_dating_app/presentation/chatpage/widget/message_box.dart';
 import 'package:ipicku_dating_app/presentation/chatpage/widget/message_bubble.dart';
-import 'package:ipicku_dating_app/presentation/chatpage/widget/video_call_page.dart';
+import 'package:ipicku_dating_app/presentation/chatpage/video_call_page.dart';
+import 'package:ipicku_dating_app/presentation/chatpage/widget/message_profile.dart';
+import 'package:ipicku_dating_app/presentation/ui_utils/colors.dart';
 import 'package:ipicku_dating_app/presentation/ui_utils/constants.dart';
 import 'package:ipicku_dating_app/presentation/widgets/empty_list.dart';
 
@@ -21,6 +25,11 @@ class ChatPagePerson extends StatefulWidget {
 
 class _ChatPagePersonState extends State<ChatPagePerson> {
   final ScrollController _scrollController = ScrollController();
+  @override
+  void initState() {
+    super.initState();
+    // MessagingRepository.updateUserSeen(widget.selectedUser?['uid']);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -29,17 +38,31 @@ class _ChatPagePersonState extends State<ChatPagePerson> {
           userId: widget.currentUser?['uid'],
           recieverId: widget.selectedUser?['uid']),
     );
-    
+
     final lastActive =
         (widget.selectedUser?['lastActive'] as Timestamp).toDate();
 
     return Scaffold(
       appBar: AppBar(
+        backgroundColor:
+            Theme.of(context).appBarTheme.backgroundColor != Colors.white
+                ? AppTheme.redAccent.withOpacity(0.5)
+                : AppTheme.white,
         leading: IconButton(
           icon: const Icon(EvaIcons.arrowIosBack),
           onPressed: () => Navigator.of(context).pop(),
         ),
-        title: MessagePersonAppBarTitle(widget: widget, lastActive: lastActive),
+        title: InkWell(
+            onTap: () {
+              Navigator.of(context).push(MaterialPageRoute(
+                builder: (context) => MessageProfilePage(
+                  userDataA: widget.currentUser ?? {},
+                  userDataB: widget.selectedUser ?? {},
+                ),
+              ));
+            },
+            child: MessagePersonAppBarTitle(
+                widget: widget, lastActive: lastActive)),
         actions: [
           //callButton(),
           if (widget.selectedUser?['blocked'] &&
@@ -84,7 +107,7 @@ class _ChatPagePersonState extends State<ChatPagePerson> {
                       if (messages.isEmpty) {
                         return const EmptyListPage(text: "No Chats , Say HII");
                       }
-                       WidgetsBinding.instance.addPostFrameCallback((_) {
+                      WidgetsBinding.instance.addPostFrameCallback((_) {
                         // Scroll to the end after inserting a new message
                         _scrollController.animateTo(
                           _scrollController.position.maxScrollExtent,
@@ -101,7 +124,12 @@ class _ChatPagePersonState extends State<ChatPagePerson> {
                               (message['sentTime'] as Timestamp).toDate();
                           final currentDate = DateTime(
                               sentTime.year, sentTime.month, sentTime.day);
-
+                          if (message.exists &&
+                              message['senderId'] !=
+                                  widget.currentUser?['uid']) {
+                            MessagingRepository.updateUserSeen(
+                                widget.selectedUser?['uid'], message.id);
+                          }
                           Widget messageWidget = MessageWidget(
                             data: message,
                             currentUSer: widget.currentUser ?? {},
@@ -125,7 +153,7 @@ class _ChatPagePersonState extends State<ChatPagePerson> {
                           }
 
                           lastDate = currentDate; // Update the last date
-                         
+
                           return messageWidget;
                         },
                       );
@@ -161,8 +189,11 @@ class _ChatPagePersonState extends State<ChatPagePerson> {
           Navigator.of(context).push(MaterialPageRoute(
             builder: (context) => PrebuiltCallPage(
               userID: widget.selectedUser?['uid'],
+              name: widget.currentUser?['name'],
             ),
           ));
+          BlocProvider.of<VideochatBloc>(context).add(SendVideoChatData(
+              selectedUser: widget.selectedUser?['uid'], token: 'call_id'));
           BlocProvider.of<MessagingBloc>(context).add(
             SendMessageEvent(
               imagel: null,

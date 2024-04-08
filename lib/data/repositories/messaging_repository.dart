@@ -14,6 +14,19 @@ class MessagingRepository {
   static final FirebaseStorage _firebaseStorage = FirebaseStorage.instance;
   String uuid = const Uuid().v4();
 
+  static Future<void> updateUserSeen(String selectedUser, String id) async {
+    final userId = FirebaseAuth.instance.currentUser!.uid;
+    List<String> ids = [userId, selectedUser];
+    ids.sort();
+    String chatRoom = ids.join('_');
+    await _firestore
+        .collection('chat_rooms')
+        .doc(chatRoom)
+        .collection('messages')
+        .doc(id)
+        .update({'delivered': true});
+  }
+
   static Future<void> sendMessage({
     required String recieverId,
     String? content,
@@ -23,8 +36,6 @@ class MessagingRepository {
     final userId = FirebaseAuth.instance.currentUser!.uid;
     MessageType messageType =
         content != null ? MessageType.text : MessageType.image;
-
-    
 
     List<String> ids = [userId, recieverId];
     ids.sort();
@@ -37,6 +48,7 @@ class MessagingRepository {
         'sentTime': timestamp,
         'text': content,
         'type': messageType.name,
+        'delivered': false,
       };
       await _firestore
           .collection('chat_rooms')
@@ -44,7 +56,6 @@ class MessagingRepository {
           .collection('messages')
           .add(message);
     } else if (messageType == MessageType.image && image != null) {
-     
       final storageRef = _firebaseStorage
           .ref()
           .child('chat_rooms_photos')
@@ -54,12 +65,13 @@ class MessagingRepository {
 
       final url = await storageRef.getDownloadURL();
       debugPrint(url);
-       final message = {
+      final message = {
         'recieverId': recieverId,
         'senderId': userId,
         'sentTime': timestamp,
         'photoUrl': url,
         'type': messageType.name,
+        'delivered': false,
       };
       // Add the message to Firestore
       await _firestore
@@ -178,7 +190,11 @@ class MessagingRepository {
           .collection('messages')
           .doc(messageId)
           .delete();
-
+     await _firebaseStorage
+          .ref()
+          .child('chat_rooms_photos')
+          .child(chatRoom)
+          .delete();
       debugPrint('Message deleted successfully');
     } catch (error) {
       debugPrint('Error deleting message: $error');

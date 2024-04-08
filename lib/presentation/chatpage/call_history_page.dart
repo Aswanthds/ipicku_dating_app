@@ -75,7 +75,7 @@ class CallHistoryPage extends StatelessWidget {
         style: Theme.of(context).textTheme.displayMedium,
       ),
       trailing: Text(
-        format((data['time'] as Timestamp).toDate()),
+        format((data['time'] as Timestamp).toDate(),locale: 'en_short',clock: DateTime.now()),
         style: Theme.of(context).textTheme.bodySmall,
       ),
     );

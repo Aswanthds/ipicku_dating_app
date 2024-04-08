@@ -1,7 +1,7 @@
 import 'dart:io';
 
-import 'package:eva_icons_flutter/eva_icons_flutter.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:ipicku_dating_app/data/functions/profile_functions.dart';
 import 'package:ipicku_dating_app/data/repositories/push_notifi_service.dart';
@@ -12,11 +12,13 @@ import 'package:ipicku_dating_app/presentation/ui_utils/constants.dart';
 class UserMessageBox extends StatefulWidget {
   final Map<String, dynamic>? selectedUser, currentUser;
   final ScrollController controller;
-  const UserMessageBox(
-      {super.key,
-      this.selectedUser,
-      this.currentUser,
-      required this.controller});
+
+  const UserMessageBox({
+    super.key,
+    required this.selectedUser,
+    required this.controller,
+    this.currentUser,
+  });
 
   @override
   State<UserMessageBox> createState() => _UserMessageBoxState();
@@ -26,6 +28,9 @@ class _UserMessageBoxState extends State<UserMessageBox> {
   final TextEditingController _msgController = TextEditingController();
   File? imageChat;
   FocusNode node = FocusNode();
+  int _maxLines = 1; // Initial number of lines
+  final int _maxLength = 1000; // Set the maximum message length
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -35,8 +40,8 @@ class _UserMessageBoxState extends State<UserMessageBox> {
         children: [
           IconButton(
             icon: Icon(
-              EvaIcons.cameraOutline,
-              color: Theme.of(context).textTheme.bodySmall?.color,
+              Icons.camera_enhance,
+              color: Theme.of(context).textTheme.displayMedium?.color,
             ),
             onPressed: () async {
               if (!widget.currentUser?['blocked']) {
@@ -49,9 +54,9 @@ class _UserMessageBoxState extends State<UserMessageBox> {
                     setState(() {
                       imageChat = File(croppedImage.path);
                     });
-                     _onFormSubmitted();
+                    _onFormSubmitted();
                   }
-                 
+
                   if (widget.selectedUser?['deviceToken'] != null &&
                       widget.selectedUser?['notifications_messages'] == true) {
                     PushNotificationService().sendPushMessage(
@@ -69,23 +74,38 @@ class _UserMessageBoxState extends State<UserMessageBox> {
             },
           ),
           Expanded(
-            child: TextFormField(
+            child: TextField(
               controller: _msgController,
               focusNode: node,
               textAlign: TextAlign.start,
+              maxLines: _maxLines,
+              inputFormatters: [_textInputFormatter(maxLength: _maxLength)],
+              onChanged: (text) {
+                if (text.contains('\n')) {
+                  setState(() {
+                    _maxLines = _maxLines < 5
+                        ? _maxLines + 1
+                        : 5; // Limit maxLines to 5
+                  });
+                }
+              },
               decoration: InputDecoration(
-                  border: OutlineInputBorder(
-                      borderSide: BorderSide(
-                          style: BorderStyle.solid,
-                          color:
-                              Theme.of(context).textTheme.displaySmall!.color ??
-                                  AppTheme.white),
-                      borderRadius:
-                          const BorderRadius.all(Radius.circular(20)))),
+                contentPadding: const EdgeInsets.symmetric(horizontal: 8.0),
+                border: OutlineInputBorder(
+                  borderSide: BorderSide(
+                    style: BorderStyle.solid,
+                    color: Theme.of(context).textTheme.displaySmall!.color ??
+                        AppTheme.white,
+                  ),
+                  borderRadius: const BorderRadius.all(Radius.circular(20)),
+                ),
+              ),
+              scrollPhysics: const NeverScrollableScrollPhysics(),
             ),
           ),
           IconButton(
-            icon: const Icon(Icons.send),
+            icon: Icon(Icons.send,
+                color: Theme.of(context).textTheme.displayMedium?.color),
             onPressed: () {
               if (_msgController.text.isNotEmpty) {
                 if (!widget.currentUser?['blocked'] ||
@@ -98,7 +118,8 @@ class _UserMessageBoxState extends State<UserMessageBox> {
                         widget.selectedUser?['notifications_messages'] ?? false;
                     bool isMuted = (widget.selectedUser?['muted'] ?? false);
                     debugPrint('$shouldSendNotification  => $isMuted');
-                    if ((shouldSendNotification == false && isMuted == false) || !shouldSendNotification  && !isMuted ) {
+                    if ((shouldSendNotification == false && isMuted == false) ||
+                        !shouldSendNotification && !isMuted) {
                       PushNotificationService().sendPushMessage(
                         token: widget.selectedUser?['deviceToken'],
                         type: 'messages',
@@ -122,6 +143,10 @@ class _UserMessageBoxState extends State<UserMessageBox> {
         ],
       ),
     );
+  }
+
+  TextInputFormatter _textInputFormatter({int maxLength = 1000}) {
+    return LengthLimitingTextInputFormatter(maxLength);
   }
 
   void _onFormSubmitted() {

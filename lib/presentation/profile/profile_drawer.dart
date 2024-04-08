@@ -86,6 +86,7 @@ class DrawerListView extends StatelessWidget {
       padding: EdgeInsets.zero,
       children: [
         UserAccountsDrawerHeader(
+          
           decoration: BoxDecoration(
             boxShadow: [
               BoxShadow(
@@ -95,10 +96,10 @@ class DrawerListView extends StatelessWidget {
               ),
             ],
             borderRadius: BorderRadius.circular(10),
-            color: AppTheme.kPrimary,
+            color:  Theme.of(context).bottomNavigationBarTheme.unselectedItemColor,
           ),
-          accountName: Text("${user?.name}"),
-          accountEmail: Text("${user?.email}"),
+          accountName: Text("${user?.name}",style: Theme.of(context).textTheme.titleLarge?.copyWith(color: AppTheme.white),),
+          accountEmail: Text("${user?.age} yrs old"),
           currentAccountPicture: InkWell(
             onTap: () {
               Navigator.of(context).push(MaterialPageRoute(

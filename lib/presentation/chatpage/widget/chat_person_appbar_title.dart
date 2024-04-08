@@ -75,7 +75,7 @@ class MessagePersonAppBarTitle extends StatelessWidget {
                 : (widget.selectedUser?['status'] == false &&
                         lastActive != DateTime.now())
                     ? Text(
-                        'Active ${timeago.format(lastActive, allowFromNow: true, clock: DateTime.now())}',
+                        'Active ${timeago.format(lastActive, allowFromNow: true, clock: DateTime.now(),locale: 'en_short')}',
                         style: Theme.of(context).textTheme.bodySmall,
                       )
                     : Text(

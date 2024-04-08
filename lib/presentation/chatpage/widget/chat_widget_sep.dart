@@ -99,15 +99,7 @@ class ChatWidgetInd extends StatelessWidget {
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       (lastMessage['senderId'] == selectedUserData['uid'])
-                          ? Text(
-                              '${selectedUserData['name'] 
-                                  .toString()
-                                  .substring(0, 3)} ● ',
-                              style: Theme.of(context)
-                                  .textTheme
-                                  .bodySmall
-                                  ?.copyWith(fontSize: 20),
-                            )
+                          ? const SizedBox()
                           : Text(
                               'You ● ',
                               style: Theme.of(context)
@@ -130,7 +122,7 @@ class ChatWidgetInd extends StatelessWidget {
                         '  ${timeago.format(
                           (lastMessage['sentTime'] as Timestamp).toDate(),
                           clock: DateTime.now(),
-                          locale: 'en',
+                          locale: 'en_short',
                           allowFromNow: true,
                         )} ',
                         style: Theme.of(context)

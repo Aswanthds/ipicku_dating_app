@@ -253,7 +253,7 @@ class SnackBarManager {
           Padding(
             padding: const EdgeInsets.only(left: 10),
             child: Text(
-              "Chat History Unmuted",
+              "Chat History deleted",
               style: Theme.of(context)
                   .textTheme
                   .bodyMedium

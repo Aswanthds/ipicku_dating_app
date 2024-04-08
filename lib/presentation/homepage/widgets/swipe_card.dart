@@ -36,8 +36,10 @@ class SwipeCardWidget extends StatelessWidget {
       defaultDirection: AxisDirection.right,
       swipeOptions: const SwipeOptions.symmetric(horizontal: true),
       onEnd: () {
-        debugPrint("No more profiles");
+        controller.unswipe();
       },
+      allowUnSwipe: true,
+      loop: true,
       cardBuilder: (context, index) => Stack(
         children: [
           GestureDetector(
@@ -99,7 +101,8 @@ class SwipeCardWidget extends StatelessWidget {
                   PushNotificationService().sendPushMessage(
                       title: "New Notification",
                       type: 'picks',
-                      body: "${currentUserData?.name} Picked You , Check on My Picks list....",
+                      body:
+                          "${currentUserData?.name} Picked You , Check on My Picks list....",
                       token: userProfile[index]['deviceToken']);
                 }
               },
@@ -126,6 +129,26 @@ class SwipeCardWidget extends StatelessWidget {
     } else {
       return NetworkImage(data['photoUrl']);
     }
+  }
+
+  void showNoMoreProfilesSnackbar(BuildContext context) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        backgroundColor: Colors.tealAccent[400], // Adjust for a fantastic color
+        elevation: 6.0, // Add some elevation for a floating effect
+        margin: const EdgeInsets.only(
+            bottom: 20.0), // Adjust margin for positioning
+        behavior: SnackBarBehavior.floating, // Set behavior to floating
+
+        content: const Text(
+          'No more profiles to swipe!',
+          style: TextStyle(
+            color: Colors.white, // Adjust text color for contrast
+          ),
+        ),
+        duration: const Duration(seconds: 2),
+      ),
+    );
   }
 }
 //nothing
