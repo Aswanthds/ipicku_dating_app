@@ -23,7 +23,7 @@ class SectionRecommendedPage extends StatelessWidget {
                   Padding(
                     padding: const EdgeInsets.all(8.0),
                     child: Text(title,
-                        style: Theme.of(context).textTheme.displayMedium),
+                        style: Theme.of(context).textTheme.displayLarge),
                   ),
                   SizedBox(
                     height: MediaQuery.of(context).size.width,

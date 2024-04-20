@@ -17,13 +17,16 @@ import 'package:ipicku_dating_app/presentation/widgets/empty_list.dart';
 
 class ChatPagePerson extends StatefulWidget {
   final Map<String, dynamic>? selectedUser, currentUser;
-  const ChatPagePerson({super.key, this.selectedUser, this.currentUser});
+  final bool isblocked;
+  const ChatPagePerson({super.key, this.selectedUser, this.currentUser, required this.isblocked});
 
   @override
   State<ChatPagePerson> createState() => _ChatPagePersonState();
-}
 
+}
+ 
 class _ChatPagePersonState extends State<ChatPagePerson> {
+  
   final ScrollController _scrollController = ScrollController();
   @override
   void initState() {

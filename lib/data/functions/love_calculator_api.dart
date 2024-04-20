@@ -1,73 +1,40 @@
-
-
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:flutter/material.dart';
-
+import 'dart:math';
 
 class LoveCalculatorAPi {
-  static double getlovePercentage(
-      Map<String, dynamic> userDataA, Map<String, dynamic> userDataB) {
-    try {
-      debugPrint("$userDataA ");
-      debugPrint("$userDataB");
-      String nameA = userDataA['name'];
-      int ageA = userDataA['age'];
-      var chatTimeA = userDataA['lastActive'] as Timestamp;
-      var commonPreferencesA = userDataA['preferences'] ?? [];
-
-      String nameB = userDataB['name'];
-      int ageB = userDataB['age'];
-      var chatTimeB = userDataB['lastActive'] as Timestamp;
-      var commonPreferencesB = userDataB['preferences'] ?? [];
-
-      // Calculate age range
-      int minAge = ageA < ageB ? ageA : ageB;
-      int maxAge = minAge + 6;
-
-      // Calculate age difference
-      int ageDifference = (ageA - ageB).abs();
-
-      // Calculate love percentage for both users
-      double percentageA = calculatePercentageOfLove(
-          minAge, maxAge, chatTimeA, commonPreferencesA, ageDifference);
-      double percentageB = calculatePercentageOfLove(
-          minAge, maxAge, chatTimeB, commonPreferencesB, ageDifference);
-
-      // Calculate average percentage of love
-      double averagePercentage = (percentageA + percentageB) / 2;
-
-      // Display the result
-      debugPrint(
-          "\nLove Percentage between $nameA and $nameB is: $averagePercentage%");
-
-      return averagePercentage;
-    } catch (e) {
-      debugPrint(e.toString());
-      return 0.0;
+  static int sumOfDigits(int num) {
+    int sum = 0;
+    while (num > 0) {
+      sum += (num % 10);
+      num ~/= 10; // Using integer division operator
     }
+    return sum;
   }
 
-  static double calculatePercentageOfLove(int minAge, int maxAge,
-      Timestamp chatTime, List<dynamic> commonPreferences, int ageDifference) {
-    // Calculate age range
-    maxAge = minAge + 6;
+  static double loveCalculator(
+      Map<String, dynamic> userData1, Map<String, dynamic> userData2) {
+    String yName = userData1['name'];
+    String pName = userData2['name'];
+    int yage = userData1['age'];
+    int page = userData2['age'];
 
-    // Adjust age range if it exceeds 25
-    if (maxAge > 25) {
-      maxAge = 25;
-    }
+    int sum = 0;
+    yName.runes.forEach((int rune) {
+      sum += rune;
+    });
 
-    // Calculate love percentage based on factors
-    double ageFactor = 1 - (ageDifference / 25); // Normalize age difference
-    double preferenceFactor =
-        commonPreferences.length / 10; // Normalize common preferences
-    double timeFactor = chatTime.seconds /
-        86400; // Normalize chat time (considering a day as unit)
+    int sum1 = 0;
+    pName.runes.forEach((int rune) {
+      sum1 += rune;
+    });
 
-    // Calculate overall love percentage considering all factors
-    double percentage = (ageFactor + preferenceFactor + timeFactor) / 3 * 100;
+    int agediference = (yage - page).abs();
 
-    // Ensure the percentage is within 0 to 100
-    return percentage.clamp(0, 100).toDouble();
+    double perc =
+        (sumOfDigits(sum) + sumOfDigits(sum1) + sumOfDigits(agediference)) + 40;
+    perc = min(perc, 100); // Ensure percentage doesn't exceed 100
+
+    print('Your love percentage is: ${perc.toStringAsFixed(2)}');
+
+    return perc.abs();
   }
 }

@@ -44,7 +44,7 @@ class _LovePercentageWidgetState extends State<LovePercentageWidget>
       builder: (context, child) {
         return Container(
           width: 200,
-          height: 200,
+          height: 120,
           decoration: const BoxDecoration(
             shape: BoxShape.circle,
             gradient: LinearGradient(
@@ -56,8 +56,9 @@ class _LovePercentageWidgetState extends State<LovePercentageWidget>
               end: Alignment.bottomCenter,
             ),
           ),
-          child: Stack(
-            alignment: Alignment.center,
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            mainAxisSize: MainAxisSize.min,
             children: [
               CircularProgressIndicator(
                 value: _animation.value / 100,

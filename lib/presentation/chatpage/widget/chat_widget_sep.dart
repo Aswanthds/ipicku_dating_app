@@ -29,7 +29,8 @@ class ChatWidgetInd extends StatelessWidget {
             Navigator.of(context).push(
               MaterialPageRoute(
                 builder: (context) => ChatPagePerson(
-                    currentUser: userData, selectedUser: selectedUserData),
+                    currentUser: userData, selectedUser: selectedUserData,
+                    isblocked: selectedUserData['blocked']),
               ),
             );
           },

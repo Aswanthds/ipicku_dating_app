@@ -23,15 +23,14 @@ class RecommendedCard extends StatelessWidget {
         //debugPrint(data['location']);
       },
       child: SizedBox(
-        child: Stack(
-          children: [
-            Card(
+          height: 100,
+          width: 200,
+          // foregroundDecoration: BoxDecoration(
+          //   gradient: AppTheme.blackFade,
+          // ),
+          child: Card(
+              elevation: 5.0,
               child: Container(
-                height: 280,
-                width: 160,
-                foregroundDecoration: BoxDecoration(
-                  gradient: AppTheme.blackFade,
-                ),
                 decoration: BoxDecoration(
                     color: AppTheme.black26,
                     image: DecorationImage(
@@ -39,10 +38,13 @@ class RecommendedCard extends StatelessWidget {
                       fit: BoxFit.cover,
                     ),
                     borderRadius: BorderRadius.circular(15)),
-              ),
-            ),
-            Positioned(
-              bottom: 20,
+              ))),
+    );
+  }
+}
+/*
+ Positioned(
+              bottom: -10,
               left: 12,
               child: Row(
                 children: [
@@ -56,9 +58,4 @@ class RecommendedCard extends StatelessWidget {
                 ],
               ),
             )
-          ],
-        ),
-      ),
-    );
-  }
-}
+*/
