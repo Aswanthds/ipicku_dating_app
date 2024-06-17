@@ -50,12 +50,12 @@ class DeleteAccountWidget extends StatelessWidget {
             onPressed: () => DialogManager.showDeleteAccountDialog(context),
             icon: const Icon(
               Icons.block_outlined,
-              color: AppTheme.black,
+              color: AppTheme.red,
             ),
-            label: const Text(
+            label: Text(
               "Delete Account",
               style: TextStyle(
-                color: AppTheme.black,
+                color: Colors.red,
                 fontWeight: FontWeight.bold,
               ),
             ),

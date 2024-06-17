@@ -120,6 +120,13 @@ class UpdateProfileScreen extends StatelessWidget {
                             controller: nameController,
                             autocorrect: true,
                             maxLines: 1,
+                            onEditingComplete: () {
+                              BlocProvider.of<FirebaseDataBloc>(context)
+                                  .add(UpdateUserFieldEvent(
+                                "name",
+                                nameController.text,
+                              ));
+                            },
                             style: Theme.of(context).textTheme.displaySmall,
                             decoration: InputDecoration(
                                 border: OutlineInputBorder(
@@ -130,8 +137,18 @@ class UpdateProfileScreen extends StatelessWidget {
                                                 .headlineMedium
                                                 ?.color ??
                                             Colors.black)),
-                                label: Text("${state.data?['name']}"),
-                                prefixIcon: const Icon(LineAwesomeIcons.user)),
+                                hintText: state.data?['name'],
+                                hintStyle: Theme.of(context)
+                                    .textTheme
+                                    .bodySmall
+                                    ?.copyWith(fontSize: 15),
+                                prefixIcon: Icon(
+                                  LineAwesomeIcons.user,
+                                  color: Theme.of(context)
+                                      .textTheme
+                                      .bodySmall
+                                      ?.color,
+                                )),
                           ),
                           const SizedBox(height: 20),
                           // TextFormField(
@@ -147,24 +164,26 @@ class UpdateProfileScreen extends StatelessWidget {
                             autocorrect: true,
                             readOnly: true,
                             maxLines: 1,
-                            style: Theme.of(context).textTheme.displaySmall,
+                            style: Theme.of(context).textTheme.headlineSmall,
                             onTap: () async {
                               final date = await showDatePicker(
                                   context: context,
                                   firstDate: DateTime(1990),
                                   confirmText: "Save",
                                   lastDate: DateTime.now());
-                              BlocProvider.of<FirebaseDataBloc>(context)
-                                  .add(UpdateUserFieldEvent(
-                                "dob",
-                                date,
-                              ));
-                              BlocProvider.of<FirebaseDataBloc>(context).add(
-                                UpdateUserFieldEvent(
-                                  'age',
-                                  ProfileFunctions.calculateAge(date),
-                                ),
-                              );
+                              if (date != null) {
+                                BlocProvider.of<FirebaseDataBloc>(context)
+                                    .add(UpdateUserFieldEvent(
+                                  "dob",
+                                  date,
+                                ));
+                                BlocProvider.of<FirebaseDataBloc>(context).add(
+                                  UpdateUserFieldEvent(
+                                    'age',
+                                    ProfileFunctions.calculateAge(date),
+                                  ),
+                                );
+                              }
                             },
                             decoration: InputDecoration(
                                 border: OutlineInputBorder(
@@ -175,18 +194,35 @@ class UpdateProfileScreen extends StatelessWidget {
                                                 .headlineMedium
                                                 ?.color ??
                                             Colors.black)),
-                                label: Text(DateFormat('dd-MM-yyyy').format(
-                                    (state.data?['dob'] as Timestamp)
-                                        .toDate())),
-                                prefixIcon:
-                                    const Icon(LineAwesomeIcons.calendar_alt)),
+                                hintText: DateFormat('dd-MM-yyyy').format(
+                                    (state.data?['dob'] as Timestamp).toDate()),
+                                hintStyle: Theme.of(context)
+                                    .textTheme
+                                    .bodySmall
+                                    ?.copyWith(fontSize: 15),
+                                prefixIcon: Icon(
+                                  LineAwesomeIcons.calendar_alt,
+                                  color: Theme.of(context)
+                                      .textTheme
+                                      .bodySmall
+                                      ?.color,
+                                )),
                           ),
                           const SizedBox(height: 20),
                           TextFormField(
                             autocorrect: true,
-                            style: Theme.of(context).textTheme.bodyMedium,
+                            controller: bioController,
+                            style: Theme.of(context).textTheme.headlineSmall,
                             maxLines: 5,
                             maxLength: 150,
+                            onEditingComplete: () {
+                              BlocProvider.of<FirebaseDataBloc>(context).add(
+                                UpdateUserFieldEvent(
+                                  'bio',
+                                  bioController.text,
+                                ),
+                              );
+                            },
                             decoration: InputDecoration(
                               border: OutlineInputBorder(
                                   borderRadius: BorderRadius.circular(15),
@@ -196,30 +232,34 @@ class UpdateProfileScreen extends StatelessWidget {
                                               .headlineMedium
                                               ?.color ??
                                           Colors.black)),
-                              label: const Text("bio"),
+                              hintText: "bio",
                               prefixIcon: Icon(
                                 LineAwesomeIcons.book_open_solid,
+                                color: Theme.of(context)
+                                    .textTheme
+                                    .bodySmall
+                                    ?.color,
                               ),
                             ),
                           ),
-                          const SizedBox(height: 12),
+
                           UserPhotosOwnProfile(
                               user: UserModel.fromJson(userData)),
                           // -- Form Submit Button
-                          SizedBox(
-                            width: double.infinity,
-                            child: ElevatedButton(
-                              onPressed: () {},
-                              // Get.to(() => const UpdateProfileScreen()),
-                              style: ElevatedButton.styleFrom(
-                                  backgroundColor: AppTheme.kprimary,
-                                  side: BorderSide.none,
-                                  shape: const StadiumBorder()),
-                              child: const Text("EditProfile",
-                                  style: TextStyle(color: Colors.white)),
-                            ),
-                          ),
-                          const SizedBox(height: 20),
+                          // SizedBox(
+                          //   width: double.infinity,
+                          //   child: ElevatedButton(
+                          //     onPressed: () {},
+                          //     // Get.to(() => const UpdateProfileScreen()),
+                          //     style: ElevatedButton.styleFrom(
+                          //         backgroundColor: AppTheme.redAccent,
+                          //         side: BorderSide.none,
+                          //         shape: const StadiumBorder()),
+                          //     child: const Text("EditProfile",
+                          //         style: TextStyle(color: Colors.white)),
+                          //   ),
+                          // ),
+                          const SizedBox(height: 10),
 
                           // -- Created Date and Delete Button
                           Row(
@@ -228,13 +268,23 @@ class UpdateProfileScreen extends StatelessWidget {
                               Text.rich(
                                 TextSpan(
                                   text: "Joined on",
-                                  style: const TextStyle(fontSize: 12),
+                                  style: TextStyle(
+                                    fontSize: 12,
+                                    color: Theme.of(context)
+                                        .textTheme
+                                        .bodyLarge
+                                        ?.color,
+                                  ),
                                   children: [
                                     TextSpan(
                                         text:
                                             " ${DateFormat('dd-MM-yyyy').format((userData['created'] as Timestamp).toDate())}",
-                                        style: const TextStyle(
+                                        style: TextStyle(
                                             fontWeight: FontWeight.bold,
+                                            color: Theme.of(context)
+                                                .textTheme
+                                                .bodySmall
+                                                ?.color,
                                             fontSize: 12))
                                   ],
                                 ),

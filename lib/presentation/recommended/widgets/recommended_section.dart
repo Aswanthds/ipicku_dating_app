@@ -22,11 +22,16 @@ class SectionRecommendedPage extends StatelessWidget {
                 children: [
                   Padding(
                     padding: const EdgeInsets.all(8.0),
-                    child: Text(title,
-                        style: Theme.of(context).textTheme.displayLarge),
+                    child: Text(
+                      title,
+                      style:
+                          Theme.of(context).textTheme.headlineLarge?.copyWith(
+                                fontSize: 20,
+                              ),
+                    ),
                   ),
                   SizedBox(
-                    height: MediaQuery.of(context).size.width,
+                    height: 280,
                     child: ListView.builder(
                       itemCount: state.length,
                       scrollDirection: Axis.horizontal,
@@ -45,8 +50,6 @@ class SectionRecommendedPage extends StatelessWidget {
   }
 }
 
-
-
 class SectionRecommendedInterestsPage extends StatelessWidget {
   final Map<String, List<Map<String, dynamic>>> state;
   final String title;
@@ -54,7 +57,7 @@ class SectionRecommendedInterestsPage extends StatelessWidget {
     Key? key,
     required this.state,
     required this.title,
-   // required this.id,
+    // required this.id,
   }) : super(key: key);
 
   @override

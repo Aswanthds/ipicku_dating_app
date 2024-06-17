@@ -43,27 +43,42 @@ class _DummySwipeState extends State<DummySwipe> {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        SizedBox(
-          height: widget.size.height - 150,
-          child: SwipeCards(
-            matchEngine: _matchEngine,
-            rightSwipeAllowed: true,
-            likeTag: const Icon(Icons.done),
-            itemBuilder: _buildCard,
-            onStackFinished: () {
-              ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-                content: Text("Stack Finished"),
-                duration: Duration(milliseconds: 500),
-              ));
-            },
-            itemChanged: _onItemChanged,
-            upSwipeAllowed: true,
-            fillSpace: true,
+    return Container(
+      margin: const EdgeInsets.all(8.0),
+      decoration: const BoxDecoration(
+        gradient: LinearGradient(colors: [
+          Color.fromRGBO(115, 0, 255, 0.894),
+          Color.fromRGBO(241, 4, 75, 0.898)
+        ]),
+        borderRadius: BorderRadius.only(
+          topLeft: Radius.circular(20),
+          topRight: Radius.circular(20),
+        ),
+      ),
+      child: Container(
+        height: widget.size.height - 150,
+        decoration: const BoxDecoration(
+          borderRadius: BorderRadius.only(
+            topLeft: Radius.circular(20),
+            topRight: Radius.circular(20),
           ),
         ),
-      ],
+        child: SwipeCards(
+          matchEngine: _matchEngine,
+          rightSwipeAllowed: true,
+          likeTag: const Icon(Icons.done),
+          itemBuilder: _buildCard,
+          onStackFinished: () {
+            ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+              content: Text("Stack Finished"),
+              duration: Duration(milliseconds: 500),
+            ));
+          },
+          itemChanged: _onItemChanged,
+          upSwipeAllowed: true,
+          fillSpace: true,
+        ),
+      ),
     );
   }
 
@@ -91,7 +106,7 @@ class _DummySwipeState extends State<DummySwipe> {
                       color: Colors.black26,
                       borderRadius: BorderRadius.circular(20),
                       image: DecorationImage(
-                        image:getImageProvider(widget.userProfile[index]),
+                        image: getImageProvider(widget.userProfile[index]),
                         fit: BoxFit.cover,
                       ),
                     ),

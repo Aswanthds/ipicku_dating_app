@@ -1,6 +1,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:ipicku_dating_app/domain/firebase_data/firebase_data_bloc.dart';
 import 'package:ipicku_dating_app/domain/theme/theme_bloc.dart';
 import 'package:ipicku_dating_app/domain/theme/theme_event.dart';
 import 'package:ipicku_dating_app/presentation/profile/pages/mutual_picks.dart';
@@ -36,32 +37,41 @@ class AccountDetails extends StatelessWidget {
             style: Theme.of(context).textTheme.titleLarge,
           ),
         ),
-        body: SingleChildScrollView(
-          scrollDirection: Axis.vertical,
-          child: Container(
-            padding: const EdgeInsets.all(20),
-            decoration: BoxDecoration(
-              color: AppTheme.white,
-              borderRadius: BorderRadius.circular(15),
-            ),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              mainAxisAlignment: MainAxisAlignment.start,
-              children: [
-                //const SizedBox(height: 10),
-                ProfileCardWidget(
-                    path: userData['photoUrl'] ?? '',
-                    age: userData['age'].toString(),
-                    id: userData['uid'].substring(userData['uid'].length - 5),
-                    name: userData['name'] ?? ''),
+        body: BlocBuilder<FirebaseDataBloc, FirebaseDataState>(
+            builder: (context, state) {
+          if (state is FirebaseDataLoaded) {
+            return SingleChildScrollView(
+              scrollDirection: Axis.vertical,
+              child: Container(
+                padding: const EdgeInsets.all(20),
+                decoration: BoxDecoration(
+                  color: AppTheme.white,
+                  borderRadius: BorderRadius.circular(15),
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [
+                    //const SizedBox(height: 10),
+                    ProfileCardWidget(
+                        path: state.data?['photoUrl'] ?? '',
+                        age: state.data?['age']?.toString() ?? '',
+                        id: state.data?['uid']
+                            .substring(userData['uid'].length - 5),
+                        name: userData['name'] ?? ''),
 
-                UserDetailsList(user: UserModel.fromJson(userData)),
-                const SizedBox(height: 20),
-                PreferencesSection(model: userData, repo: userRepository)
-              ],
-            ),
-          ),
-        ));
+                    UserDetailsList(user: UserModel.fromJson(userData)),
+                    const SizedBox(height: 20),
+                    PreferencesSection(model: userData, repo: userRepository)
+                  ],
+                ),
+              ),
+            );
+          } else if (state is FirebaseDataLoading) {
+            return const Center(child: CircularProgressIndicator());
+          }
+          return const SizedBox();
+        }));
   }
 }
 

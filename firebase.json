@@ -1,6 +1,1 @@
-{
-  "firestore": {
-    "rules": "firestore.rules",
-    "indexes": "firestore.indexes.json"
-  }
-}
+{"firestore":{"rules":"firestore.rules","indexes":"firestore.indexes.json"},"flutter":{"platforms":{"android":{"default":{"projectId":"ipicku-dating-app-fire","appId":"1:471585294652:android:9539aa0ed4f2c2686bf639","fileOutput":"android/app/google-services.json"}},"dart":{"lib/firebase_options.dart":{"projectId":"ipicku-dating-app-fire","configurations":{"android":"1:471585294652:android:9539aa0ed4f2c2686bf639","web":"1:471585294652:web:8cfa9ebed41600d66bf639"}}}}}}

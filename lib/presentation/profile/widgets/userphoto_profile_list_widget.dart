@@ -28,14 +28,14 @@ class _UserPhotosOwnProfileState extends State<UserPhotosOwnProfile> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Padding(
+        Padding(
           padding: EdgeInsets.only(top: 8.0, bottom: 8.0),
           child: Text(
             "Photos",
             textAlign: TextAlign.start,
             style: TextStyle(
               fontWeight: FontWeight.bold,
-              color: AppTheme.black,
+              color: Theme.of(context).textTheme.bodySmall?.color,
               fontSize: 18,
             ),
           ),
