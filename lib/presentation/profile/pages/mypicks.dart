@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
@@ -72,7 +73,7 @@ class MyPicksPage extends StatelessWidget {
                                     fontWeight: FontWeight.bold)),
                             leading: CircleAvatar(
                               backgroundImage:
-                                  NetworkImage(data[index]['photoUrl']),
+                                  CachedNetworkImageProvider(data[index]['photoUrl']),
                             ),
                             trailing: IconButton(
                               onPressed: () {

@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:ipicku_dating_app/presentation/chatpage/widget/chat_person.dart';
 import 'package:ipicku_dating_app/presentation/ui_utils/colors.dart';
@@ -25,7 +26,7 @@ class MessagePersonAppBarTitle extends StatelessWidget {
                 ? CircleAvatar(
                     radius: 20,
                     backgroundImage:
-                        NetworkImage(widget.selectedUser?['photoUrl']),
+                        CachedNetworkImageProvider(widget.selectedUser?['photoUrl']),
                   )
                 : CircleAvatar(
                     radius: 20,

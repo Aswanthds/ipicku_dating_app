@@ -26,57 +26,55 @@ class _FormFieldWidgetState extends State<FormFieldWidget> {
 
   @override
   Widget build(BuildContext context) {
-    return TextFormField(
-      controller: widget._controller,
-      obscureText: widget.isPassword && !_obscureText,
-      decoration: InputDecoration(
-        suffixIcon: widget.isPassword 
-            ? IconButton(
-                icon: Icon(
-                    !_obscureText ? Icons.visibility : Icons.visibility_off),
-                onPressed: () {
-                  setState(() {
-                    _obscureText = !_obscureText;
-                  });
-                },
-              )
-            : null,
-        icon: Icon(
-          widget.icon,
-          color: AppTheme.white,
-        ),
-        labelText: widget.labelText,
-        focusedErrorBorder: OutlineInputBorder(
-            borderSide: const BorderSide(color: AppTheme.white),
-            borderRadius: BorderRadius.circular(15)),
-        errorBorder: OutlineInputBorder(
-            borderSide: const BorderSide(color: AppTheme.red),
-            borderRadius: BorderRadius.circular(15)),
-        enabledBorder: const OutlineInputBorder(
-          borderRadius: BorderRadius.all(
-            Radius.circular(15),
+    return Container(
+      decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(15),
+          gradient: LinearGradient(colors: [
+            AppTheme.pinkAccent,
+            AppTheme.red,
+          ])),
+      child: Container(
+        margin: EdgeInsets.all(2.0),
+        decoration: BoxDecoration(
+            color: Colors.white, borderRadius: BorderRadius.circular(15)),
+        child: TextFormField(
+          controller: widget._controller,
+          obscureText: widget.isPassword && !_obscureText,
+          decoration: InputDecoration(
+            // filled: true,
+            // fillColor: Colors.white,
+            suffixIcon: widget.isPassword
+                ? IconButton(
+                    icon: Icon(!_obscureText
+                        ? Icons.visibility
+                        : Icons.visibility_off),
+                    onPressed: () {
+                      setState(() {
+                        _obscureText = !_obscureText;
+                      });
+                    },
+                  )
+                : null,
+            icon: Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Icon(
+                widget.icon,
+                color: AppTheme.black,
+              ),
+            ),
+            labelText: widget.labelText,
+            border: InputBorder.none,
+            enabledBorder: InputBorder.none,
+            focusedBorder: InputBorder.none,
+            labelStyle: const TextStyle(color: AppTheme.black),
           ),
-          borderSide: BorderSide(
-            color: AppTheme.red,
-            style: BorderStyle.solid,
+          style: const TextStyle(
+            color: AppTheme.black,
           ),
-        ),
-        labelStyle: const TextStyle(color: AppTheme.white),
-        focusedBorder: const OutlineInputBorder(
-          borderRadius: BorderRadius.all(
-            Radius.circular(15),
-          ),
-          borderSide: BorderSide(
-            color: AppTheme.white,
-            style: BorderStyle.solid,
-          ),
+          autocorrect: false,
+          validator: widget.validator,
         ),
       ),
-      style: const TextStyle(
-        color: AppTheme.white,
-      ),
-      autocorrect: false,
-      validator: widget.validator,
     );
   }
 }

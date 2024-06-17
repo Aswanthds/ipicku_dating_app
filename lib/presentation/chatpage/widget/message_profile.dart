@@ -1,11 +1,9 @@
-import 'package:eva_icons_flutter/eva_icons_flutter.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:ipicku_dating_app/data/functions/love_calculator_api.dart';
 import 'package:ipicku_dating_app/data/functions/profile_functions.dart';
 import 'package:ipicku_dating_app/domain/messages/messages_bloc.dart';
-import 'package:ipicku_dating_app/presentation/chatpage/chatpage.dart';
-import 'package:ipicku_dating_app/presentation/chatpage/widget/chat_person.dart';
 import 'package:ipicku_dating_app/presentation/chatpage/widget/lovepercantage.dart';
 import 'package:ipicku_dating_app/presentation/homepage/progfilepage.dart';
 import 'package:ipicku_dating_app/presentation/profile/user_profile/image_preview.dart';
@@ -88,7 +86,7 @@ class _MessageProfilePageState extends State<MessageProfilePage> {
                       child: Text("No data found"),
                     );
                   }
-                  return SizedBox();
+                  return const SizedBox();
                 },
               ),
             ),
@@ -113,7 +111,7 @@ class _MessageProfilePageState extends State<MessageProfilePage> {
             icon: Column(
               children: [
                 const Icon(
-                  EvaIcons.personOutline,
+                  Icons.person_2_rounded,
                   size: 40,
                 ),
                 Text(
@@ -144,8 +142,8 @@ class _MessageProfilePageState extends State<MessageProfilePage> {
               children: [
                 Icon(
                   widget.userDataB['muted']
-                      ? EvaIcons.bellOffOutline
-                      : EvaIcons.bellOutline,
+                      ? Icons.notifications_off_rounded
+                      : Icons.notifications_none_rounded,
                   size: 40,
                 ),
                 Text(
@@ -176,7 +174,7 @@ class _MessageProfilePageState extends State<MessageProfilePage> {
             icon: Column(
               children: [
                 const Icon(
-                  EvaIcons.alertTriangle,
+                  Icons.crisis_alert_outlined,
                   size: 40,
                 ),
                 Text(
@@ -196,7 +194,7 @@ class _MessageProfilePageState extends State<MessageProfilePage> {
         crossAxisAlignment: WrapCrossAlignment.center,
         children: [
           CircleAvatar(
-            backgroundImage: NetworkImage(widget.userDataB['photoUrl']),
+            backgroundImage: CachedNetworkImageProvider(widget.userDataB['photoUrl']),
             radius: 50,
           ),
           const SizedBox(

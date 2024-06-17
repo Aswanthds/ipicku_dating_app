@@ -1,4 +1,3 @@
-import 'package:eva_icons_flutter/eva_icons_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:ipicku_dating_app/presentation/ui_utils/colors.dart';
 
@@ -26,14 +25,13 @@ class ProfileDetailsAction extends StatelessWidget {
       },
       style: IconButton.styleFrom(
         backgroundColor: AppTheme.green,
-        
       ),
       // child: const Text('Cancel', style: TextStyle(color: Colors.black)),
-    
+
       icon: const Icon(
-        EvaIcons.messageSquare,
+        Icons.message_sharp,
         color: AppTheme.black,
-         size: 45,
+        size: 45,
       ),
     );
   }

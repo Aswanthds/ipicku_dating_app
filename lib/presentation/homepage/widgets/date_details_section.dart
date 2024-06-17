@@ -15,25 +15,22 @@ class DateDetailsSection extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        RichText(
-            text: TextSpan(children: [
-          TextSpan(
-            text: "$name ,",
-            style: const TextStyle(
-              color: AppTheme.white,
-              fontSize: 25,
-              fontWeight: FontWeight.bold,
-            ),
+       Text(
+          "${name.toUpperCase()} ",
+          style: const TextStyle(
+            color: AppTheme.white,
+            fontSize: 25,
+            fontWeight: FontWeight.bold,
           ),
-          TextSpan(
-            text: " $age yrs old",
+        ),
+        Text(
+            "$age yrs old",
             style: const TextStyle(
               color: AppTheme.white,
               fontSize: 20,
               fontWeight: FontWeight.bold,
             ),
-          )
-        ])),
+          ),
         Text(
           (bio == 'null') ? '' : bio,
           style: const TextStyle(

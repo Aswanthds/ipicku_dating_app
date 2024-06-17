@@ -1,4 +1,3 @@
-import 'package:eva_icons_flutter/eva_icons_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:ipicku_dating_app/domain/theme/theme_bloc.dart';
@@ -52,7 +51,7 @@ class ContactUsPage extends StatelessWidget {
             //_launchUrl(Uri.parse('https://play.google.com/store/apps/details?id=com.aswanth.ipicku'));
           },
           leading: Icon(
-            EvaIcons.shareOutline,
+            Icons.ios_share,
             color: Theme.of(context).textTheme.bodyLarge?.color,
           ),
           title: Text(
@@ -67,7 +66,7 @@ class ContactUsPage extends StatelessWidget {
             ));
           },
           leading: Icon(
-            EvaIcons.infoOutline,
+            Icons.info_outline_rounded,
             color: Theme.of(context).textTheme.bodyLarge?.color,
           ),
           title: Text(

@@ -1,5 +1,6 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:eva_icons_flutter/eva_icons_flutter.dart';
+
 import 'package:flutter/material.dart';
 import 'package:ipicku_dating_app/data/repositories/messaging_repository.dart';
 import 'package:ipicku_dating_app/presentation/ui_utils/colors.dart';
@@ -29,7 +30,8 @@ class ChatWidgetInd extends StatelessWidget {
             Navigator.of(context).push(
               MaterialPageRoute(
                 builder: (context) => ChatPagePerson(
-                    currentUser: userData, selectedUser: selectedUserData,
+                    currentUser: userData,
+                    selectedUser: selectedUserData,
                     isblocked: selectedUserData['blocked']),
               ),
             );
@@ -40,7 +42,7 @@ class ChatWidgetInd extends StatelessWidget {
                   ? CircleAvatar(
                       radius: 30,
                       backgroundImage:
-                          NetworkImage(selectedUserData['photoUrl']),
+                          CachedNetworkImageProvider(selectedUserData['photoUrl']),
                     )
                   : CircleAvatar(
                       radius: 30,
@@ -79,7 +81,7 @@ class ChatWidgetInd extends StatelessWidget {
                 direction: Axis.horizontal,
                 children: [
                   (selectedUserData['muted'])
-                      ? const Icon(EvaIcons.volumeOffOutline)
+                      ? const Icon(Icons.volume_mute)
                       : const SizedBox(),
                 ],
               )
@@ -99,17 +101,6 @@ class ChatWidgetInd extends StatelessWidget {
                     mainAxisAlignment: MainAxisAlignment.start,
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      (lastMessage['senderId'] == selectedUserData['uid'])
-                          ? const SizedBox()
-                          : Text(
-                              'You ● ',
-                              style: Theme.of(context)
-                                  .textTheme
-                                  .bodySmall
-                                  ?.copyWith(
-                                      fontSize: 14,
-                                      fontWeight: FontWeight.bold),
-                            ),
                       SizedBox(
                         width: 50,
                         child: Text(
@@ -120,7 +111,7 @@ class ChatWidgetInd extends StatelessWidget {
                         ),
                       ),
                       Text(
-                        '  ${timeago.format(
+                        '${timeago.format(
                           (lastMessage['sentTime'] as Timestamp).toDate(),
                           clock: DateTime.now(),
                           locale: 'en_short',
@@ -138,7 +129,7 @@ class ChatWidgetInd extends StatelessWidget {
                   // Display image message
                   return Row(
                     children: [
-                      const Icon(EvaIcons.image),
+                      const Icon(Icons.image),
                       const SizedBox(width: 8), // Add some spacing
                       const Text("Photo"),
                       const SizedBox(width: 10),
@@ -166,7 +157,7 @@ class ChatWidgetInd extends StatelessWidget {
                     tapPosition: tapPosition,
                     isBlocked: selectedUserData['blocked'] ?? false);
               },
-              icon: const Icon(EvaIcons.moreHorizontalOutline))),
+              icon: const Icon(Icons.more_horiz))),
     );
   }
 }

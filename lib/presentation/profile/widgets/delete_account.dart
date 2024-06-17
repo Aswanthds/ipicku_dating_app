@@ -1,4 +1,3 @@
-import 'package:eva_icons_flutter/eva_icons_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:ipicku_dating_app/presentation/ui_utils/colors.dart';
@@ -41,26 +40,23 @@ class DeleteAccountWidget extends StatelessWidget {
       },
       child: BlocBuilder<AuthenticationBloc, AuthenticationState>(
         builder: (context, state) {
-          return SizedBox(
-            width: double.infinity,
-            child: OutlinedButton.icon(
-              style: OutlinedButton.styleFrom(
-                  side: const BorderSide(
-                color: AppTheme.kPrimary,
-                style: BorderStyle.solid,
-                width: 1.5,
-              )),
-              onPressed: () => DialogManager.showDeleteAccountDialog(context),
-              icon: const Icon(
-                EvaIcons.trash2,
-                color: AppTheme.kPrimary,
-              ),
-              label: const Text(
-                "Delete Account",
-                style: TextStyle(
-                  color: AppTheme.kPrimary,
-                  fontWeight: FontWeight.bold,
-                ),
+          return OutlinedButton.icon(
+            style: OutlinedButton.styleFrom(
+                side: const BorderSide(
+              color: AppTheme.black,
+              style: BorderStyle.solid,
+              width: 1.5,
+            )),
+            onPressed: () => DialogManager.showDeleteAccountDialog(context),
+            icon: const Icon(
+              Icons.block_outlined,
+              color: AppTheme.black,
+            ),
+            label: const Text(
+              "Delete Account",
+              style: TextStyle(
+                color: AppTheme.black,
+                fontWeight: FontWeight.bold,
               ),
             ),
           );

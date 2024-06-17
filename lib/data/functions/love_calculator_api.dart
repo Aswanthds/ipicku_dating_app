@@ -18,14 +18,14 @@ class LoveCalculatorAPi {
     int page = userData2['age'];
 
     int sum = 0;
-    yName.runes.forEach((int rune) {
+    for (var rune in yName.runes) {
       sum += rune;
-    });
+    }
 
     int sum1 = 0;
-    pName.runes.forEach((int rune) {
+    for (var rune in pName.runes) {
       sum1 += rune;
-    });
+    }
 
     int agediference = (yage - page).abs();
 

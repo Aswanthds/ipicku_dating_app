@@ -2,6 +2,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:ipicku_dating_app/presentation/chatpage/widget/custom_cropper.dart';
 import 'package:ipicku_dating_app/presentation/ui_utils/colors.dart';
 import 'package:ipicku_dating_app/data/functions/profile_functions.dart';
 import 'package:ipicku_dating_app/domain/firebase_data/firebase_data_bloc.dart';
@@ -82,13 +83,20 @@ class ProfileCardWidget extends StatelessWidget {
                     left: 100,
                     child: IconButton.filled(
                         onPressed: () async {
-                          // final pickedImage =
-                          //     await ProfileFunctions.pickImage();
-                          // if (pickedImage != null) {
-                          //   BlocProvider.of<FirebaseDataBloc>(context)
-                          //       .add(FirebaseProfilePhotochanged(pickedImage));
-                          // }
-                          ProfileFunctions.pickAndCropImage(context);
+                          final pickedImage =
+                              await ProfileFunctions.pickImage();
+                          if (pickedImage != null) {
+                            // BlocProvider.of<FirebaseDataBloc>(context)
+                            //     .add(FirebaseProfilePhotochanged(pickedImage));
+                             Navigator.of(context).push(MaterialPageRoute(
+                              builder: (context) => CustomCropperPage(
+                                path: pickedImage,
+                                title: 'Profile picture',
+                              ),
+                            ));
+                          }
+                          // ProfileFunctions.pickAndCropImage(context);
+                         
                         },
                         icon: const Icon(Icons.camera_alt)),
                   )

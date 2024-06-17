@@ -31,14 +31,14 @@ class RemoveImageEvent extends FirebaseDataEvent {
 }
 
 class FirebaseDataPhotoChanged extends FirebaseDataEvent {
-  final XFile data;
+  final Uint8List data;
   final int index;
 
   const FirebaseDataPhotoChanged(this.data, this.index);
 }
 
 class FirebaseProfilePhotochanged extends FirebaseDataEvent {
-  final XFile image;
+  final Uint8List image;
 
   const FirebaseProfilePhotochanged(this.image);
 }

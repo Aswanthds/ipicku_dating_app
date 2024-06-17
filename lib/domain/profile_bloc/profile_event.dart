@@ -49,14 +49,14 @@ class InterestedInChanged extends ProfileEvent {
   List<Object> get props => [interestedGender!];
 }
 
-class LocationChanged extends ProfileEvent {
-  final GeoPoint? location;
+// class LocationChanged extends ProfileEvent {
+//   final GeoPoint? location;
 
-  const LocationChanged(this.location);
+//   const LocationChanged(this.location);
 
-  @override
-  List<Object> get props => [location!];
-}
+//   @override
+//   List<Object> get props => [location!];
+// }
 
 class PhotosChanged extends ProfileEvent {
   final List<File?> photos;
@@ -69,7 +69,7 @@ class PhotosChanged extends ProfileEvent {
 
 class Submitted extends ProfileEvent {
   final String? name, gender;
-  final GeoPoint? location;
+  final String? location;
   final File? photo;
   final int? age;
   final DateTime? dob;

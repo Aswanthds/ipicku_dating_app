@@ -1,4 +1,3 @@
-import 'package:eva_icons_flutter/eva_icons_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:ipicku_dating_app/presentation/ui_utils/colors.dart';
 
@@ -59,7 +58,7 @@ class SnackBarManager {
     content: Row(
       children: [
         Text("Details Submitted Successfully"),
-        Icon(EvaIcons.doneAll),
+        Icon(Icons.done_all),
       ],
     ),
     behavior: SnackBarBehavior.floating,
@@ -116,7 +115,7 @@ class SnackBarManager {
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
         Text("Deleting your data failed !!!"),
-        Icon(EvaIcons.alertCircle),
+        Icon(Icons.crisis_alert_rounded),
       ],
     ),
   );
@@ -127,7 +126,7 @@ class SnackBarManager {
     content: Row(
       children: [
         Text("Deleted your data !!"),
-        Icon(EvaIcons.doneAll),
+        Icon(Icons.done_all),
       ],
     ),
   );
@@ -137,7 +136,7 @@ class SnackBarManager {
       content: Row(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          const Icon(EvaIcons.alertCircleOutline),
+          const Icon(Icons.crisis_alert_rounded),
           Padding(
             padding: const EdgeInsets.only(left: 10),
             child: Text(
@@ -165,7 +164,7 @@ class SnackBarManager {
       content: Row(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          const Icon(EvaIcons.alertCircleOutline),
+          const Icon(Icons.crisis_alert_rounded),
           Padding(
             padding: const EdgeInsets.only(left: 10),
             child: Text(
@@ -193,7 +192,7 @@ class SnackBarManager {
       content: Row(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          const Icon(EvaIcons.alertCircleOutline),
+          const Icon(Icons.crisis_alert_rounded),
           Padding(
             padding: const EdgeInsets.only(left: 10),
             child: Text(
@@ -221,7 +220,7 @@ class SnackBarManager {
       content: Row(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          const Icon(EvaIcons.alertCircleOutline),
+          const Icon(Icons.crisis_alert_rounded),
           Padding(
             padding: const EdgeInsets.only(left: 10),
             child: Text(
@@ -249,7 +248,7 @@ class SnackBarManager {
       content: Row(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          const Icon(EvaIcons.alertCircleOutline),
+          const Icon(Icons.crisis_alert_rounded),
           Padding(
             padding: const EdgeInsets.only(left: 10),
             child: Text(

@@ -12,18 +12,10 @@ class InputDecorationManager {
   );
 
   static const InputDecoration inputDecoration = InputDecoration(
-    labelText: 'Gender',
-    enabledBorder: OutlineInputBorder(
-      borderRadius: BorderRadius.all(
-        Radius.circular(15),
-      ),
-      borderSide: BorderSide(
-        color: Colors.red,
-        style: BorderStyle.solid,
-      ),
-    ),
-    labelStyle: TextStyle(color: Colors.white),
-    focusedBorder: outlineInputBorder,
+    hintText: 'Gender',
+    border: InputBorder.none,
+    hintStyle: TextStyle(color: Colors.black),
+    focusedBorder: InputBorder.none,
     focusColor: Colors.grey,
   );
 

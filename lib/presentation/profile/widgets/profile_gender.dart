@@ -1,10 +1,8 @@
-import 'package:eva_icons_flutter/eva_icons_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:ipicku_dating_app/presentation/ui_utils/colors.dart';
 import 'package:ipicku_dating_app/data/model/user.dart';
 import 'package:ipicku_dating_app/domain/firebase_data/firebase_data_bloc.dart';
-
 
 class ProfileGenderWidget extends StatelessWidget {
   const ProfileGenderWidget({
@@ -46,7 +44,7 @@ class ProfileGenderWidget extends StatelessWidget {
                 _showGenderDialog(context);
               },
               icon: const Icon(
-                EvaIcons.edit2,
+                Icons.edit,
                 color: AppTheme.black,
                 size: 18,
               ),
@@ -102,7 +100,8 @@ class ProfileGenderWidget extends StatelessWidget {
                       },
                     ),
                   ),
-                  const Text('Please refresh home after updating to get latest data')
+                  const Text(
+                      'Please refresh home after updating to get latest data')
                 ],
               );
             },

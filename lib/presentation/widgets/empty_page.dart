@@ -1,4 +1,3 @@
-import 'package:animated_text_kit/animated_text_kit.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:gif/gif.dart';
@@ -51,16 +50,8 @@ class _EmptyPageGifState extends State<EmptyPageGif>
                     autostart: Autostart.loop,
                     fps: 30,
                    
-                    placeholder: (context) => AnimatedTextKit(
-                          animatedTexts: [
-                            TypewriterAnimatedText(
-                              "Loading...",
-                              textStyle:
-                                  Theme.of(context).textTheme.displayMedium,
-                            ),
-                          ],
-                          totalRepeatCount: 4,
-                          pause: const Duration(milliseconds: 1000),
+                    placeholder: (context) => const Text(
+                        "Loading...."
                         ));
               } else {
                 return Gif(
@@ -71,17 +62,7 @@ class _EmptyPageGifState extends State<EmptyPageGif>
                     height: 150,
                     autostart: Autostart.loop,
                     fps: 30,
-                    placeholder: (context) => AnimatedTextKit(
-                          animatedTexts: [
-                            TypewriterAnimatedText(
-                              "Loading...",
-                              textStyle:
-                                  Theme.of(context).textTheme.displayMedium,
-                            ),
-                          ],
-                          totalRepeatCount: 4,
-                          pause: const Duration(milliseconds: 1000),
-                        ));
+                    placeholder: (context) => const Text("Loading..."));
               }
             },
           ),

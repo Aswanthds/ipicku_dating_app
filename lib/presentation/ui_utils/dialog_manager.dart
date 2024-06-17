@@ -1,4 +1,3 @@
-import 'package:eva_icons_flutter/eva_icons_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:ipicku_dating_app/data/repositories/user_repositories.dart';
@@ -69,7 +68,7 @@ class DialogManager {
                     ),
                     TextButton.icon(
                       icon: const Icon(
-                        EvaIcons.logOut,
+                        Icons.logout_rounded,
                         color: AppTheme.red,
                       ),
                       label: Text(

@@ -2,7 +2,6 @@ import 'dart:async';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
-import 'package:ipicku_dating_app/data/repositories/local_notifications.dart';
 import 'package:ipicku_dating_app/data/repositories/user_repositories.dart';
 
 final usersCollection = FirebaseFirestore.instance.collection('users');
@@ -140,7 +139,7 @@ class MatchesRepository {
       // Convert GeoPoint to GeoPoint
       List<Map<String, dynamic>> profiles = querySnapshot.docs.map((doc) {
         Map<String, dynamic> profileData = doc.data();
-        GeoPoint? location = doc.data()['location'];
+        String? location = doc.data()['location'];
         profileData['location'] = location;
         return profileData;
       }).toList();
@@ -322,10 +321,7 @@ class MatchesRepository {
                           minutes: 5), // Adjust the duration as needed
                     ),
               )) {
-            NotificationService().showNotification(notification: {
-              "title": "New User Picked you",
-              "body": "A USer ${userData['name']}"
-            });
+          
           }
         }
       }

@@ -13,14 +13,12 @@ import 'package:ipicku_dating_app/domain/matching_bloc/matching_bloc.dart';
 import 'package:ipicku_dating_app/domain/messages/messages_bloc.dart';
 import 'package:ipicku_dating_app/domain/messaging/messaging_bloc.dart';
 import 'package:ipicku_dating_app/domain/notifications/notifications_bloc.dart';
-
 import 'package:ipicku_dating_app/domain/profile_bloc/profile_bloc.dart';
 import 'package:ipicku_dating_app/domain/signup_bloc/sign_up_bloc.dart';
 import 'package:ipicku_dating_app/domain/theme/theme_bloc.dart';
 import 'package:ipicku_dating_app/domain/theme/theme_event.dart';
 import 'package:ipicku_dating_app/domain/video_chat/videochat_bloc.dart';
 import 'package:ipicku_dating_app/presentation/chatpage/chatpage.dart';
-import 'package:ipicku_dating_app/presentation/chatpage/widget/chat_person.dart';
 import 'package:ipicku_dating_app/presentation/homepage/notifications_page.dart';
 import 'package:ipicku_dating_app/presentation/log_in/login.dart';
 import 'package:ipicku_dating_app/presentation/main_page.dart';
@@ -86,6 +84,7 @@ class MyApp extends StatelessWidget {
         return MaterialApp(
             navigatorKey: navigatorKey,
             title: 'IPickU Dating App ',
+            
             debugShowCheckedModeBanner: false,
             theme: state,
             routes: {
@@ -93,7 +92,6 @@ class MyApp extends StatelessWidget {
                     data: [],
                   ),
               ChatPage.route: (context) => const ChatPage(),
-            
               MyPicksPage.route: (context) => const MyPicksPage()
             },
             home: BlocBuilder<AuthenticationBloc, AuthenticationState>(

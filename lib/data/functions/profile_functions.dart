@@ -1,16 +1,13 @@
 import 'dart:io';
-import 'package:firebase_storage/firebase_storage.dart';
-import 'package:geocoding/geocoding.dart';
-import 'package:animated_text_kit/animated_text_kit.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_storage/firebase_storage.dart';
+
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:geolocator/geolocator.dart';
-import 'package:image_cropper/image_cropper.dart';
+
 import 'package:image_picker/image_picker.dart';
-import 'package:ipicku_dating_app/presentation/ui_utils/colors.dart';
-import 'package:ipicku_dating_app/domain/firebase_data/firebase_data_bloc.dart';
-import 'package:ipicku_dating_app/presentation/profile/widgets/image_cropping.dart';
+import 'package:ipicku_dating_app/main.dart';
+import 'package:ipicku_dating_app/presentation/chatpage/widget/user_photso.dart';
 
 class ProfileFunctions {
   static Future<List<String>> showImages(String user1, String user2) async {
@@ -50,10 +47,9 @@ class ProfileFunctions {
     return 0;
   }
 
-  static Future<GeoPoint?> getLocation() async {
+  static Future<String?> getLocation() async {
     if (!await isLocationServiceEnabled()) {
-      // Handle location service disabled
-      return null;
+      showEnableLocationSnackbar();
     }
 
     LocationPermission permission = await requestLocationPermission();
@@ -63,7 +59,7 @@ class ProfileFunctions {
         permission == LocationPermission.whileInUse) {
       Position? position = await getCurrentLocation();
       if (position != null) {
-        return GeoPoint(position.latitude, position.longitude);
+        return '${position.latitude},${position.longitude}';
       }
     }
 
@@ -72,7 +68,7 @@ class ProfileFunctions {
 
   static Future<Position?> getCurrentLocation() async {
     if (!await isLocationServiceEnabled()) {
-      return null; // Handle case where location service is disabled
+      showEnableLocationSnackbar();
     }
 
     LocationPermission permission = await Geolocator.requestPermission();
@@ -81,6 +77,24 @@ class ProfileFunctions {
       return await Geolocator.getCurrentPosition();
     }
     return null;
+  }
+
+  static void showEnableLocationSnackbar() {
+    // Show a snackbar informing the user about disabled location service
+    // You can customize this snackbar based on your app's UI/UX
+    ScaffoldMessenger.of(navigatorKey.currentContext!).showSnackBar(
+      SnackBar(
+        content: const Text('Please enable location service to proceed.'),
+        duration: const Duration(seconds: 3),
+        action: SnackBarAction(
+          label: 'SETTINGS',
+          onPressed: () {
+            // Open device settings to enable location service
+            Geolocator.openAppSettings();
+          },
+        ),
+      ),
+    );
   }
 
   static Future<XFile?> pickImage() async {
@@ -93,76 +107,6 @@ class ProfileFunctions {
     }
     debugPrint(pickedImage!.path);
     return null;
-  }
-
-  static Future<File?> cropImage(File image) async {
-    final croppedFile = await ImageCropper().cropImage(
-        sourcePath: image.path,
-        aspectRatio: const CropAspectRatio(ratioX: 1, ratioY: 1),
-        compressQuality: 100,
-        maxHeight: 1000,
-        maxWidth: 1000,
-        compressFormat: ImageCompressFormat.jpg,
-        aspectRatioPresets: [
-          CropAspectRatioPreset.square,
-          CropAspectRatioPreset.ratio3x2,
-          CropAspectRatioPreset.original,
-          CropAspectRatioPreset.ratio4x3,
-          CropAspectRatioPreset.ratio16x9
-        ],
-        uiSettings: [
-          AndroidUiSettings(
-            toolbarColor: AppTheme.white,
-            toolbarTitle: "Crop Image",
-            statusBarColor: AppTheme.kPrimary,
-            backgroundColor: Colors.white,
-          ),
-        ]);
-
-    return File(croppedFile!.path);
-  }
-
-  static Future<File?> cropProfileImage(File image) async {
-    final croppedFile = await ImageCropper().cropImage(
-        sourcePath: image.path,
-        aspectRatio: const CropAspectRatio(ratioX: 1, ratioY: 1),
-        compressQuality: 100,
-        maxHeight: 1000,
-        maxWidth: 1000,
-        cropStyle: CropStyle.circle,
-        compressFormat: ImageCompressFormat.jpg,
-        aspectRatioPresets: [
-          CropAspectRatioPreset.square,
-          CropAspectRatioPreset.original,
-          CropAspectRatioPreset.ratio4x3,
-        ],
-        uiSettings: [
-          AndroidUiSettings(
-            toolbarColor: AppTheme.white,
-            toolbarTitle: "Crop Image",
-            statusBarColor: AppTheme.kPrimary,
-            backgroundColor: Colors.white,
-          ),
-        ]);
-
-    return File(croppedFile!.path);
-  }
-
-  static Future<void> pickAndCropImage(BuildContext ctx) async {
-    final pickedImage = await pickImage();
-
-    if (pickedImage != null) {
-      // Crop the picked image
-      File? croppedImage = await cropProfileImage(File(pickedImage.path));
-
-      if (croppedImage != null) {
-        // Navigate to the upload page with the cropped image
-        showDialog(
-          context: ctx,
-          builder: (context) => UploadPage(croppedImage: croppedImage),
-        );
-      }
-    }
   }
 
   static Future<DateTime?> pickDateofBirth(BuildContext context) async {
@@ -189,15 +133,7 @@ class ProfileFunctions {
           Positioned(
             top: cardPosition.dy + 50, // Adjust position as needed
             left: cardPosition.dx + 50,
-            child: AnimatedTextKit(
-              animatedTexts: [
-                TyperAnimatedText('You picked the user!',
-                    textStyle:
-                        const TextStyle(fontSize: 24, color: Colors.green),
-                    speed: const Duration(milliseconds: 150)),
-              ],
-              totalRepeatCount: 2,
-            ),
+            child: const Text('You picked the user!'),
           ),
           // ... other dialog content if needed
         ],
@@ -205,21 +141,33 @@ class ProfileFunctions {
     );
   }
 
-  static Future<String?> getAddressFromCoordinates(
-      double latitude, double longitude) async {
-    try {
-      List<Placemark> placemarks =
-          await placemarkFromCoordinates(latitude, longitude);
-      if (placemarks.isNotEmpty) {
-        Placemark placemark = placemarks[0];
-        debugPrint('${placemark.locality},${placemark.administrativeArea}');
-        return '${placemark.locality} , ${placemark.administrativeArea}';
-      }
-    } catch (e) {
-      debugPrint('Error: $e');
-    }
-    return null;
-  }
+  // static Future<String?> getAddressFromCoordinates(
+  //     double latitude, double longitude,
+  //     [String? userId]) async {
+  //   try {
+  //     List<Placemark> placemarks =
+  //         await placemarkFromCoordinates(latitude, longitude);
+  //     if (placemarks.isNotEmpty) {
+  //       Placemark placemark = placemarks[0];
+  //       debugPrint('${placemark.locality},${placemark.administrativeArea}');
+  //       if (userId != null) {
+  //         // BlocProvider.of<FirebaseDataBloc>(context).add(UpdateUserFieldEvent(
+  //         //     'location',
+  //         //     '${placemark.locality} , ${placemark.administrativeArea}'));
+  //         FirebaseFirestore.instance.collection("users").doc(userId).update(
+  //           {
+  //             'location':
+  //                 '${placemark.locality} , ${placemark.administrativeArea}'
+  //           },
+  //         );
+  //       }
+  //       return '${placemark.locality} , ${placemark.administrativeArea}';
+  //     }
+  //   } catch (e) {
+  //     debugPrint('Error: $e');
+  //   }
+  //   return null;
+  // }
 
   static File? onImageSelection(int index, BuildContext context) {
     File? croppedImage;
@@ -236,21 +184,17 @@ class ProfileFunctions {
           ),
           TextButton(
             onPressed: () async {
-              Navigator.of(context).pop();
               final image = await ProfileFunctions.pickImage();
-              croppedImage =
-                  await ProfileFunctions.cropImage(File(image!.path));
 
-              // setState(() {
-              //   _selectedImages[index] = File(croppedImage!.path);
-              // });
-
-              BlocProvider.of<FirebaseDataBloc>(context).add(
-                FirebaseDataPhotoChanged(
-                  XFile(croppedImage!.path),
-                  index,
-                ),
-              );
+              if (image != null) {
+                Navigator.of(context).push(MaterialPageRoute(
+                  builder: (context) => CustomUsersPhotoCrop(
+                    path: image,
+                    title: 'Profile picture',
+                    index: index,
+                  ),
+                ));
+              }
             },
             child: const Text("Continue"),
           ),

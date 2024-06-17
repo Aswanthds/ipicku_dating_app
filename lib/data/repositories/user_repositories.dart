@@ -2,6 +2,7 @@
 
 import 'dart:async';
 import 'dart:io';
+import 'dart:typed_data';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -9,7 +10,6 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
-import 'package:image_picker/image_picker.dart';
 import 'package:ipicku_dating_app/data/model/user.dart';
 import 'package:ipicku_dating_app/data/repositories/matches_repo.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -131,7 +131,7 @@ class UserRepository {
     File? photoPath,
     Timestamp? created,
     DateTime? dob,
-    GeoPoint? location,
+    String? location,
   }) async {
     try {
       final Reference storageRef = FirebaseStorage.instance
@@ -203,17 +203,17 @@ class UserRepository {
     }
   }
 
-  Future<UserModel?> getUserData() async {
+  Future<Map<String,dynamic>> getUserData() async {
     try {
       final userId = await getUser();
       final users = FirebaseFirestore.instance.collection('users').doc(userId);
 
       final data = await users.get();
 
-      return UserModel.fromJson(data.data() ?? {});
+      return data.data() ?? {};
     } catch (e) {
       debugPrint("$e");
-      return null;
+      return {};
     }
   }
 
@@ -273,7 +273,7 @@ class UserRepository {
   }
 
   Future<void> uploadImageToStorage(
-      XFile imageFile, int index, String field) async {
+      Uint8List imageFile, int index, String field) async {
     try {
       final userId = await getUser();
 
@@ -285,7 +285,7 @@ class UserRepository {
           .child('userPhotos')
           .child(userId)
           .child(photoName);
-      await storageRef.putFile(File(imageFile.path));
+      await storageRef.putData(imageFile);
       // final downloadURL = await storageRef.getDownloadURL();
       // return downloadURL;
     } catch (e) {
@@ -293,7 +293,7 @@ class UserRepository {
     }
   }
 
-  Future<String> getProfilePhotoLink(XFile imageFile) async {
+  Future<String> getProfilePhotoLink(Uint8List imageFile) async {
     final userId = await getUser();
     String photoPrefix = userId.substring(userId.length - 4).toLowerCase();
     final storageRef = FirebaseStorage.instance
@@ -301,7 +301,7 @@ class UserRepository {
         .child('userPhotos')
         .child(userId)
         .child('$photoPrefix-profile_pic4.png');
-    await storageRef.putFile(File(imageFile.path));
+    await storageRef.putData(imageFile);
 
     return storageRef.getDownloadURL();
   }
@@ -435,29 +435,7 @@ class UserRepository {
     }
   }
 
-  Future<GeoPoint?> getUserLocation() async {
-    String userId = await getUser();
-    DocumentSnapshot userSnapshot =
-        await FirebaseFirestore.instance.collection('users').doc(userId).get();
-
-    // Check if the user document exists
-    if (userSnapshot.exists) {
-      // Retrieve the GeoPoint from the 'location' field
-      GeoPoint geoPoint = userSnapshot['location'];
-
-      return geoPoint;
-
-      // Extract latitude and longitude
-      // double latitude = geoPoint.latitude;
-      // double longitude = geoPoint.longitude;
-
-      // debugPrint('User Latitude: $latitude, Longitude: $longitude');
-    } else {
-      debugPrint('User not found or document does not exist.');
-      return null;
-    }
-  }
-
+ 
   Future<String> getSelectedUserIdToken(String userId) async {
     final tokenSnapshot = await usersCollection.doc(userId).get();
     if (!tokenSnapshot.data()!.containsKey('deviceToken')) {
@@ -506,6 +484,137 @@ class UserRepository {
     usersCollection.doc(await getUser()).update({'notifications_$key': value});
     await prefs.setBool(key, value);
   }
+
+
+  // Future<void> deleteUserAccount() async {
+  //   try {
+  //     // Get the current user ID
+  //     final userId = FirebaseAuth.instance.currentUser!.uid;
+
+  //     // Reference to Firestore document
+  //     DocumentReference userRef =
+  //         FirebaseFirestore.instance.collection('users').doc(userId);
+
+  //     // Reference to Firebase Storage folder
+  //     Reference userImagesRef =
+  //         FirebaseStorage.instance.ref().child('userPhotos').child(userId);
+
+  //     // Delete user data from Firestore
+  //     await userRef.delete();
+
+  //     // Delete all images in the Firebase Storage folder
+  //     await userImagesRef.listAll().then((result) async {
+  //       await Future.forEach(result.items, (Reference item) async {
+  //         await item.delete();
+  //       });
+  //     });
+
+  //     // Sign out from Google if signed in using Google Sign-In
+  //     if (_firebaseAuth.currentUser != null) {
+  //       await _firebaseAuth.currentUser?.delete();
+  //       await _googleSignIn.signOut();
+  //     }
+  //   } on FirebaseAuthException catch (e) {
+  //     debugPrint(e.toString());
+
+  //     if (e.code == "requires-recent-login") {
+  //       // Handle the case where re-authentication is required
+  //       await _reauthenticateAndDelete();
+  //       await _firebaseAuth.currentUser?.delete();
+  //       await _googleSignIn.signOut();
+  //     } else {
+  //       // Handle other Firebase exceptions
+  //     }
+  //   } catch (e) {
+  //     debugPrint(e.toString());
+
+  //     // Handle general exception
+  //   }
+  // }
+
+  // Future<void> _reauthenticateAndDelete() async {
+  //   try {
+  //     final providerData = _firebaseAuth.currentUser?.providerData.first;
+
+  //     if (GoogleAuthProvider().providerId == providerData!.providerId) {
+  //       await _firebaseAuth.currentUser!
+  //           .reauthenticateWithProvider(GoogleAuthProvider());
+  //     }
+
+  //     await _firebaseAuth.currentUser?.delete();
+  //   } catch (e) {
+  //     // Handle exceptions
+  //   }
+  // }
+
+  // Future<UserCredential?> googleSignUp() async {
+  //   try {
+  //     final GoogleSignInAccount? googleSignInAccount =
+  //         await _googleSignIn.signIn();
+  //     final GoogleSignInAuthentication? googleSignInAuthentication =
+  //         await googleSignInAccount?.authentication;
+
+  //     final AuthCredential credential = GoogleAuthProvider.credential(
+  //       accessToken: googleSignInAuthentication?.accessToken,
+  //       idToken: googleSignInAuthentication?.idToken,
+  //     );
+
+  //     return await _firebaseAuth.signInWithCredential(credential);
+  //   } catch (error) {
+  //     debugPrint('Error signing in with Google: $error');
+  //     return null;
+  //   }
+  // }
+
+ 
+  // Future<String> getSelectedUserIdToken(String userId) async {
+  //   final tokenSnapshot = await usersCollection.doc(userId).get();
+  //   if (!tokenSnapshot.data()!.containsKey('deviceToken')) {
+  //     await storeDeviceToken();
+  //     final userData = tokenSnapshot.data() as Map<String, dynamic>;
+  //     return userData['deviceToken'] as String;
+  //   } else {
+  //     final userData = tokenSnapshot.data() as Map<String, dynamic>;
+  //     return userData['deviceToken'] as String;
+  //   }
+  // }
+
+  // Future<void> storeDeviceToken() async {
+  //   final id = await getUser();
+
+  //   await FirebaseMessaging.instance.getToken().then((token) async {
+  //     await usersCollection.doc(id).update({"deviceToken": token});
+  //     debugPrint('My token is $token');
+  //   });
+  // }
+
+  // void setStatus(bool status) async {
+  //   final userId = await getUser();
+  //   debugPrint(status.toString());
+  //   await usersCollection
+  //       .doc(userId)
+  //       .update({'status': status, 'lastActive': Timestamp.now()});
+  // }
+
+  // Future<Map<String, dynamic>> getNotificationsValue() async {
+  //   final SharedPreferences prefs = await SharedPreferences.getInstance();
+  //   final picks = prefs.getBool("picks") ?? false;
+  //   final messages = prefs.getBool("messages") ?? false;
+  //   final recommendations = prefs.getBool("recomendations") ?? false;
+
+  //   return {
+  //     'picks': picks,
+  //     'messages': messages,
+  //     'recomendations': recommendations,
+  //   };
+  // }
+
+  // Future<void> updateNotificationPreferences(String key, bool value) async {
+  //   final SharedPreferences prefs = await SharedPreferences.getInstance();
+
+  //   usersCollection.doc(await getUser()).update({'notifications_$key': value});
+  //   await prefs.setBool(key, value);
+  // }
 }
 /*
 

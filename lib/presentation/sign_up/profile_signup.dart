@@ -4,7 +4,6 @@ import 'dart:io';
 import 'package:ipicku_dating_app/presentation/homepage/welcome_page.dart';
 import 'package:ipicku_dating_app/presentation/ui_utils/colors.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:eva_icons_flutter/eva_icons_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:image_picker/image_picker.dart';
@@ -35,12 +34,14 @@ class _SignupProfilePageState extends State<SignupProfilePage> {
   final TextEditingController _nameController = TextEditingController();
   XFile? _pickedImage;
   String? _gender;
+  int age = 0;
   DateTime? _selectedDate;
 
   bool isPopulated() =>
       _nameController.text.isNotEmpty &&
       _gender != null &&
       _pickedImage != null &&
+      age >= 18 &&
       _selectedDate != null;
   @override
   Widget build(BuildContext context) {
@@ -74,7 +75,7 @@ class _SignupProfilePageState extends State<SignupProfilePage> {
         }
       },
       child: Scaffold(
-        backgroundColor: AppTheme.kPrimary,
+        backgroundColor: AppTheme.black,
         appBar: AppBar(
           automaticallyImplyLeading: true,
           backgroundColor: Colors.transparent,
@@ -93,17 +94,16 @@ class _SignupProfilePageState extends State<SignupProfilePage> {
                           onTap: () async {
                             final image = await ProfileFunctions.pickImage();
                             if (image != null) {
-                              var croppedImage =
-                                  await ProfileFunctions.cropProfileImage(
-                                      File(image.path));
+                              // var croppedImage =
+                              //     await ProfileFunctions.cropProfileImage(
+                              //         File(image.path));
                               setState(() {
-                                _pickedImage = XFile(croppedImage!.path);
+                                _pickedImage = image;
                               });
                             }
                           },
                           pickedImage: _pickedImage,
                         ),
-                      
                         ProfileSignUpFormField(
                           controller: _nameController,
                           icon: Icons.person_4,
@@ -133,24 +133,33 @@ class _SignupProfilePageState extends State<SignupProfilePage> {
                               debugPrint(
                                   ProfileFunctions.calculateAge(pickedDate)
                                       .toString());
+                              age = ProfileFunctions.calculateAge(pickedDate);
                             });
                           },
                           selectedDate: _selectedDate,
                         ),
                         const SizedBox(
-                          height: 20,
+                          height: 50,
                         ),
                         SizedBox(
                           width: size.width - 60,
                           height: 50,
                           child: ElevatedButton(
                             style: ElevatedButton.styleFrom(
+                                backgroundColor:
+                                    AppTheme.redAccent.withOpacity(0.95),
                                 shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(15))),
+                                    borderRadius: BorderRadius.circular(10))),
                             onPressed: () {
                               _onSubmitted();
                             },
-                            child: const Text('Complete Profile'),
+                            child: const Text(
+                              'Complete Profile',
+                              style: TextStyle(
+                                color: AppTheme.white,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
                           ),
                         ),
                         FutureBuilder(
@@ -211,7 +220,7 @@ class _SignupProfilePageState extends State<SignupProfilePage> {
           gender: _gender,
           location: location,
           photo: File(_pickedImage?.path ?? '')));
-    } else{
+    } else {
       ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
           backgroundColor: Colors.red,
           behavior: SnackBarBehavior.floating,
@@ -220,16 +229,24 @@ class _SignupProfilePageState extends State<SignupProfilePage> {
               borderRadius: BorderRadius.all(Radius.circular(20.0))),
           content: Text("Complete the details ")));
     }
-    if(_pickedImage == null){
-       ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+    if (_pickedImage == null) {
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
           backgroundColor: Colors.red,
-            behavior: SnackBarBehavior.floating,
+          behavior: SnackBarBehavior.floating,
           margin: EdgeInsets.all(10),
           shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.all(Radius.circular(20.0))),
           content: Text("Profile picture is required")));
     }
-    
+    if (age < 18) {
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+          backgroundColor: Colors.red,
+          behavior: SnackBarBehavior.floating,
+          margin: EdgeInsets.all(10),
+          shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.all(Radius.circular(20.0))),
+          content: Text("Age should be greater than 18")));
+    }
   }
 }
 
@@ -247,17 +264,34 @@ class ProfilePicture extends StatelessWidget {
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: onTap,
-      child: CircleAvatar(
-        radius: 50,
-        backgroundColor: AppTheme.white,
-        backgroundImage:
-            pickedImage != null ? FileImage(File(pickedImage!.path)) : null,
-        child: pickedImage == null
-            ? const Icon(
-                Icons.add_a_photo,
-                color: AppTheme.black,
-              )
-            : null,
+      child: Container(
+        decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(100),
+            gradient: LinearGradient(colors: [
+              AppTheme.pinkAccent,
+              AppTheme.red,
+            ])),
+        child: Container(
+          width: 120,
+          height: 120,
+          padding: const EdgeInsets.all(15),
+          margin: EdgeInsets.all(2.0),
+          decoration: BoxDecoration(
+            color: AppTheme.white,
+            borderRadius: BorderRadius.circular(100),
+            image: pickedImage != null
+                ? DecorationImage(
+                    image: FileImage(File(pickedImage!.path)),
+                    fit: BoxFit.cover)
+                : null,
+          ),
+          child: pickedImage == null
+              ? const Icon(
+                  Icons.add_a_photo,
+                  color: AppTheme.black,
+                )
+              : null,
+        ),
       ),
     );
   }
@@ -282,19 +316,33 @@ class _ProfileDropdownButtonState extends State<ProfileDropdownButton> {
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
-      child: DropdownButtonFormField<String>(
-        style: const TextStyle(color: AppTheme.white),
-        dropdownColor: AppTheme.grey,
-        value: widget.gender,
-        decoration: InputDecorationManager.inputDecoration,
-        onChanged: widget.onChanged,
-        items: ['Male', 'Female']
-            .map((gender) => DropdownMenuItem(
-                value: gender,
-                child: Text(
-                  gender,
-                )))
-            .toList(),
+      child: Container(
+        decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(15),
+            gradient: const LinearGradient(colors: [
+              AppTheme.pinkAccent,
+              AppTheme.red,
+            ])),
+        child: Container(
+          margin: const EdgeInsets.all(2.0),
+          padding: const EdgeInsets.only(left: 5.0),
+          decoration: BoxDecoration(
+              color: Colors.white, borderRadius: BorderRadius.circular(15)),
+          child: DropdownButtonFormField<String>(
+            style: const TextStyle(color: AppTheme.black),
+            dropdownColor: AppTheme.grey,
+            value: widget.gender,
+            decoration: InputDecorationManager.inputDecoration,
+            onChanged: widget.onChanged,
+            items: ['Male', 'Female']
+                .map((gender) => DropdownMenuItem(
+                    value: gender,
+                    child: Text(
+                      gender,
+                    )))
+                .toList(),
+          ),
+        ),
       ),
     );
   }
@@ -316,132 +364,41 @@ class ProfileDatePicker extends StatefulWidget {
 class _ProfileDatePickerState extends State<ProfileDatePicker> {
   @override
   Widget build(BuildContext context) {
-    return ListTile(
-      onTap: widget.onTap,
-      title: Container(
-        padding: const EdgeInsets.all(15),
+    return Container(
+      margin: const EdgeInsets.symmetric(horizontal: 12.0),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(15),
+        gradient: const LinearGradient(
+          colors: [
+            AppTheme.pinkAccent,
+            AppTheme.red,
+          ],
+        ),
+      ),
+      child: Container(
+        margin: const EdgeInsets.all(2.0),
         decoration: BoxDecoration(
-          border: Border.all(
-            color: AppTheme.white,
-            style: BorderStyle.solid,
-          ),
+          color: AppTheme.white,
           borderRadius: BorderRadius.circular(15),
         ),
-        child: Text(
-          widget.selectedDate != null
-              ? DateFormat('dd-MM-yyyy').format(widget.selectedDate!)
-              : 'D.O.B',
-          style: const TextStyle(
-            color: AppTheme.white,
+        child: ListTile(
+          onTap: widget.onTap,
+          contentPadding: EdgeInsets.zero,
+          title: Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Text(
+              widget.selectedDate != null
+                  ? DateFormat('dd-MM-yyyy').format(widget.selectedDate!)
+                  : 'D.O.B',
+              style: const TextStyle(
+                color: AppTheme.black,
+              ),
+            ),
           ),
-        ),
-      ),
-      trailing: const Icon(
-        EvaIcons.calendarOutline,
-        color: AppTheme.white,
-      ),
-    );
-  }
-}
-
-class ImageGrid extends StatefulWidget {
-  final List<File?> selectedImages;
-
-  const ImageGrid({
-    required this.selectedImages,
-    Key? key,
-  }) : super(key: key);
-
-  @override
-  State<ImageGrid> createState() => _ImageGridState();
-}
-
-class _ImageGridState extends State<ImageGrid> {
-  final ImagePicker imagePicker = ImagePicker();
-
-  @override
-  Widget build(BuildContext context) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-      children: List.generate(
-        widget.selectedImages.length,
-        (index) => Padding(
-          padding: const EdgeInsets.only(right: 8.0),
-          child: GestureDetector(
-              onTap: () async {
-                final image = await imagePicker.pickImage(
-                  source: ImageSource.gallery,
-                );
-                if (image != null) {
-                  setState(() {
-                    widget.selectedImages[index] = File(image.path);
-                  });
-                }
-                debugPrint(image!.name);
-              },
-              child: Container(
-                  height: 120,
-                  width: 72,
-                  decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(15),
-                      color: AppTheme.grey,
-                      image: widget.selectedImages[index] != null
-                          ? DecorationImage(
-                              image: FileImage(
-                                widget.selectedImages[index]!,
-                              ),
-                              fit: BoxFit.cover,
-                            )
-                          : const DecorationImage(
-                              image: AssetImage("assets/images/logo_dark.png"),
-                              opacity: 0.4,
-                              fit: BoxFit.scaleDown)))),
-        ),
-      ),
-    );
-  }
-}
-
-class ImageUploadDialog extends StatelessWidget {
-  final List<File?> selectedImages;
-
-  const ImageUploadDialog({
-    required this.selectedImages,
-    Key? key,
-  }) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return Dialog(
-      child: Container(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            const Text(
-              'Image Upload',
-              style: TextStyle(
-                fontSize: 18,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-            const SizedBox(height: 16.0),
-            ImageGrid(selectedImages: selectedImages),
-            const SizedBox(height: 16.0),
-            Align(
-              alignment: Alignment.bottomRight,
-              child: ElevatedButton(
-                onPressed: () {
-                  // BlocProvider.of<ProfileBloc>(context).add(
-                  //   PhotosChanged(photos: selectedImages),
-                  // );
-                  Navigator.of(context).pop();
-                },
-                child: const Text('Save'),
-              ),
-            ),
-          ],
+          trailing: const Icon(
+            Icons.calendar_month_rounded,
+            color: AppTheme.black,
+          ),
         ),
       ),
     );

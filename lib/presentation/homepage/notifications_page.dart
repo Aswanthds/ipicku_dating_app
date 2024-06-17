@@ -1,5 +1,4 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:eva_icons_flutter/eva_icons_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:ipicku_dating_app/presentation/ui_utils/colors.dart';
 import 'package:ipicku_dating_app/presentation/widgets/empty_page.dart';
@@ -16,7 +15,9 @@ class NotificationsPage extends StatelessWidget {
         appBar: AppBar(
           title: const Text('Notification'),
         ),
-        body: data.isEmpty ? const EmptyPageGif(text: 'No Notifications'): ListView.separated(
+        body: data.isEmpty
+            ? const EmptyPageGif(text: 'No Notifications')
+            : ListView.separated(
                 itemBuilder: (context, index) => NotificationItem(
                       time: format((data[index]['time'] as Timestamp).toDate(),
                           allowFromNow: true,
@@ -69,7 +70,7 @@ class NotificationItem extends StatelessWidget {
           radius: 20,
           backgroundColor: Colors.yellow,
           child: Icon(
-            EvaIcons.heart,
+            Icons.heart_broken_rounded,
             color: AppTheme.red,
           ),
         );
@@ -79,7 +80,7 @@ class NotificationItem extends StatelessWidget {
           radius: 20,
           backgroundColor: AppTheme.yellow,
           child: Icon(
-            EvaIcons.messageCircle,
+            Icons.message_rounded,
             color: AppTheme.blue,
           ),
         );
@@ -88,7 +89,7 @@ class NotificationItem extends StatelessWidget {
           radius: 20,
           backgroundColor: Colors.yellow,
           child: Icon(
-            EvaIcons.alertCircle,
+            Icons.crisis_alert_rounded,
             color: AppTheme.red,
           ),
         );

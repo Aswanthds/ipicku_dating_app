@@ -1,4 +1,4 @@
-import 'package:eva_icons_flutter/eva_icons_flutter.dart';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:ipicku_dating_app/domain/messages/messages_bloc.dart';
@@ -41,7 +41,7 @@ class _ChatPageState extends State<ChatPage> {
                   builder: (context) => const CallHistoryPage(),
                 ));
               },
-              icon: const Icon(EvaIcons.phoneCall),
+              icon: const Icon(Icons.phone),
             ),
           ],
         ),

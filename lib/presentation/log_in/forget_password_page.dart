@@ -1,4 +1,3 @@
-import 'package:eva_icons_flutter/eva_icons_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:ipicku_dating_app/presentation/ui_utils/colors.dart';
@@ -58,7 +57,7 @@ class _ForgetPasswordPageState extends State<ForgetPasswordPage> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text("Link Sent to your Email...."),
-                  Icon(EvaIcons.doneAll)
+                  Icon(Icons.done_all)
                 ],
               ),
             ),
@@ -66,9 +65,9 @@ class _ForgetPasswordPageState extends State<ForgetPasswordPage> {
         }
       },
       child: Scaffold(
-        backgroundColor: AppTheme.kPrimary,
+        backgroundColor: AppTheme.black,
         appBar: AppBar(
-          backgroundColor: AppTheme.kPrimary,
+          backgroundColor: AppTheme.black,
           automaticallyImplyLeading: true,
           iconTheme: const IconThemeData(color: AppTheme.white),
         ),
@@ -94,7 +93,7 @@ class _ForgetPasswordPageState extends State<ForgetPasswordPage> {
                       return null;
                     },
                     labelText: "Email",
-                    icon: EvaIcons.emailOutline,
+                    icon: Icons.email_rounded,
                     isPassword: false,
                   ),
                 ),

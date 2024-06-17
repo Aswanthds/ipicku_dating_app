@@ -1,4 +1,3 @@
-import 'package:eva_icons_flutter/eva_icons_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:ipicku_dating_app/data/functions/validators.dart';
@@ -94,67 +93,74 @@ class _LoginFormState extends State<LoginForm> {
             padding: const EdgeInsets.all(20.0),
             child: Form(
               key: _formkey,
-              child: ListView(
-                children: <Widget>[
-                  const LogoWidget(),
-                  FormFieldWidget(
-                    controller: _emailController,
-                    validator: (value) {
-                      if (value!.isEmpty) {
-                        return "Enter your email ";
-                      } else if (!Validators.isValidEmail(value)) {
-                        return "Enter a valid email address";
-                      }
+              child: SingleChildScrollView(
+                scrollDirection: Axis.vertical,
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: <Widget>[
+                    const LogoWidget(),
+                    FormFieldWidget(
+                      controller: _emailController,
+                      validator: (value) {
+                        if (value!.isEmpty) {
+                          return "Enter your email ";
+                        } else if (!Validators.isValidEmail(value)) {
+                          return "Enter a valid email address";
+                        }
 
-                      return null;
-                    },
-                    labelText: "Email",
-                    icon: EvaIcons.email,
-                    isPassword: false,
-                  ),
-                  const SizedBox(
-                    height: 15,
-                  ),
-                  FormFieldWidget(
-                    controller: _passwordController,
-                    validator: (value) {
-                      if (value!.isEmpty) {
-                        return "Enter your password ";
-                      }
-
-                      return null;
-                    },
-                    labelText: "Password",
-                    icon: EvaIcons.lock,
-                    isPassword: true,
-                  ),
-                  const ForgetPasswordText(),
-                  GoogleLoginButton(userRepository: widget._userRepository),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 20),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.stretch,
-                      children: <Widget>[
-                        LoginButton(
-                          onPressed: () {
-                            if (isPopulated) {
-                              _formkey.currentState!.validate()
-                                  ? _onFormSubmitted(context)
-                                  : null;
-                            } else {
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                  const SnackBar(
-                                      content: Text(
-                                          "Enter your email and Password")));
-                            }
-                          },
-                        ),
-                        CreateAccountButton(
-                            userRepository: widget._userRepository),
-                      ],
+                        return null;
+                      },
+                      labelText: "Email",
+                      icon: Icons.email,
+                      isPassword: false,
                     ),
-                  ),
-                ],
+                    const SizedBox(
+                      height: 15,
+                    ),
+                    FormFieldWidget(
+                      controller: _passwordController,
+                      validator: (value) {
+                        if (value!.isEmpty) {
+                          return "Enter your password ";
+                        }
+
+                        return null;
+                      },
+                      labelText: "Password",
+                      icon: Icons.lock,
+                      isPassword: true,
+                    ),
+                    const ForgetPasswordText(),
+                    SizedBox(
+                        width: double.infinity,
+                        child: GoogleLoginButton(
+                            userRepository: widget._userRepository)),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 20),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                        children: <Widget>[
+                          LoginButton(
+                            onPressed: () {
+                              if (isPopulated) {
+                                _formkey.currentState!.validate()
+                                    ? _onFormSubmitted(context)
+                                    : null;
+                              } else {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                    const SnackBar(
+                                        content: Text(
+                                            "Enter your email and Password")));
+                              }
+                            },
+                          ),
+                          CreateAccountButton(
+                              userRepository: widget._userRepository),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
               ),
             ),
           );

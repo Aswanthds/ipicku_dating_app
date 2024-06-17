@@ -1,5 +1,5 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
-import 'package:ipicku_dating_app/presentation/profile/user_profile/image_preview.dart';
 
 class UserImageSection extends StatelessWidget {
   final List<dynamic>? imageUrl;
@@ -20,7 +20,6 @@ class UserImageSection extends StatelessWidget {
             "User Photos",
             style: Theme.of(context).textTheme.titleLarge?.copyWith(
                   fontWeight: FontWeight.bold,
-                  
                 ),
           ),
         ),
@@ -52,7 +51,23 @@ class UserImageSection extends StatelessWidget {
 Widget _buildUserPhoto(BuildContext context, String imgUrl) {
   return GestureDetector(
     onTap: () {
-      Navigator.of(context).push(_createImagePreviewRoute(imgUrl));
+      showDialog(
+        context: context,
+        builder: (context) {
+          return Dialog(
+            child: Container(
+              width: MediaQuery.of(context).size.width * 0.8,
+              height: MediaQuery.of(context).size.height * 0.8,
+              decoration: BoxDecoration(
+                image: DecorationImage(
+                  image: CachedNetworkImageProvider(imgUrl),
+                  fit: BoxFit.cover,
+                ),
+              ),
+            ),
+          );
+        },
+      );
     },
     child: Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -75,28 +90,12 @@ Widget _buildUserPhoto(BuildContext context, String imgUrl) {
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(15),
             image: DecorationImage(
-              image: NetworkImage(imgUrl),
+              image: CachedNetworkImageProvider(imgUrl),
               fit: BoxFit.cover,
             ),
           ),
         ),
       ],
     ),
-  );
-}
-
-Route _createImagePreviewRoute(String imgUrl) {
-  return PageRouteBuilder(
-    pageBuilder: (context, animation, secondaryAnimation) {
-      return ImagePreviewPage(imageUrl: imgUrl);
-    },
-    transitionsBuilder: (context, animation, secondaryAnimation, child) {
-      const begin = Offset(0.0, 1.0);
-      const end = Offset.zero;
-      const curve = Curves.easeInOut;
-      var tween = Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
-      var offsetAnimation = animation.drive(tween);
-      return SlideTransition(position: offsetAnimation, child: child);
-    },
   );
 }

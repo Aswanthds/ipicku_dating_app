@@ -1,15 +1,16 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:ipicku_dating_app/data/repositories/user_repositories.dart';
 import 'package:ipicku_dating_app/presentation/ui_utils/colors.dart';
-import 'package:ipicku_dating_app/data/model/user.dart';
 import 'package:ipicku_dating_app/domain/matches_data_bloc/matches_data_bloc.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:ipicku_dating_app/presentation/homepage/progfilepage.dart';
 import 'package:ipicku_dating_app/presentation/widgets/empty_list.dart';
 
 class MutualPicks extends StatelessWidget {
-  final UserModel user;
-
-  const MutualPicks({super.key, required this.user});
+  const MutualPicks({
+    super.key,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -40,11 +41,16 @@ class MutualPicks extends StatelessWidget {
                         margin: const EdgeInsets.all(10),
                         elevation: 5.0,
                         child: ListTile(
-                          onTap: () {
-                            Navigator.of(context).push(MaterialPageRoute(
-                              builder: (context) =>
-                                  UserProfileBottomSheet(data: data[index],userid: user.uid ?? '',isMyPick: false),
-                            ));
+                          onTap: () async {
+                            final id = await UserRepository().getUser();
+                            Navigator.of(context)
+                                .push(MaterialPageRoute(builder: (context) {
+                              
+                              return UserProfileBottomSheet(
+                                  data: data[index],
+                                  userid: id,
+                                  isMyPick: false);
+                            }));
                           },
                           shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(20)),
@@ -55,8 +61,8 @@ class MutualPicks extends StatelessWidget {
                                   letterSpacing: 2.0,
                                   fontWeight: FontWeight.bold)),
                           leading: CircleAvatar(
-                            backgroundImage:
-                                NetworkImage(data[index]['photoUrl']),
+                            backgroundImage: CachedNetworkImageProvider(
+                                data[index]['photoUrl']),
                           ),
                         ),
                       );

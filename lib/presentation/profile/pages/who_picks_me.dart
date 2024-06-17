@@ -1,18 +1,18 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:ipicku_dating_app/data/repositories/user_repositories.dart';
 import 'package:ipicku_dating_app/presentation/ui_utils/colors.dart';
-import 'package:ipicku_dating_app/data/model/user.dart';
 import 'package:ipicku_dating_app/domain/matches_data_bloc/matches_data_bloc.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:ipicku_dating_app/presentation/homepage/progfilepage.dart';
 import 'package:ipicku_dating_app/presentation/widgets/empty_list.dart';
 
 class WhoPicksMePag extends StatelessWidget {
-  final UserModel user;
 
-  const WhoPicksMePag({super.key, required this.user});
+
+  const WhoPicksMePag({super.key,});
 
   @override
   Widget build(BuildContext context) {
@@ -72,8 +72,10 @@ class WhoPicksMePag extends StatelessWidget {
                                   fontSize: 12,
                                   fontWeight: FontWeight.bold)),
                           leading: CircleAvatar(
-                            backgroundImage:
-                                NetworkImage(data[index]['photoUrl']),
+                            backgroundImage: CachedNetworkImageProvider(
+                                data[index]['photoUrl'],
+                                errorListener: (data) =>
+                                    const Text("Failed to Load Image")),
                           ),
                         ),
                       );

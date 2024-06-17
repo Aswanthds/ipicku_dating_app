@@ -3,7 +3,6 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:ipicku_dating_app/data/functions/profile_functions.dart';
 import 'package:ipicku_dating_app/data/repositories/push_notifi_service.dart';
 import 'package:ipicku_dating_app/domain/messaging/messaging_bloc.dart';
 import 'package:ipicku_dating_app/presentation/ui_utils/colors.dart';
@@ -44,33 +43,33 @@ class _UserMessageBoxState extends State<UserMessageBox> {
               color: Theme.of(context).textTheme.displayMedium?.color,
             ),
             onPressed: () async {
-              if (!widget.currentUser?['blocked']) {
-                final image = await ProfileFunctions.pickImage();
-                if (image != null) {
-                  final croppedImage =
-                      await ProfileFunctions.cropImage(File(image.path));
+              // if (!widget.currentUser?['blocked']) {
+              //   final image = await ProfileFunctions.pickImage();
+              //   if (image != null) {
+              //     final croppedImage =
+              //         await ProfileFunctions.cropImage(File(image.path));
 
-                  if (croppedImage != null) {
-                    setState(() {
-                      imageChat = File(croppedImage.path);
-                    });
-                    _onFormSubmitted();
-                  }
+              //     if (croppedImage != null) {
+              //       setState(() {
+              //         imageChat = File(croppedImage.path);
+              //       });
+              //       _onFormSubmitted();
+              //     }
 
-                  if (widget.selectedUser?['deviceToken'] != null &&
-                      widget.selectedUser?['notifications_messages'] == true) {
-                    PushNotificationService().sendPushMessage(
-                        token: widget.selectedUser?['deviceToken'],
-                        type: 'messages',
-                        title: 'A new message',
-                        body:
-                            '${widget.currentUser?['name']} just messaged you');
-                  }
-                }
-              } else {
-                ScaffoldMessenger.of(context)
-                    .showSnackBar(SnackBarManager.userBlockedSnackbar(context));
-              }
+              //     if (widget.selectedUser?['deviceToken'] != null &&
+              //         widget.selectedUser?['notifications_messages'] == true) {
+              //       PushNotificationService().sendPushMessage(
+              //           token: widget.selectedUser?['deviceToken'],
+              //           type: 'messages',
+              //           title: 'A new message',
+              //           body:
+              //               '${widget.currentUser?['name']} just messaged you');
+              //     }
+              //   }
+              // } else {
+              //   ScaffoldMessenger.of(context)
+              //       .showSnackBar(SnackBarManager.userBlockedSnackbar(context));
+              // }
             },
           ),
           Expanded(

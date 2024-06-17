@@ -25,35 +25,35 @@ class ProfileSignUpFormField extends StatelessWidget {
         horizontal: 12,
         vertical: 10,
       ),
-      child: TextFormField(
-          controller: controller,
-          decoration: InputDecoration(
-            labelText: title,
-            enabledBorder: const OutlineInputBorder(
-              borderRadius: BorderRadius.all(
-                Radius.circular(15),
-              ),
-              borderSide: BorderSide(
-                color: AppTheme.white,
-                style: BorderStyle.solid,
-              ),
-            ),
-            labelStyle: const TextStyle(color: AppTheme.white),
-            focusedBorder: const OutlineInputBorder(
-              borderRadius: BorderRadius.all(
-                Radius.circular(15),
-              ),
-              borderSide: BorderSide(
-                color: AppTheme.grey,
-                style: BorderStyle.solid,
-              ),
-            ),
+      child: Container(
+        decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(15),
+            gradient: const LinearGradient(colors: [
+              AppTheme.pinkAccent,
+              AppTheme.red,
+            ])),
+        child: Container(
+          margin: const EdgeInsets.all(2.0),
+          padding: const EdgeInsets.all(3.0),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(15),
           ),
-          style: const TextStyle(
-            color: AppTheme.white,
-          ),
-          autocorrect: false,
-          validator: validator),
+          child: TextFormField(
+              controller: controller,
+              decoration: InputDecoration(
+                hintText: title,
+                hintStyle: const TextStyle(color: AppTheme.black),
+                border: InputBorder.none,
+                enabledBorder: InputBorder.none,
+              ),
+              style: const TextStyle(
+                color: AppTheme.black,
+              ),
+              autocorrect: false,
+              validator: validator),
+        ),
+      ),
     );
   }
 }

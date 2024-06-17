@@ -10,7 +10,7 @@ class UserModel {
   String? photoPath;
   DateTime? dob;
   Timestamp? created;
-  GeoPoint? location;
+  String? location;
   int? minAge, maxAge;
   List<dynamic>? userPhotos;
   List<dynamic>? interests;
@@ -47,12 +47,13 @@ class UserModel {
       photoPath: json['photoUrl'],
       userPhotos: json['photos'],
       email: json['email'],
-      dob: (json['dob'] as Timestamp).toDate(),
+      dob: json['dob'] != null ? (json['dob'] as Timestamp).toDate() : null,
       bio: json['bio'],
       minAge: json['minAge'],
       maxAge: json['maxAge'],
       isOnline: json['status'],
-      lastActive: (json['lastActive'] as Timestamp).toDate(),
+      lastActive:
+          json['dob'] != null ? (json['dob'] as Timestamp).toDate() : null,
     );
   }
 }

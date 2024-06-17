@@ -1,4 +1,3 @@
-import 'package:eva_icons_flutter/eva_icons_flutter.dart';
 import 'package:flutter/material.dart';
 
 class ProfileListTile extends StatelessWidget {
@@ -18,7 +17,7 @@ class ProfileListTile extends StatelessWidget {
       onTap: onTap,
       leading: Icon(leading),
       title: Text(text),
-      trailing: const Icon(EvaIcons.arrowIosForwardOutline),
+      trailing: const Icon(Icons.arrow_forward_ios),
     );
   }
 }
@@ -41,7 +40,7 @@ class ProfileImageWidget extends StatelessWidget {
             borderRadius: BorderRadius.circular(12)),
         child: Center(
           child: IconButton(
-              icon: const Icon(EvaIcons.imageOutline), onPressed: () {}),
+              icon: const Icon(Icons.image), onPressed: () {}),
         ));
   }
 }

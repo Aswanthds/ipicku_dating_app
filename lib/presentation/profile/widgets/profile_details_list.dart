@@ -1,4 +1,3 @@
-import 'package:eva_icons_flutter/eva_icons_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:ipicku_dating_app/presentation/ui_utils/colors.dart';
 import 'package:ipicku_dating_app/presentation/ui_utils/dialog_manager.dart';
@@ -27,8 +26,8 @@ class ProfileDetailsListTile extends StatelessWidget {
           heading ?? '',
           overflow: TextOverflow.ellipsis,
           textAlign: TextAlign.start,
-          style: const TextStyle(
-            color: AppTheme.black,
+          style: TextStyle(
+            color: Theme.of(context).textTheme.headlineMedium?.color,
           ),
         ),
         Row(
@@ -49,18 +48,11 @@ class ProfileDetailsListTile extends StatelessWidget {
             isEditable
                 ? IconButton(
                     onPressed: () {
-                      DialogManager.showEditDialog(
-                        context: context,
-                        isEditable: isEditable,
-                        controller: controller,
-                        field: field,
-                        heading: heading,
-                        value: value,
-                      );
+                     
                     },
-                    icon: const Icon(
-                      EvaIcons.edit2,
-                      color: AppTheme.black,
+                    icon: Icon(
+                      Icons.edit,
+                      color: Theme.of(context).textTheme.headlineMedium?.color,
                       size: 18,
                     ),
                   )

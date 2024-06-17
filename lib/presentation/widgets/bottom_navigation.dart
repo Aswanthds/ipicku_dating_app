@@ -1,6 +1,6 @@
-import 'package:eva_icons_flutter/eva_icons_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:ipicku_dating_app/presentation/ui_utils/colors.dart';
+import 'package:line_awesome_flutter/line_awesome_flutter.dart';
 
 ValueNotifier<int> indexChangeNotifier = ValueNotifier(0);
 
@@ -35,22 +35,22 @@ class BottomNavigation extends StatelessWidget {
             ),
             BottomNavigationBarItem(
               icon: Icon(
-                Icons.recommend_outlined,
+                LineAwesomeIcons.smile,
                 size: 25,
               ),
               activeIcon: Icon(
-                Icons.recommend,
+                LineAwesomeIcons.surprise,
                 size: 25,
               ),
               label: '',
             ),
             BottomNavigationBarItem(
               icon: Icon(
-                EvaIcons.messageCircleOutline,
+                LineAwesomeIcons.inbox_solid,
                 size: 25,
               ),
               activeIcon: Icon(
-                EvaIcons.messageCircle,
+                LineAwesomeIcons.inbox_solid,
                 size: 25,
               ),
               label: '',

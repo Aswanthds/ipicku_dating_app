@@ -1,4 +1,3 @@
-import 'package:eva_icons_flutter/eva_icons_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:ipicku_dating_app/presentation/ui_utils/colors.dart';
@@ -99,7 +98,7 @@ class _RegisterFormState extends State<RegisterForm> {
                       return null;
                     },
                     labelText: "Email",
-                    icon: EvaIcons.email,
+                    icon: Icons.email,
                     isPassword: false,
                   ),
                   const SizedBox(
@@ -115,7 +114,7 @@ class _RegisterFormState extends State<RegisterForm> {
                       return null;
                     },
                     labelText: "Password",
-                    icon: EvaIcons.lock,
+                    icon: Icons.lock,
                     isPassword: true,
                   ),
                   const SizedBox(
@@ -133,7 +132,7 @@ class _RegisterFormState extends State<RegisterForm> {
                       return null;
                     },
                     labelText: "Re-enter your password",
-                    icon: EvaIcons.lock,
+                    icon: Icons.lock,
                     isPassword: true,
                   ),
                   Padding(
@@ -146,7 +145,7 @@ class _RegisterFormState extends State<RegisterForm> {
                         borderRadius: BorderRadius.circular(30.0),
                       ),
                     ),
-                    icon: const Icon(EvaIcons.google, color: AppTheme.white),
+                    icon: const Icon(Icons.g_mobiledata, color: AppTheme.white),
                     onPressed: () {
                       BlocProvider.of<SignUpBloc>(context)
                           .add(GoogleSignUpEvent());

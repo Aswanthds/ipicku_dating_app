@@ -10,7 +10,7 @@ sealed class FirebaseDataState extends Equatable {
 final class FirebaseDataInitial extends FirebaseDataState {}
 
 class FirebaseDataLoaded extends FirebaseDataState {
-  final UserModel? data;
+  final Map<String,dynamic>? data;
 
 
   const FirebaseDataLoaded({ required this.data});

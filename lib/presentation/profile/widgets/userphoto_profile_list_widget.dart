@@ -1,13 +1,10 @@
 import 'dart:io';
-import 'package:eva_icons_flutter/eva_icons_flutter.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:image_picker/image_picker.dart';
+import 'package:ipicku_dating_app/presentation/chatpage/widget/user_photso.dart';
 import 'package:ipicku_dating_app/presentation/ui_utils/colors.dart';
 import 'package:ipicku_dating_app/data/functions/profile_functions.dart';
 import 'package:ipicku_dating_app/data/model/user.dart';
-import 'package:ipicku_dating_app/domain/firebase_data/firebase_data_bloc.dart';
-import 'package:ipicku_dating_app/presentation/profile/user_profile/image_preview.dart';
 
 class UserPhotosOwnProfile extends StatefulWidget {
   final UserModel? user;
@@ -23,6 +20,8 @@ class UserPhotosOwnProfile extends StatefulWidget {
 
 class _UserPhotosOwnProfileState extends State<UserPhotosOwnProfile> {
   final List<File?> _selectedImages = List.generate(3, (index) => null);
+  final double _width = 80;
+  final double _height = 120;
 
   @override
   Widget build(BuildContext context) {
@@ -45,37 +44,53 @@ class _UserPhotosOwnProfileState extends State<UserPhotosOwnProfile> {
           children: List<Widget>.generate(
             3,
             (index) => InkWell(
-              onTap: () {
+              onTap: () async {
                 if (widget.user?.userPhotos != null &&
                     widget.user!.userPhotos!.isNotEmpty) {
                   if (index < widget.user!.userPhotos!.length) {
                     _selectedImages.isNotEmpty
-                        ? Navigator.of(context).push(MaterialPageRoute(
-                            builder: (context) => ImagePreviewPage(
-                              imageUrl: widget.user?.userPhotos?[index],
-                            ),
-                          ))
+                        ? showDialog(
+                            context: context,
+                            builder: (context) {
+                              return Dialog(
+                                child: Container(
+                                  width:
+                                      MediaQuery.of(context).size.width * 0.8,
+                                  height:
+                                      MediaQuery.of(context).size.height * 0.8,
+                                  decoration: BoxDecoration(
+                                    image: DecorationImage(
+                                      image: CachedNetworkImageProvider(
+                                          widget.user!.userPhotos![index]),
+                                      fit: BoxFit.cover,
+                                    ),
+                                  ),
+                                ),
+                              );
+                            },
+                          )
                         : null;
                   } else {
-                    _onImageSelection(index);
+                    _imagePicking(index);
                   }
                 } else {
-                  _onImageSelection(index);
+                  _imagePicking(index);
                 }
               },
-              onLongPress: () {
+              onLongPress: () async {
                 if (widget.user?.userPhotos != null &&
                     widget.user!.userPhotos!.isNotEmpty &&
                     index < widget.user!.userPhotos!.length) {
-                  _onImageSelection(index);
+                  _imagePicking(index);
                 }
               },
               child: Card(
                 elevation: 5.0,
                 margin: const EdgeInsets.all(10),
-                child: Container(
-                  height: 120,
-                  width: 80,
+                child: AnimatedContainer(
+                  width: _width,
+                  height: _height,
+                  duration: Durations.extralong1,
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(15),
                     color: widget.user?.userPhotos != null &&
@@ -87,7 +102,7 @@ class _UserPhotosOwnProfileState extends State<UserPhotosOwnProfile> {
                             widget.user!.userPhotos!.isNotEmpty &&
                             index < widget.user!.userPhotos!.length
                         ? DecorationImage(
-                            image: NetworkImage(
+                            image: CachedNetworkImageProvider(
                               widget.user?.userPhotos?[index],
                             ),
                             fit: BoxFit.cover,
@@ -113,55 +128,18 @@ class _UserPhotosOwnProfileState extends State<UserPhotosOwnProfile> {
     );
   }
 
-  void _onImageSelection(int index) {
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        content: const Text("Select an Image"),
-        backgroundColor: AppTheme.white,
-        shape: const RoundedRectangleBorder(borderRadius: BorderRadius.zero),
-        actions: [
-          TextButton(
-            onPressed: () {
-              Navigator.of(context).pop();
-            },
-            child: const Text(
-              "Cancel",
-              style: TextStyle(color: AppTheme.red),
-            ),
-          ),
-          TextButton.icon(
-            onPressed: () async {
-              final image = await ProfileFunctions.pickImage();
-              final croppedImage =
-                  await ProfileFunctions.cropImage(File(image!.path));
-
-              setState(() {
-                _selectedImages[index] = File(croppedImage!.path);
-              });
-
-              BlocProvider.of<FirebaseDataBloc>(context).add(
-                FirebaseDataPhotoChanged(
-                  XFile(croppedImage!.path),
-                  index,
-                ),
-              );
-
-              Navigator.of(context).pop();
-            },
-            icon: const Icon(
-              EvaIcons.arrowRight,
-              color: AppTheme.green,
-            ),
-            label: const Text(
-              "Continue",
-              style: TextStyle(
-                color: AppTheme.green,
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
+  void _imagePicking(int index) async {
+    final pickedImage = await ProfileFunctions.pickImage();
+    if (pickedImage != null) {
+      // BlocProvider.of<FirebaseDataBloc>(context)
+      //     .add(FirebaseProfilePhotochanged(pickedImage));
+      Navigator.of(context).push(MaterialPageRoute(
+        builder: (context) => CustomUsersPhotoCrop(
+          path: pickedImage,
+          title: 'Profile picture',
+          index: index,
+        ),
+      ));
+    }
   }
 }

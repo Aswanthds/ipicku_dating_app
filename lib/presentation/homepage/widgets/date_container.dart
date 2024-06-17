@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:ipicku_dating_app/presentation/homepage/widgets/swipe_card.dart';
 import 'package:ipicku_dating_app/data/repositories/user_repositories.dart';
+import 'package:ipicku_dating_app/presentation/profile/widgets/swipe_dummy.dart';
 
 class DateProfileContainer extends StatelessWidget {
   final UserRepository userRepository;
@@ -17,10 +17,7 @@ class DateProfileContainer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SwipeCardWidget(
-      size: size,
-      userProfile: userProfile,
-      userRepository: userRepository,
-    );
+    return  DummySwipe(userProfile: userProfile,size: size,);
+  
   }
 }

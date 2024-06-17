@@ -1,5 +1,4 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:eva_icons_flutter/eva_icons_flutter.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -8,7 +7,6 @@ import 'package:ipicku_dating_app/domain/messaging/messaging_bloc.dart';
 import 'package:ipicku_dating_app/presentation/profile/user_profile/image_preview.dart';
 
 import 'package:ipicku_dating_app/presentation/ui_utils/colors.dart';
-import 'package:ipicku_dating_app/presentation/chatpage/video_call_page.dart';
 
 class MessageWidget extends StatefulWidget {
   final DocumentSnapshot data;
@@ -185,7 +183,7 @@ class _MessageWidgetState extends State<MessageWidget> {
             ),
           ),
           Icon(
-            data['delivered'] ? EvaIcons.doneAll : Icons.check,
+            data['delivered'] ? Icons.done_all : Icons.check,
             size: 16,
             color: data['delivered'] ? Colors.blue : Colors.grey,
           ),
@@ -217,7 +215,8 @@ class _MessageWidgetState extends State<MessageWidget> {
               mainAxisSize: MainAxisSize.min,
               children: [
                 Text(
-                  DateFormat.jm().format((data['sentTime'] as Timestamp).toDate()),
+                  DateFormat.jm()
+                      .format((data['sentTime'] as Timestamp).toDate()),
                   style: Theme.of(context).textTheme.bodySmall!.copyWith(
                         color: (data['senderId'] ==
                                 FirebaseAuth.instance.currentUser?.uid)
@@ -226,7 +225,7 @@ class _MessageWidgetState extends State<MessageWidget> {
                       ),
                 ),
                 Icon(
-                  data['delivered'] ? EvaIcons.doneAll : Icons.check,
+                  data['delivered'] ? Icons.done_all_rounded : Icons.check,
                   size: 16,
                   color: data['delivered'] ? Colors.blue : Colors.grey,
                 ),
@@ -235,72 +234,75 @@ class _MessageWidgetState extends State<MessageWidget> {
           ),
         ],
       );
-    } else if (data['text'] == 'A Video chat is started click this to join') {
-      return ConstrainedBox(
-        constraints: BoxConstraints(
-          maxWidth: MediaQuery.of(context).size.width * 0.7,
-          maxHeight: 80,
-        ),
-        child: ListTile(
-          onTap: () {
-            if (!calledOnce ||
-                (widget.selectedUSer['blocked'] &&
-                    widget.selectedUSer['done_by'] ==
-                        widget.currentUSer['uid'])) {
-              Navigator.of(context).push(MaterialPageRoute(
-                builder: (context) => PrebuiltCallPage(
-                  userID: widget.selectedUSer['uid'],
-                  name: widget.currentUSer['name'],
-                ),
-              ));
+    } 
+    // else if (data['text'] == 'A Video chat is started click this to join') {
+    //   return ConstrainedBox(
+    //     constraints: BoxConstraints(
+    //       maxWidth: MediaQuery.of(context).size.width * 0.7,
+    //       maxHeight: 80,
+    //     ),
+    //     child: ListTile(
+    //       onTap: () {
+    //         if (!calledOnce ||
+    //             (widget.selectedUSer['blocked'] &&
+    //                 widget.selectedUSer['done_by'] ==
+    //                     widget.currentUSer['uid'])) {
+    //           Navigator.of(context).push(MaterialPageRoute(
+    //             builder: (context) => PrebuiltCallPage(
+    //               userID: widget.selectedUSer['uid'],
+    //               name: widget.currentUSer['name'],
+    //             ),
+    //           ));
 
-              setState(() {
-                calledOnce = true;
-              });
-            }
-          },
-          leading: Icon(
-            EvaIcons.video,
-            color: (data['senderId'] == FirebaseAuth.instance.currentUser?.uid)
-                ? Colors.white
-                : Colors.black,
-            size: 15,
-          ),
-          title: Text(
-            "Video call started",
-            style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                  color: (data['senderId'] ==
-                          FirebaseAuth.instance.currentUser?.uid)
-                      ? Colors.white
-                      : Colors.black,
-                ),
-          ),
-          trailing: Padding(
-            padding: EdgeInsets.only(left: size.height * 0.01),
-            child: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Text(
-                  DateFormat.jm().format((data['sentTime'] as Timestamp).toDate()),
-                  style: Theme.of(context).textTheme.bodySmall!.copyWith(
-                        fontSize: 8,
-                        color: (data['senderId'] ==
-                                FirebaseAuth.instance.currentUser?.uid)
-                            ? Colors.white
-                            : Colors.black,
-                      ),
-                ),
-                Icon(
-                  data['delivered'] ? EvaIcons.doneAll : Icons.check,
-                  size: 16,
-                  color: data['delivered'] ? Colors.blue : Colors.grey,
-                ),
-              ],
-            ),
-          ),
-        ),
-      );
-    } else {
+    //           setState(() {
+    //             calledOnce = true;
+    //           });
+    //         }
+    //       },
+    //       leading: Icon(
+    //         Icons.video_call,
+    //         color: (data['senderId'] == FirebaseAuth.instance.currentUser?.uid)
+    //             ? Colors.white
+    //             : Colors.black,
+    //         size: 15,
+    //       ),
+    //       title: Text(
+    //         "Video call started",
+    //         style: Theme.of(context).textTheme.bodySmall?.copyWith(
+    //               color: (data['senderId'] ==
+    //                       FirebaseAuth.instance.currentUser?.uid)
+    //                   ? Colors.white
+    //                   : Colors.black,
+    //             ),
+    //       ),
+    //       trailing: Padding(
+    //         padding: EdgeInsets.only(left: size.height * 0.01),
+    //         child: Row(
+    //           mainAxisSize: MainAxisSize.min,
+    //           children: [
+    //             Text(
+    //               DateFormat.jm()
+    //                   .format((data['sentTime'] as Timestamp).toDate()),
+    //               style: Theme.of(context).textTheme.bodySmall!.copyWith(
+    //                     fontSize: 8,
+    //                     color: (data['senderId'] ==
+    //                             FirebaseAuth.instance.currentUser?.uid)
+    //                         ? Colors.white
+    //                         : Colors.black,
+    //                   ),
+    //             ),
+    //             Icon(
+    //               data['delivered'] ? Icons.done_all : Icons.check,
+    //               size: 16,
+    //               color: data['delivered'] ? Colors.blue : Colors.grey,
+    //             ),
+    //           ],
+    //         ),
+    //       ),
+    //     ),
+    //   );
+    //}
+     else {
       return const SizedBox();
     }
   }

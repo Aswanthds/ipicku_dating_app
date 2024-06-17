@@ -1,16 +1,16 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:eva_icons_flutter/eva_icons_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:ipicku_dating_app/domain/notifications/notifications_bloc.dart';
+import 'package:ipicku_dating_app/presentation/profile/pages/account_details.dart';
 import 'package:ipicku_dating_app/presentation/ui_utils/colors.dart';
 import 'package:ipicku_dating_app/data/repositories/user_repositories.dart';
 import 'package:ipicku_dating_app/domain/matching_bloc/matching_bloc.dart';
 import 'package:ipicku_dating_app/domain/firebase_data/firebase_data_bloc.dart';
 import 'package:ipicku_dating_app/presentation/homepage/notifications_page.dart';
 import 'package:ipicku_dating_app/presentation/homepage/widgets/date_container.dart';
-import 'package:ipicku_dating_app/presentation/profile/profile_drawer.dart';
 import 'package:ipicku_dating_app/presentation/widgets/empty_list.dart';
+import 'package:line_awesome_flutter/line_awesome_flutter.dart';
 
 class HomePage extends StatefulWidget {
   final UserRepository userRepository;
@@ -23,17 +23,21 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
   bool isRandomUsersLoaded = false;
-bool showBanner = false; // Add this variable
+  bool showBanner = false; // Add this variable
   @override
   void initState() {
+    WidgetsBinding.instance.addPostFrameCallback(
+      (_) {
+        BlocProvider.of<MatchingBloc>(context).add(GetRandomUsers());
+        BlocProvider.of<NotificationsBloc>(context).add(GetNotifications());
+        BlocProvider.of<FirebaseDataBloc>(context)
+            .add(FirebaseDataLoadedEvent());
+        WidgetsBinding.instance.addObserver(this);
+        UserRepository().setStatus(true);
+      },
+    );
     super.initState();
     // Dispatch the event only if random users data is not already loaded
-
-    BlocProvider.of<MatchingBloc>(context).add(GetRandomUsers());
-    BlocProvider.of<NotificationsBloc>(context).add(GetNotifications());
-    BlocProvider.of<FirebaseDataBloc>(context).add(FirebaseDataLoadedEvent());
-    WidgetsBinding.instance.addObserver(this);
-    UserRepository().setStatus(true);
   }
 
   @override
@@ -50,6 +54,18 @@ bool showBanner = false; // Add this variable
       appBar: AppBar(
         title: const Text("I Pick U"),
         centerTitle: true,
+        leading: IconButton(
+          onPressed: () async {
+            final userData = await widget.userRepository.getUserMap();
+            Navigator.of(context).push(MaterialPageRoute(
+              builder: (context) => ProfileScreen(
+                userData: userData ?? {},
+                userRepository: widget.userRepository,
+              ),
+            ));
+          },
+          icon: Icon(LineAwesomeIcons.user),
+        ),
         actions: [
           IconButton(
               onPressed: () {
@@ -57,8 +73,8 @@ bool showBanner = false; // Add this variable
                 BlocProvider.of<FirebaseDataBloc>(context)
                     .add(FirebaseDataLoadedEvent());
               },
-              icon: const Icon(EvaIcons.refresh)),
-           BlocBuilder<NotificationsBloc, NotificationsState>(
+              icon: const Icon(Icons.refresh)),
+          BlocBuilder<NotificationsBloc, NotificationsState>(
             builder: (context, state) {
               if (state is GetNotificationsLoaded) {
                 final data = state.data;
@@ -84,7 +100,7 @@ bool showBanner = false; // Add this variable
                       },
                       icon: Stack(
                         children: [
-                          const Icon(EvaIcons.bellOutline),
+                          const Icon(Icons.notifications_none_rounded),
                           if (showBanner &&
                               userdata
                                   .isNotEmpty) // Show banner based on showBanner variable
@@ -119,9 +135,9 @@ bool showBanner = false; // Add this variable
               if (state is GetNotificationsError) {
                 return IconButton(
                   onPressed: () {},
-                  icon:  Stack(
+                  icon: Stack(
                     children: [
-                     const Icon(EvaIcons.bellOutline),
+                      const Icon(Icons.notifications_none_rounded),
                       Positioned(
                         right: 0,
                         child: Container(
@@ -153,7 +169,7 @@ bool showBanner = false; // Add this variable
           ),
         ],
       ),
-      drawer: ProfileDrawer(userRepository: widget.userRepository),
+      // drawer: ProfileDrawer(userRepository: widget.userRepository),
       body: BlocBuilder<MatchingBloc, MatchingState>(
         bloc: BlocProvider.of<MatchingBloc>(context),
         builder: (context, state) {
