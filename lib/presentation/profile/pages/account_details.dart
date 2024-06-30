@@ -98,8 +98,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
         backgroundColor: Theme.of(context).scaffoldBackgroundColor,
         surfaceTintColor: Theme.of(context).scaffoldBackgroundColor,
         leading: IconButton(
-            onPressed: () {
+            onPressed: () async{
               Navigator.of(context).pop();
+               print(await widget.userRepository.getUser());
             },
             icon: const Icon(LineAwesomeIcons.angle_left_solid)),
         title: Text("User Profile",
@@ -254,3 +255,22 @@ class _ProfileScreenState extends State<ProfileScreen> {
     );
   }
 }
+
+
+//  ListTile(
+//             leading: 
+//             Container(
+//               width: 50,
+//               child: AspectRatio(
+//                 aspectRatio: 1,
+//                 child: Container(
+//                   decoration: BoxDecoration(
+//                     borderRadius: BorderRadius.all(Radius.circular(14)),
+//                     image: DecorationImage(image: NetworkImage("https://profilemagazine.com/wp-content/uploads/2020/04/Ajmere-Dale-Square-thumbnail.jpg"))
+//                   ),
+//                 ),
+//               ),
+//             ),
+//             title: Text("Micelle Johnathan"),
+//             subtitle: Text("@Micelle_NYC"),
+//           ),

@@ -147,22 +147,21 @@ class UserRepository {
       final CollectionReference usersCollection =
           FirebaseFirestore.instance.collection('users');
 
-      final DocumentSnapshot userDoc = await usersCollection.doc(userId).get();
       final dataToken = await FirebaseMessaging.instance.getToken();
-      if (userDoc.exists) {
-        await usersCollection.doc(userId).set({
-          'photoUrl': photoUrl,
-          'name': name,
-          'location': location,
-          'gender': gender,
-          'age': age,
-          'email': email,
-          'created': created,
-          'dob': dob,
-          'bio': bio,
-          'deviceToken': dataToken
-        }, SetOptions(merge: true));
-      }
+      await usersCollection.doc(userId).set({
+        'photoUrl': photoUrl,
+        'name': name,
+        'location': location,
+        'gender': gender,
+        'age': age,
+        'email': email,
+        'created': created,
+        'dob': dob,
+        'bio': bio,
+        'deviceToken': dataToken
+      }, SetOptions(merge: true));
+   
+
       // else {
       //   await usersCollection.doc(userId).set({
       //     'uid': userId,

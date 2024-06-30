@@ -44,40 +44,32 @@ class _DummySwipeState extends State<DummySwipe> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      margin: const EdgeInsets.all(8.0),
+      height: widget.size.height - 150,
+      margin: EdgeInsets.all(6.0),
       decoration: const BoxDecoration(
         gradient: LinearGradient(colors: [
           Color.fromRGBO(115, 0, 255, 0.894),
           Color.fromRGBO(241, 4, 75, 0.898)
         ]),
         borderRadius: BorderRadius.only(
-          topLeft: Radius.circular(20),
-          topRight: Radius.circular(20),
+          topLeft: Radius.circular(10),
+          topRight: Radius.circular(10),
         ),
       ),
-      child: Container(
-        height: widget.size.height - 150,
-        decoration: const BoxDecoration(
-          borderRadius: BorderRadius.only(
-            topLeft: Radius.circular(20),
-            topRight: Radius.circular(20),
-          ),
-        ),
-        child: SwipeCards(
-          matchEngine: _matchEngine,
-          rightSwipeAllowed: true,
-          likeTag: const Icon(Icons.done),
-          itemBuilder: _buildCard,
-          onStackFinished: () {
-            ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-              content: Text("Stack Finished"),
-              duration: Duration(milliseconds: 500),
-            ));
-          },
-          itemChanged: _onItemChanged,
-          upSwipeAllowed: true,
-          fillSpace: true,
-        ),
+      child: SwipeCards(
+        matchEngine: _matchEngine,
+        rightSwipeAllowed: true,
+        likeTag: const Icon(Icons.done),
+        itemBuilder: _buildCard,
+        onStackFinished: () {
+          ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+            content: Text("Stack Finished"),
+            duration: Duration(milliseconds: 500),
+          ));
+        },
+        itemChanged: _onItemChanged,
+        upSwipeAllowed: true,
+        fillSpace: true,
       ),
     );
   }
@@ -87,40 +79,32 @@ class _DummySwipeState extends State<DummySwipe> {
       child: Card(
         color: Theme.of(context).scaffoldBackgroundColor,
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(20),
+          borderRadius: BorderRadius.circular(10),
         ),
         child: SingleChildScrollView(
           scrollDirection: Axis.vertical,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Stack(
-                children: [
-                  Container(
-                    height: widget.size.height - 150,
-                    foregroundDecoration: BoxDecoration(
-                      gradient: AppTheme.blackFade,
-                      borderRadius: BorderRadius.circular(20),
-                    ),
-                    decoration: BoxDecoration(
-                      color: Colors.black26,
-                      borderRadius: BorderRadius.circular(20),
-                      image: DecorationImage(
-                        image: getImageProvider(widget.userProfile[index]),
-                        fit: BoxFit.cover,
-                      ),
-                    ),
+              Container(
+                height: widget.size.width,
+                // foregroundDecoration: BoxDecoration(
+                //   gradient: AppTheme.blackFade,
+                //   borderRadius: BorderRadius.circular(20),
+                // ),
+                decoration: BoxDecoration(
+                  color: Colors.black26,
+                  borderRadius: BorderRadius.circular(20),
+                  image: DecorationImage(
+                    image: getImageProvider(widget.userProfile[index]),
+                    fit: BoxFit.fitWidth,
                   ),
-                  Positioned(
-                    bottom: 50,
-                    left: 20,
-                    child: DateDetailsSection(
-                      name: '${widget.userProfile[index]['name']}',
-                      age: '${widget.userProfile[index]['age']}',
-                      bio: '${widget.userProfile[index]['bio']}',
-                    ),
-                  )
-                ],
+                ),
+              ),
+              DateDetailsSection(
+                name: '${widget.userProfile[index]['name']}',
+                age: '${widget.userProfile[index]['age']}',
+                bio: '${widget.userProfile[index]['bio']}',
               ),
               DetailsSection(
                 data: widget.userProfile[index],
