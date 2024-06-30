@@ -150,21 +150,7 @@ class UserRepository {
       final DocumentSnapshot userDoc = await usersCollection.doc(userId).get();
       final dataToken = await FirebaseMessaging.instance.getToken();
       if (userDoc.exists) {
-        await usersCollection.doc(userId).update({
-          'photoUrl': photoUrl,
-          'name': name,
-          'location': location,
-          'gender': gender,
-          'age': age,
-          'email': email,
-          'created': created,
-          'dob': dob,
-          'bio': bio,
-          'deviceToken': dataToken
-        });
-      } else {
         await usersCollection.doc(userId).set({
-          'uid': userId,
           'photoUrl': photoUrl,
           'name': name,
           'location': location,
@@ -175,8 +161,23 @@ class UserRepository {
           'dob': dob,
           'bio': bio,
           'deviceToken': dataToken
-        });
+        }, SetOptions(merge: true));
       }
+      // else {
+      //   await usersCollection.doc(userId).set({
+      //     'uid': userId,
+      //     'photoUrl': photoUrl,
+      //     'name': name,
+      //     'location': location,
+      //     'gender': gender,
+      //     'age': age,
+      //     'email': email,
+      //     'created': created,
+      //     'dob': dob,
+      //     'bio': bio,
+      //     'deviceToken': dataToken
+      //   });
+      // }
     } catch (e) {
       debugPrint('Error during profile setup: $e');
 
@@ -203,7 +204,7 @@ class UserRepository {
     }
   }
 
-  Future<Map<String,dynamic>> getUserData() async {
+  Future<Map<String, dynamic>> getUserData() async {
     try {
       final userId = await getUser();
       final users = FirebaseFirestore.instance.collection('users').doc(userId);
@@ -435,7 +436,6 @@ class UserRepository {
     }
   }
 
- 
   Future<String> getSelectedUserIdToken(String userId) async {
     final tokenSnapshot = await usersCollection.doc(userId).get();
     if (!tokenSnapshot.data()!.containsKey('deviceToken')) {
@@ -484,7 +484,6 @@ class UserRepository {
     usersCollection.doc(await getUser()).update({'notifications_$key': value});
     await prefs.setBool(key, value);
   }
-
 
   // Future<void> deleteUserAccount() async {
   //   try {
@@ -566,7 +565,6 @@ class UserRepository {
   //   }
   // }
 
- 
   // Future<String> getSelectedUserIdToken(String userId) async {
   //   final tokenSnapshot = await usersCollection.doc(userId).get();
   //   if (!tokenSnapshot.data()!.containsKey('deviceToken')) {

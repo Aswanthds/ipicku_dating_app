@@ -108,20 +108,20 @@ class _UserProfileBottomSheetState extends State<UserProfileBottomSheet> {
                           AddUserAsAPick(
                               selectedUserId: widget.data['uid']));
                       final currentUserData =
-                          await UserRepository().getUserData();
+                          await UserRepository().getUserMap();
                       if (widget.data['deviceToken'] != null &&
                           (widget.data['notifications_picks'] ?? false)) {
                         BlocProvider.of<NotificationsBloc>(context).add(
                             NotificationReceivedEvent(
                                 'New Pick',
-                                "${currentUserData['name']} picked you , Check My Picks list....",
+                                "${currentUserData?['name']} picked you , Check My Picks list....",
                                 widget.data['uid'],
                                 NotificationType.picks));
                         PushNotificationService().sendPushMessage(
                             title: "New Notification",
                             type: 'picks',
                             body:
-                                "${currentUserData['name']} Picked You , Check on My Picks list....",
+                                "${currentUserData?['name']} Picked You , Check on My Picks list....",
                             token: widget.data['deviceToken']);
                       }
                     },

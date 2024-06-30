@@ -1,9 +1,12 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:ipicku_dating_app/domain/auth_bloc/authentication_bloc.dart';
 import 'package:ipicku_dating_app/domain/firebase_data/firebase_data_bloc.dart';
+import 'package:ipicku_dating_app/domain/login_bloc/login_bloc.dart';
 import 'package:ipicku_dating_app/domain/theme/theme_bloc.dart';
 import 'package:ipicku_dating_app/domain/theme/theme_event.dart';
+import 'package:ipicku_dating_app/presentation/log_in/login.dart';
 import 'package:ipicku_dating_app/presentation/profile/pages/mutual_picks.dart';
 import 'package:ipicku_dating_app/presentation/profile/pages/mypicks.dart';
 import 'package:ipicku_dating_app/presentation/profile/pages/seettings.dart';
@@ -128,7 +131,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         child: Image(
                             fit: BoxFit.fitWidth,
                             image: CachedNetworkImageProvider(
-                                widget.userData['photoUrl']))),
+                                widget.userData['photoUrl'] ?? ''))),
                   ),
                   Positioned(
                     bottom: 0,
@@ -149,9 +152,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 ],
               ),
               const SizedBox(height: 10),
-              Text(widget.userData['name'],
+              Text(widget.userData['name'] ?? '',
                   style: Theme.of(context).textTheme.headlineMedium),
-              Text('${widget.userData["age"]} years old',
+              Text('${widget.userData["age"] ?? 0} years old',
                   style: Theme.of(context).textTheme.headlineSmall),
               const SizedBox(height: 20),
 
@@ -234,26 +237,15 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   textColor: Colors.red,
                   endIcon: false,
                   onPress: () {
-                    // Get.defaultDialog(
-                    //   title: "LOGOUT",
-                    //   titleStyle: const TextStyle(fontSize: 20),
-                    //   content: const Padding(
-                    //     padding: EdgeInsets.symmetric(vertical: 15.0),
-                    //     child: Text("Are you sure, you want to Logout?"),
-                    //   ),
-                    //   confirm: Expanded(
-                    //     child: ElevatedButton(
-                    //       onPressed: () =>
-                    //           AuthenticationRepository.instance.logout(),
-                    //       style: ElevatedButton.styleFrom(
-                    //           backgroundColor: Colors.redAccent,
-                    //           side: BorderSide.none),
-                    //       child: const Text("Yes"),
-                    //     ),
-                    //   ),
-                    //   cancel: OutlinedButton(
-                    //       onPressed: () => Get.back(), child: const Text("No")),
-                    // );
+                    BlocProvider.of<AuthenticationBloc>(context)
+                        .add(LoggedOut());
+                    Navigator.of(context).pushAndRemoveUntil(
+                      MaterialPageRoute(
+                        builder: (context) =>
+                            SignInPage(userRepository: widget.userRepository),
+                      ),
+                      (route) => false,
+                    );
                   }),
             ],
           ),

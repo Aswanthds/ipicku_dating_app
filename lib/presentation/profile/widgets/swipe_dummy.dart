@@ -201,14 +201,14 @@ class _DummySwipeState extends State<DummySwipe> {
 
           await UserRepository().storeDeviceToken();
 
-          final currentUserData = await UserRepository().getUserData();
+          final currentUserData = await UserRepository().getUserMap();
 
           if (_names[i]['deviceToken'] != null &&
               (_names[i]['notifications_picks'] ?? false)) {
             BlocProvider.of<NotificationsBloc>(context).add(
               NotificationReceivedEvent(
                 'New Pick',
-                "${currentUserData['name']} picked you , Check My Picks list....",
+                "${currentUserData?['name']} picked you , Check My Picks list....",
                 _names[i]['uid'],
                 NotificationType.picks,
               ),
@@ -218,7 +218,7 @@ class _DummySwipeState extends State<DummySwipe> {
               title: "New Notification",
               type: 'picks',
               body:
-                  "${currentUserData['name']} Picked You , Check on My Picks list....",
+                  "${currentUserData?['name']} Picked You , Check on My Picks list....",
               token: _names[i]['deviceToken'],
             );
           }
